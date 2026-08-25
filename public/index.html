@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SERVIR GRP — Thailand Evacuation Preparedness Planning Prototype</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><div class="brand-mark"><span></span><span></span><span></span></div><div><b>SERVIR</b><small>GLOBAL RISK PLATFORM</small></div></div>
+    <div class="workspace-title"><span class="status-dot"></span>Evacuation preparedness planning <em>Prototype</em></div>
+    <div class="top-actions"><button class="help-btn">?</button><button class="user-menu"><span>OJ</span><span>Ole J.<small>Planning workspace</small></span><b>⌄</b></button></div>
+  </header>
+
+  <main class="app-shell">
+    <aside class="chat-panel">
+      <div class="chat-header"><div><p class="eyebrow">AI planning assistant</p><h1>Evacuation planning assessment</h1></div><button id="newChat" class="square-btn" title="Start again">＋</button></div>
+      <div class="scope-banner"><span>◈</span><p><b>Thailand district or Tambon AOI</b> · Planner output · ADPC analyst validation</p></div>
+      <section class="messages" id="messages" aria-live="polite">
+        <div class="date-rule"><span>Today</span></div>
+        <div class="message assistant"><div class="avatar">AI</div><div class="bubble">
+          <p>For any Thailand district or Tambon and an agreed flood scenario, I can help a Planner answer two linked questions: <b>Where could people move?</b> and <b>Which vulnerable people need support?</b> Then I can create a traceable budget-request report. A red/yellow/green risk map is available as further information.</p>
+          <p><b>What decision are you preparing for?</b></p>
+          <div class="quick-actions">
+            <button data-purpose="budget"><span>▤</span><div><b>Prepare a budget case</b><small>Candidate-place and vulnerable-people evidence</small></div><i>›</i></button>
+            <button data-purpose="preparedness"><span>⌖</span><div><b>Review preparedness</b><small>Candidate places, vulnerable people and evidence gaps</small></div><i>›</i></button>
+            <button data-purpose="improvement"><span>◫</span><div><b>Review a candidate place</b><small>Inspect suitability evidence and validation gaps</small></div><i>›</i></button>
+            <button data-purpose="urban"><span>▦</span><div><b>Download building footprints</b><small>Urban-planning height data for risk mapping</small></div><i>›</i></button>
+          </div>
+        </div></div>
+      </section>
+      <div class="composer-wrap"><div class="composer"><button id="attachBtn" aria-label="Upload local data">＋</button><textarea id="chatInput" rows="1" placeholder="Ask where people could move, about vulnerable people or risk…"></textarea><button id="sendBtn" class="send" aria-label="Send"><svg viewBox="0 0 24 24"><path d="m5 12 14-7-4 14-3-6-7-1Z"/><path d="m12 13 7-8"/></svg></button></div><p>AI output requires authorised human review.</p></div>
+    </aside>
+
+    <section class="map-panel">
+      <div class="map-toolbar">
+        <div class="aoi-wrap">
+          <button class="aoi-selector" id="aoiSelector"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg><span id="aoiLabel">Select Thailand area of interest <small>AOI</small></span><kbd>⌄</kbd></button>
+          <div class="aoi-menu" id="aoiMenu">
+            <div class="aoi-head"><span>⌖</span><div><b>Thailand nationwide AOI</b><small>First slice: any district or Tambon</small></div></div>
+            <label class="aoi-search"><span>⌕</span><input id="aoiSearch" placeholder="Search district or Tambon…" /></label>
+            <button data-aoi="phaya-thai"><span><b>Phaya Thai District, Bangkok</b><small>District · real name · mocked review data</small></span><em>Select</em></button>
+            <button data-aoi="warin-chamrap"><span><b>Warin Chamrap District, Ubon Ratchathani</b><small>District · real name · mocked review data</small></span><em>Select</em></button>
+            <button data-aoi="kham-nam-saep"><span><b>Tambon Kham Nam Saep, Warin Chamrap District</b><small>Tambon · real name · mocked review data</small></span><em>Select</em></button>
+            <p class="aoi-footnote">Examples demonstrate nationwide selection. Boundaries, flood geometry and results remain illustrative in this prototype.</p>
+          </div>
+        </div>
+        <div class="tool-group">
+          <button id="candidateTool" title="Ask a planning question in chat"><span>⌖</span> Ask location question</button>
+          <button id="uploadTool" title="Upload local data"><span>⇧</span> Upload</button>
+          <button id="layersTool"><span>▱</span> Layers <b id="layerCount">1</b></button>
+          <button id="exportTool"><span>⇩</span> Risk map</button>
+        </div>
+      </div>
+      <div class="global-status"><span>Planning scenario — not a forecast</span><b id="globalAOI">Select a Thailand district or Tambon</b><span id="globalScenario">RP100 · 1% AEP</span><em>Real AOI name · mocked geometry/results</em><i id="analystState">Analyst: Not reviewed</i></div>
+
+      <div class="map-canvas" id="mapCanvas">
+        <svg class="map-art" id="mapArt" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid slice" aria-label="Illustrative Thailand district or Tambon assessment map">
+          <defs><pattern id="grid" width="44" height="44" patternUnits="userSpaceOnUse"><path d="M44 0H0V44" fill="none" stroke="#b9c6c2" stroke-width="1" opacity=".28"/></pattern><filter id="shadow"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity=".22"/></filter></defs>
+          <rect width="1000" height="700" fill="#e9eeea"/><rect width="1000" height="700" fill="url(#grid)"/>
+          <g class="districts">
+            <path d="M-20 70 170 35l110 105-46 151-202 18Z"/><path d="m280 140 178-83 126 83-35 156-191 19-124-24Z"/>
+            <path d="m584 140 216-78 183 65 39 159-237 31-236-21Z"/><path d="M32 309 234 291l124 24 13 166-183 116-202-53Z"/>
+            <path id="selectedDistrict" class="selected-district" d="m358 315 191-19 236 21-29 167-202 85-183-88Z"/><path d="m785 317 237-31 19 271-285-73Z"/>
+            <path d="m188 597 183-116 183 88-21 151H168Z"/><path d="m554 569 202-85 285 73v170H533Z"/>
+          </g>
+          <g class="roads"><path d="M-20 410C180 380 285 202 466 188s260 142 560 62"/><path d="M190-20c38 173 102 241 242 336s251 201 298 405"/><path d="M85 680c144-92 219-165 316-172s269 59 599 3"/></g>
+          <path class="river" d="M420-30c-73 95 73 130 1 231-52 73 29 110-9 170-55 87 40 137-14 214-34 48-27 95-21 145"/>
+          <g class="map-labels"><text x="105" y="185">ADJACENT AREA</text><text x="640" y="190">ADJACENT AREA</text><text x="80" y="465">ADJACENT AREA</text><text x="585" y="430" class="phaya-label" id="selectedAOIMapLabel">SELECT AOI</text><text x="790" y="515">ADJACENT AREA</text><text x="690" y="610">ADJACENT AREA</text></g>
+          <g id="analysisLayers" class="analysis-layers">
+            <path class="flood flood-20" d="M383 102c37 40 74 66 62 112-10 38-36 64-18 105 19 43 57 70 38 119-11 29-38 42-55 17-25-38-25-88-39-131-16-49-22-104 12-222Z"/>
+            <path class="flood flood-50" d="M360 80c50 42 108 61 116 113 8 48-49 76-25 127 25 52 82 75 61 136-14 41-68 55-95 20-37-48-48-94-52-151-5-61-47-116-5-245Z"/>
+            <path class="flood flood-100" d="M339 64c64 43 138 55 173 117 32 56-53 92-24 149 31 63 116 80 91 157-16 52-105 70-144 24-47-54-72-87-72-164 0-68-76-118-51-187 12-33 9-65 27-96Z"/>
+            <g id="candidatePlacesLayer" class="candidate-places-layer">
+              <g class="candidate-place" data-candidate-id="P-01" transform="translate(650 350)"><circle r="17"/><text>C1</text></g>
+              <g class="candidate-place" data-candidate-id="P-02" transform="translate(715 420)"><circle r="17"/><text>C2</text></g>
+              <g class="candidate-place" data-candidate-id="P-03" transform="translate(630 495)"><circle r="17"/><text>C3</text></g>
+              <g class="candidate-place" data-candidate-id="P-04" transform="translate(750 535)"><circle r="17"/><text>C4</text></g>
+              <g class="candidate-place" data-candidate-id="P-05" transform="translate(665 585)"><circle r="17"/><text>C5</text></g>
+            </g>
+            <g id="riskPointLayer" class="risk-point-layer">
+            <g class="center risk-low" data-center="C-01" transform="translate(650 350)"><circle r="17"/><text>L</text></g>
+            <g class="center risk-medium" data-center="C-02" transform="translate(715 420)"><circle r="17"/><text>M</text></g>
+            <g class="center risk-low" data-center="C-03" transform="translate(630 495)"><circle r="17"/><text>L</text></g>
+            <g class="center risk-medium" data-center="C-04" transform="translate(750 535)"><circle r="17"/><text>M</text></g>
+            <g class="center risk-low" data-center="C-05" transform="translate(665 585)"><circle r="17"/><text>L</text></g>
+            <g class="center risk-high risk-1" data-center="C-06" transform="translate(425 350)"><circle r="16"/><text>H</text></g>
+            <g class="center risk-high risk-2" data-center="C-07" transform="translate(480 405)"><circle r="16"/><text>H</text></g>
+            <g class="center risk-medium risk-3" data-center="C-08" transform="translate(390 420)"><circle r="16"/><text>M</text></g>
+            </g>
+          </g>
+          <g id="buildingLayer" class="building-layer">
+            <path d="m555 350 22-7 10 25-23 7Z"/><path d="m595 370 28-5 7 28-27 6Z"/><path d="m640 405 18-3 5 20-19 4Z"/><path d="m575 430 32-8 9 27-34 9Z"/><path d="m625 460 24-4 6 23-25 5Z"/><path d="m680 445 29-6 8 30-31 7Z"/><path d="m545 485 20-5 8 24-23 6Z"/><path d="m600 515 34-7 7 25-35 8Z"/><path d="m690 510 21-3 4 22-22 4Z"/><path d="m730 470 26-5 6 26-27 6Z"/><path d="m715 555 30-6 7 28-32 7Z"/><path d="m650 565 18-4 5 21-20 5Z"/>
+          </g>
+          <g id="candidateLayer" class="candidate-layer" filter="url(#shadow)"><g class="candidate" data-center="candidate" transform="translate(685 345)"><circle r="21"/><path d="m0-11 11 20h-22Z"/><text x="28" y="5">CANDIDATE POI</text></g><path class="reach-ring" d="M685 345m-78 0a78 78 0 1 0 156 0a78 78 0 1 0-156 0"/></g>
+        </svg>
+
+        <div class="demo-label">ILLUSTRATIVE DATA & GEOMETRY</div>
+        <div class="zoom"><button>＋</button><button>−</button><button>⌖</button></div>
+        <div class="map-scale">2 km</div>
+
+        <div class="scenario-card" id="scenarioCard"><div class="scenario-icon">≈</div><div><small id="scenarioScope">SELECT AN AOI</small><b id="scenarioTitle">100-year flood extent</b><span>1% annual chance · Static planning scenario</span></div><button data-detail="evidence">Evidence ›</button></div>
+
+        <div class="legend" id="legend"><div><b id="legendTitle">Planning-map legend</b><button id="legendToggle">−</button></div><section class="planning-legend"><label><i class="lg safe-lg">C</i>Candidate evacuation place</label><label><i class="lg flood-lg"></i>Illustrative flood extent</label><label><i class="lg unknown-lg">?</i>Missing evidence</label><p>Candidates require analyst, field and responsible-authority validation.</p></section><section class="risk-view-legend"><label><i class="lg high-lg">H</i>High risk point</label><label><i class="lg medium-lg">M</i>Medium risk point</label><label><i class="lg low-lg">L</i>Low risk point</label><label><i class="lg flood-lg"></i>Illustrative flood extent</label><p>Further-information view. Low/green does not mean safe.</p></section></div>
+
+        <aside class="assessment-panel" id="assessmentPanel">
+          <div class="panel-head"><div><small id="panelScenario">SELECT DISTRICT OR TAMBON · RP100</small><h2>Evacuation planning</h2></div><button id="closePanel">×</button></div>
+          <div class="panel-alert"><span>!</span><p><b>Two planning viewpoints:</b> where people could move and which vulnerable groups may need support. Candidate places are not officially verified safe.</p></div>
+          <div class="kpi-row"><button data-tab="centres"><b>5</b><small>Candidate places</small></button><button data-tab="centres"><b>5</b><small>Need validation</small></button><button data-tab="people"><b>4</b><small>Support indicators</small></button><button data-detail="people"><b>18,640</b><small>People · Illustrative</small></button></div>
+          <div class="tabs two-view-tabs"><button class="active" data-tab="centres">Where could people move?</button><button data-tab="people">Vulnerable people</button></div>
+          <div class="tab-content active" data-tab-content="centres">
+            <div class="section-title"><b>Candidate evacuation places</b><span>Not verified safe</span></div>
+            <button class="centre-row" data-candidate-id="P-01"><i class="status-safe">C1</i><p><b>Candidate Stadium A</b><small>Capacity method not agreed · field check required</small></p><em class="candidate-text">Review ›</em></button>
+            <button class="centre-row" data-candidate-id="P-02"><i class="status-safe">C2</i><p><b>Candidate School B</b><small>Permission and availability unknown</small></p><em class="candidate-text">Review ›</em></button>
+            <button class="centre-row" data-candidate-id="P-03"><i class="status-safe">C3</i><p><b>Community Hall C</b><small>Access and services require evidence</small></p><em class="candidate-text">Review ›</em></button>
+            <button class="text-link" data-detail="safeplaces">View all five candidate places and validation gaps →</button>
+          </div>
+          <div class="tab-content" data-tab-content="exposure">
+            <div class="section-title"><b>Buildings and critical facilities</b><span>Illustrative / not assessed</span></div>
+            <div class="guidance-card"><span>▦</span><p><b>Exposed building footprints</b><small>Authoritative count: Not available · method/version: Not agreed</small></p></div>
+            <div class="guidance-card"><span>＋</span><p><b>Hospitals — critical continuity</b><small>Selected-AOI inventory is reported ready but not connected in this static mock; hospitals will not be treated automatically as shelters.</small></p></div>
+            <div class="guidance-card"><span>□</span><p><b>Facility inventory</b><small>Real facility records will come from the selected district/Tambon data service—not from names invented by the prototype.</small></p></div>
+            <button class="text-link" data-detail="evidence">Review source, method and missing evidence →</button>
+          </div>
+          <div class="tab-content" data-tab-content="people">
+            <div class="section-title"><b>Potentially exposed population</b><span>18,640</span></div>
+            <div class="people-grid"><button data-detail="children"><b>3,920</b><small>Children 0–14</small></button><button data-detail="older"><b>2,760</b><small>Older people 65+</small></button><button data-detail="support"><b>930</b><small>Disability support needs*</small></button><button data-detail="mobility"><b>1,480</b><small>Low-mobility households*</small></button></div>
+            <p class="micro">*Aggregated illustrative estimates; categories may overlap and must not be summed.</p>
+            <button class="coverage-card" data-detail="coverage"><span>Service coverage indicator</span><b>7.5 centres per 10,000 people ›</b><small>Simple density only; capacity and travel time are not yet included.</small></button>
+          </div>
+          <div class="tab-content" data-tab-content="guidance">
+            <div class="section-title"><b>Risk method and follow-up</b><span>3 checks</span></div>
+            <div class="guidance-card"><span>01</span><p><b>Validate risk inputs</b><small>Confirm hazard, exposure, vulnerability, vintage and AOI coverage.</small></p></div>
+            <div class="guidance-card"><span>02</span><p><b>Approve H/M/L thresholds</b><small>Document the deterministic classification method and uncertainty.</small></p></div>
+            <div class="guidance-card"><span>03</span><p><b>Review and report</b><small>Record analyst comments, limitations and map-download metadata.</small></p></div>
+            <div class="inventory-examples"><b>Safe-place questions are separate</b><span>Ask “Where could people move?” in chat</span><span>The assistant starts candidate screening—not a safe-place answer</span><small>Risk colour alone cannot establish suitability. Responsible-authority and field validation remain required.</small></div>
+            <p class="micro">Illustrative guidance prototype. Production advice requires an approved, cited policy catalogue.</p>
+          </div>
+          <div class="panel-actions three"><button id="downloadRiskMap">View risk map</button><button id="analystReview">Analyst review</button><button id="createReport" class="primary">Budget report →</button></div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <div class="backdrop" id="backdrop"></div>
+  <aside class="detail-drawer" id="detailDrawer" aria-hidden="true"><div class="drawer-head"><div><p class="eyebrow" id="drawerEyebrow">PROVISIONAL · ILLUSTRATIVE</p><h2 id="drawerTitle">Details</h2></div><button id="closeDrawer">×</button></div><div id="drawerBody"></div><div class="authority-note"><span>!</span><p>Planning support only. Validate source data, current conditions and authority requirements before operational use.</p></div></aside>
+
+  <div class="modal" id="uploadModal" role="dialog" aria-modal="true"><div class="modal-card"><div class="modal-head"><div><p class="eyebrow">LOCAL EVIDENCE</p><h2>Upload data and rerun</h2></div><button data-close-modal>×</button></div><p class="modal-intro">Add a local population, building or road file. The prototype validates and versions it before rerunning; it never silently replaces governed data.</p><div class="type-row"><button class="selected" data-upload-type="Population">People</button><button data-upload-type="Buildings">Buildings</button><button data-upload-type="Roads">Roads</button></div><button class="drop-zone" id="demoFile"><span>⇧</span><b>Use demonstration file</b><small>selected_aoi_population_mock.geojson · Illustrative</small></button><div class="file-state" id="fileState"><span>✓</span><p><b>Schema validation passed</b><small>CRS EPSG:4326 · 24 features · Demo licence</small></p></div><div class="modal-actions"><button data-close-modal>Cancel</button><button class="primary" id="rerunUpload" disabled>Validate & rerun →</button></div></div></div>
+
+  <div class="modal" id="reportModal" role="dialog" aria-modal="true"><div class="modal-card report-modal"><div class="modal-head"><div><p class="eyebrow">REVIEWED OUTPUT</p><h2>Build preparedness budget report</h2></div><button data-close-modal>×</button></div><label class="field"><span>Report purpose</span><select id="reportPurpose"><option>Evacuation-preparedness budget request</option><option>Preparedness review</option><option>Decision briefing</option></select></label><p class="field-label">Include sections</p><div class="check-grid"><label><input type="checkbox" checked> Executive summary</label><label><input type="checkbox" checked> Candidate evacuation places</label><label><input type="checkbox" checked> People and social-support context</label><label><input type="checkbox" checked> Vulnerable people and support gaps</label><label><input type="checkbox" checked> Budget investment categories</label><label><input type="checkbox" checked> Evidence, limitations and approval</label><label><input type="checkbox"> Risk-map appendix</label></div><div class="report-preview"><span>2 PAGES</span><p><b>Provisional evacuation-preparedness budget brief</b><small>Candidate places · vulnerable people · investment gaps · validation status</small></p></div><div class="modal-actions"><button data-close-modal>Cancel</button><button class="primary" id="generateReport">Generate editable report →</button></div></div></div>
+
+  <div class="modal" id="analystModal" role="dialog" aria-modal="true"><div class="modal-card"><div class="modal-head"><div><p class="eyebrow">ADPC ANALYST VALIDATION</p><h2>Review planning evidence</h2></div><button data-close-modal>×</button></div><p class="modal-intro">Record the review state for the candidate-place and vulnerable-people assessment. This does not replace responsible-authority approval.</p><label class="field"><span>Validation status</span><select id="validationStatus"><option>Not reviewed</option><option>Needs evidence</option><option>Provisionally suitable</option><option>Rejected</option></select></label><label class="field"><span>Analyst comments</span><textarea id="analystComments" rows="4" placeholder="Record missing evidence, concerns and required field checks…"></textarea></label><div class="readiness-grid"><span><b>Hazard</b><em class="partial">Partial</em></span><span><b>Capacity method</b><em class="unknown">Unknown</em></span><span><b>Access</b><em class="unknown">Unknown</em></span><span><b>Facility inventory</b><em class="partial">Partial</em></span></div><div class="modal-actions"><button data-close-modal>Cancel</button><button class="primary" id="saveValidation">Save analyst review →</button></div></div></div>
+
+  <div class="modal" id="exportModal" role="dialog" aria-modal="true"><div class="modal-card"><div class="modal-head"><div><p class="eyebrow">AOI RISK-MAP DOWNLOAD</p><h2>Download district or Tambon risk map</h2></div><button data-close-modal>×</button></div><p class="modal-intro">The prototype creates a valid SVG map or GeoJSON evidence package. Production PDF, PNG and GeoTIFF rendering will use the same AOI, scenario and provenance contract.</p><div class="export-grid"><button class="selected" data-format="SVG"><b>SVG</b><small>Risk-map graphic</small></button><button data-format="GeoJSON"><b>GeoJSON</b><small>Evidence features</small></button><button data-format="JSON"><b>JSON</b><small>Metadata manifest</small></button><button disabled><b>PNG</b><small>Production renderer</small></button><button disabled><b>GeoTIFF</b><small>Production raster</small></button></div><div class="export-meta"><p><span>AOI</span><b id="exportAOI">Select district or Tambon</b></p><p><span>Scenario</span><b id="exportScenario">RP100 · 1% AEP</b></p><p><span>Status</span><b>Mock geometry/results · Provisional</b></p></div><div class="modal-actions"><button data-close-modal>Cancel</button><button class="primary" id="downloadExport">Download SVG risk map →</button></div></div></div>
+
+  <div class="toast" id="toast"><span>✓</span><p id="toastText">Done</p></div>
+  <script src="app.js"></script>
+</body>
+</html>

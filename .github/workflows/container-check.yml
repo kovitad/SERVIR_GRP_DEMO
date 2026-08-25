@@ -1,0 +1,38 @@
+name: Container check
+
+on:
+  push:
+    branches: ["main", "master"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate JavaScript syntax
+        run: node --check public/app.js
+
+      - name: Validate Compose
+        run: docker compose config --quiet
+
+      - name: Build image
+        run: docker build --tag grp-evacuation-prototype:${{ github.sha }} .
+
+      - name: Smoke test container
+        run: |
+          docker run --detach --name grp-smoke -p 8080:80 grp-evacuation-prototype:${{ github.sha }}
+          for i in {1..20}; do
+            curl --fail --silent http://127.0.0.1:8080/healthz && break
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:8080/ | grep -q "Thailand Evacuation Preparedness"
+
+      - name: Show logs on failure
+        if: failure()
+        run: docker logs grp-smoke || true
