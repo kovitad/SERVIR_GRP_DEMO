@@ -104,15 +104,21 @@ If these files are retained in a subfolder:
 cd prototype/github
 ```
 
-### 3. Install Docker
+### 3. Verify/install Docker
+
+The bootstrap script is safe to rerun. If Docker Engine and the Compose plugin already work, it skips Docker reinstallation and only verifies the installation, configures UFW and adds the SSH user to the `docker` group.
 
 ```bash
 sudo ./scripts/bootstrap-ubuntu.sh
-sudo usermod -aG docker "$USER"
 exit
 ```
 
-Reconnect over SSH so the Docker group takes effect.
+Reconnect over SSH so the Docker-group change takes effect. Confirm:
+
+```bash
+docker --version
+docker compose version
+```
 
 ### 4. Configure the site
 
