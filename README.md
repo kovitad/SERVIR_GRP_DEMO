@@ -12,6 +12,8 @@ The prototype supports Thailand district or Tambon examples and provides three c
 
 > AOI names are real examples. Boundaries, cells, shelters, distances and results are mocked. Proximity is not capacity coverage, route safety or official shelter assessment.
 
+Pin's 26 August refinement brief, implementation report, demo guide and screenshots are under [`docs/26Aug2026/`](docs/26Aug2026/).
+
 ## Repository structure
 
 ```text
