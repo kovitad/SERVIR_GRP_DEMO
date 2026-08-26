@@ -13,7 +13,7 @@ The application source was restored from Git commit `9102adf`, preserving the st
 4. review candidate evacuation places;
 5. review vulnerable people;
 6. record analyst review;
-7. generate an editable budget report; and
+7. generate an editable preparedness investment brief; and
 8. open the H/M/L risk map as supporting information.
 
 ## Only new feature in this revision

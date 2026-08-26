@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.7-prototype
+
+- Renamed the output to **Preparedness investment brief**.
+- Reframed report generation as building a strategic case for preparedness investment.
+- Added the eight requested evidence, action, investment, limitation and map sections.
+- Updated the editable document content, filename, interface button and assistant wording.
+
 ## 0.1.6-prototype
 
 - Replaced the centre-per-population density ratio with **Shelter proximity and population gaps**.

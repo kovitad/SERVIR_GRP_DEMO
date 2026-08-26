@@ -9,7 +9,7 @@ The prototype supports any Thailand district or sub-district through mocked exam
 1. **Where could people move?** Candidate evacuation places and validation gaps.
 2. **Vulnerable people.** Aggregated indicators for assisted-movement planning.
 
-Both viewpoints feed an editable preparedness budget-request report. A red/yellow/green H/M/L risk map is available as supporting information.
+Both viewpoints, together with shelter-proximity gaps, feed an editable **Preparedness investment brief** that provides strategic guidance for funding discussions. A red/yellow/green H/M/L risk map is available as supporting information.
 
 > The AOI names are real examples. Boundaries, candidates, population values and analytical outputs are mocked. This is not an operational warning or shelter-designation system.
 
