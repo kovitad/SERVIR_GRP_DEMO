@@ -1,18 +1,23 @@
-# GRP Thailand Flood Evacuation Proximity Planning Prototype
+# GRP Thailand Evacuation Preparedness Prototype
 
 A self-contained static review prototype packaged for GitHub, Docker and an Ubuntu AWS Lightsail instance.
 
 ## Product flow
 
-The prototype supports Thailand district or Tambon examples and provides three connected automated spatial-planning views:
+The prototype supports any Thailand district or Tambon through mocked examples and presents two primary planning viewpoints:
 
-1. **People & vulnerability** — aggregated population-density and vulnerable-population cells.
-2. **Shelter proximity** — candidate shelters, selectable thresholds and nearest-shelter straight-line distance.
-3. **Planning gaps** — areas outside the threshold and automated preparedness strategy guidance.
+1. **Where could people move?** Candidate evacuation places and validation gaps.
+2. **Vulnerable people.** Aggregated indicators for assisted-movement planning.
 
-> AOI names are real examples. Boundaries, cells, shelters, distances and results are mocked. Proximity is not capacity coverage, route safety or official shelter assessment.
+Both viewpoints feed an editable preparedness budget-request report. A red/yellow/green H/M/L risk map is available as supporting information.
 
-Pin's 26 August refinement brief, implementation report, demo guide and screenshots are under [`docs/26Aug2026/`](docs/26Aug2026/).
+> The AOI names are real examples. Boundaries, candidates, population values and analytical outputs are mocked. This is not an operational warning or shelter-designation system.
+
+### Step-by-step vulnerable-people map
+
+The 26 August revision preserves this systematic journey and adds only one spatial feature first: selecting **Vulnerable people** displays four purple hatched aggregated zones (V1–V4). Selecting a zone opens its illustrative indicator and limitations. No individual or household locations are shown, and categories may overlap.
+
+The broader automated shelter-proximity experiment remains archived under [`docs/26Aug2026/`](docs/26Aug2026/) for possible later incremental work.
 
 ## Repository structure
 
@@ -189,10 +194,9 @@ Do not run `docker compose down -v` unless you intentionally want to remove cert
 - Treat `public/` as the deployable application source in this GitHub package.
 - Update `VERSION` and `CHANGELOG.md` for review milestones.
 - Use feature branches and pull requests.
-- Preserve visible `Illustrative`, missing-data and method-limitation states.
+- Preserve visible `Illustrative`, missing-data and validation states.
 - Never commit AWS credentials, personal data or operational facility/vulnerability records.
-- Candidate shelters must not be described as safe, suitable, approved or operational.
-- Do not describe straight-line proximity as walking distance, travel time, route safety or capacity coverage.
+- Candidate places must not be described as officially safe without authority evidence.
 
 ## Production-readiness boundary
 
