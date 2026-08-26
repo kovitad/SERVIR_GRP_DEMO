@@ -12,7 +12,7 @@ The application source was restored from Git commit `9102adf`, preserving the st
 3. choose RP20/RP50/RP100;
 4. review candidate evacuation places;
 5. review vulnerable people;
-6. record analyst review;
+6. compare five candidate locations with vulnerable-people movement information;
 7. generate an editable preparedness investment brief; and
 8. open the H/M/L risk map as supporting information.
 
@@ -47,7 +47,7 @@ The following remain archived for later incremental consideration and are not in
 - nearest-shelter lines and gap calculations;
 - automated strategy-guidance replacement;
 - broad upload redesign; and
-- removal of analyst/budget workflows.
+- formal review, validation and approval workflows.
 
 ## Test path
 

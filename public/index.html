@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>SERVIR GRP — Thailand Evacuation Preparedness Planning Prototype</title>
-  <link rel="stylesheet" href="styles.css?v=0.1.8" />
+  <link rel="stylesheet" href="styles.css?v=0.1.9" />
 </head>
 <body>
   <header class="topbar">
@@ -16,7 +16,7 @@
   <main class="app-shell">
     <aside class="chat-panel">
       <div class="chat-header"><div><p class="eyebrow">AI planning assistant</p><h1>Evacuation planning assessment</h1></div><button id="newChat" class="square-btn" title="Start again">＋</button></div>
-      <div class="scope-banner"><span>◈</span><p><b>Thailand district or sub-district AOI</b> · Planner output · ADPC analyst validation</p></div>
+      <div class="scope-banner"><span>◈</span><p><b>Thailand district or sub-district AOI</b> · Planner output · Illustrative first phase</p></div>
       <section class="messages" id="messages" aria-live="polite">
         <div class="date-rule"><span>Today</span></div>
         <div class="message assistant"><div class="avatar">AI</div><div class="bubble">
@@ -24,8 +24,8 @@
           <p><b>What decision are you preparing for?</b></p>
           <div class="quick-actions">
             <button data-purpose="budget"><span>▤</span><div><b>Build preparedness investment case</b><small>Population, vulnerability and shelter-proximity evidence</small></div><i>›</i></button>
-            <button data-purpose="preparedness"><span>⌖</span><div><b>Review preparedness</b><small>Candidate places, vulnerable people and evidence gaps</small></div><i>›</i></button>
-            <button data-purpose="improvement"><span>◫</span><div><b>Review a candidate place</b><small>Inspect suitability evidence and validation gaps</small></div><i>›</i></button>
+            <button data-purpose="preparedness"><span>⌖</span><div><b>Review preparedness</b><small>Candidate places and vulnerable-people movement information</small></div><i>›</i></button>
+            <button data-purpose="improvement"><span>◫</span><div><b>Review a candidate place</b><small>See location and vulnerable-people movement information</small></div><i>›</i></button>
             <button data-purpose="urban"><span>▦</span><div><b>Download building footprints</b><small>Urban-planning height data for risk mapping</small></div><i>›</i></button>
           </div>
         </div></div>
@@ -53,7 +53,7 @@
           <button id="exportTool"><span>⇩</span> Risk map</button>
         </div>
       </div>
-      <div class="global-status"><span>Planning scenario — not a forecast</span><b id="globalAOI">Select a Thailand district or sub-district</b><span id="globalScenario">RP100 · 1% AEP</span><em>Real AOI name · mocked geometry/results</em><i id="analystState">Analyst: Not reviewed</i></div>
+      <div class="global-status"><span>Planning scenario — not a forecast</span><b id="globalAOI">Select a Thailand district or sub-district</b><span id="globalScenario">RP100 · 1% AEP</span><em>Real AOI name · mocked geometry/results</em><i>First phase · planning information</i></div>
 
       <div class="map-canvas" id="mapCanvas">
         <svg class="map-art" id="mapArt" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid slice" aria-label="Illustrative Thailand district or sub-district assessment map">
@@ -110,19 +110,19 @@
 
         <button class="show-info-panel" id="showPanel" aria-label="Show planning information"><span>▤</span><div><b>Show planning information</b><small>Return to the current result view</small></div></button>
 
-        <div class="legend" id="legend"><div><b id="legendTitle">Planning-map legend</b><button id="legendToggle">−</button></div><section class="planning-legend"><label><i class="lg safe-lg">C</i>Candidate evacuation place</label><label class="vulnerability-legend-item"><i class="lg vulnerable-lg">V</i>Aggregated vulnerable-population zone</label><label><i class="lg flood-lg"></i>Illustrative flood extent</label><label><i class="lg unknown-lg">?</i>Missing evidence</label><p class="standard-legend-note">Candidates require analyst, field and responsible-authority validation.</p><p class="vulnerability-legend-note">Zones show illustrative aggregated concentration—not individual or household locations. Categories may overlap.</p></section><section class="risk-view-legend"><label><i class="lg high-lg">H</i>High risk point</label><label><i class="lg medium-lg">M</i>Medium risk point</label><label><i class="lg low-lg">L</i>Low risk point</label><label><i class="lg flood-lg"></i>Illustrative flood extent</label><p>Further-information view. Low/green does not mean safe.</p></section></div>
+        <div class="legend" id="legend"><div><b id="legendTitle">Planning-map legend</b><button id="legendToggle">−</button></div><section class="planning-legend"><label><i class="lg safe-lg">C</i>Candidate evacuation place</label><label class="vulnerability-legend-item"><i class="lg vulnerable-lg">V</i>Aggregated vulnerable-population zone</label><label><i class="lg flood-lg"></i>Illustrative flood extent</label><p class="standard-legend-note">Five candidate locations are shown with vulnerable-people movement information. Suitability and capacity are not assessed in this first phase.</p><p class="vulnerability-legend-note">Zones show illustrative aggregated concentration—not individual or household locations. Categories may overlap.</p></section><section class="risk-view-legend"><label><i class="lg high-lg">H</i>High risk point</label><label><i class="lg medium-lg">M</i>Medium risk point</label><label><i class="lg low-lg">L</i>Low risk point</label><label><i class="lg flood-lg"></i>Illustrative flood extent</label><p>Further-information view. Low/green does not mean safe.</p></section></div>
 
         <aside class="assessment-panel" id="assessmentPanel">
           <div class="panel-head"><div><small id="panelScenario">SELECT DISTRICT OR SUB-DISTRICT · RP100</small><h2>Evacuation planning</h2></div><button id="closePanel" aria-label="Hide planning information" title="Hide panel and expand map">×</button></div>
-          <div class="panel-alert"><span>!</span><p><b>Two planning viewpoints:</b> where people could move and which vulnerable groups may need support. Candidate places are not officially verified safe.</p></div>
-          <div class="kpi-row"><button data-tab="centres"><b>5</b><small>Candidate places</small></button><button data-tab="centres"><b>5</b><small>Need validation</small></button><button data-tab="people"><b>4</b><small>Support indicators</small></button><button data-detail="people"><b>18,640</b><small>People · Illustrative</small></button></div>
+          <div class="panel-alert"><span>!</span><p><b>Two planning viewpoints:</b> where people could move and which vulnerable groups may need support. This first phase compares locations and movement information; it does not assess suitability or capacity.</p></div>
+          <div class="kpi-row"><button data-tab="centres"><b>5</b><small>Candidate places</small></button><button data-tab="people"><b>4</b><small>Vulnerable zones</small></button><button data-tab="people"><b>4</b><small>Support indicators</small></button><button data-detail="people"><b>18,640</b><small>People · Illustrative</small></button></div>
           <div class="tabs two-view-tabs"><button class="active" data-tab="centres">Where could people move?</button><button data-tab="people">Vulnerable people</button></div>
           <div class="tab-content active" data-tab-content="centres">
-            <div class="section-title"><b>Candidate evacuation places</b><span>Not verified safe</span></div>
-            <button class="centre-row" data-candidate-id="P-01"><i class="status-safe">C1</i><p><b>Candidate Stadium A</b><small>Capacity method not agreed · field check required</small></p><em class="candidate-text">Review ›</em></button>
-            <button class="centre-row" data-candidate-id="P-02"><i class="status-safe">C2</i><p><b>Candidate School B</b><small>Permission and availability unknown</small></p><em class="candidate-text">Review ›</em></button>
-            <button class="centre-row" data-candidate-id="P-03"><i class="status-safe">C3</i><p><b>Community Hall C</b><small>Access and services require evidence</small></p><em class="candidate-text">Review ›</em></button>
-            <button class="text-link" data-detail="safeplaces">View all five candidate places and validation gaps →</button>
+            <div class="section-title"><b>Candidate evacuation places</b><span>Movement information</span></div>
+            <button class="centre-row" data-candidate-id="P-01"><i class="status-safe">C1</i><p><b>Candidate Stadium A</b><small>Near V1 · child-support movement focus</small></p><em class="candidate-text">View ›</em></button>
+            <button class="centre-row" data-candidate-id="P-02"><i class="status-safe">C2</i><p><b>Candidate School B</b><small>Near V2 · older-people movement focus</small></p><em class="candidate-text">View ›</em></button>
+            <button class="centre-row" data-candidate-id="P-03"><i class="status-safe">C3</i><p><b>Community Hall C</b><small>Near V3 · accessible-movement focus</small></p><em class="candidate-text">View ›</em></button>
+            <button class="text-link" data-detail="safeplaces">View all five candidates and movement information →</button>
           </div>
           <div class="tab-content" data-tab-content="exposure">
             <div class="section-title"><b>Buildings and critical facilities</b><span>Illustrative / not assessed</span></div>
@@ -143,11 +143,11 @@
             <div class="section-title"><b>Risk method and follow-up</b><span>3 checks</span></div>
             <div class="guidance-card"><span>01</span><p><b>Validate risk inputs</b><small>Confirm hazard, exposure, vulnerability, vintage and AOI coverage.</small></p></div>
             <div class="guidance-card"><span>02</span><p><b>Approve H/M/L thresholds</b><small>Document the deterministic classification method and uncertainty.</small></p></div>
-            <div class="guidance-card"><span>03</span><p><b>Review and report</b><small>Record analyst comments, limitations and map-download metadata.</small></p></div>
-            <div class="inventory-examples"><b>Safe-place questions are separate</b><span>Ask “Where could people move?” in chat</span><span>The assistant starts candidate screening—not a safe-place answer</span><small>Risk colour alone cannot establish suitability. Responsible-authority and field validation remain required.</small></div>
+            <div class="guidance-card"><span>03</span><p><b>Review and report</b><small>Record limitations and map-download metadata.</small></p></div>
+            <div class="inventory-examples"><b>Safe-place questions are separate</b><span>Ask “Where could people move?” in chat</span><span>The assistant starts candidate screening—not a safe-place answer</span><small>Risk colour alone cannot establish suitability. Capacity, access and official status belong to later phases.</small></div>
             <p class="micro">Illustrative guidance prototype. Production advice requires an approved, cited policy catalogue.</p>
           </div>
-          <div class="panel-actions three"><button id="downloadRiskMap">View risk map</button><button id="analystReview">Analyst review</button><button id="createReport" class="primary">Investment brief →</button></div>
+          <div class="panel-actions"><button id="downloadRiskMap">View risk map</button><button id="createReport" class="primary">Investment brief →</button></div>
         </aside>
       </div>
     </section>
@@ -160,11 +160,9 @@
 
   <div class="modal" id="reportModal" role="dialog" aria-modal="true"><div class="modal-card report-modal investment-modal"><div class="modal-head"><div><p class="eyebrow">STRATEGIC PLANNING OUTPUT</p><h2>Build the case for preparedness investment</h2></div><button data-close-modal>×</button></div><p class="modal-intro">Turn population, vulnerability and shelter-proximity gaps into strategic guidance for funding discussions.</p><label class="field"><span>Report purpose</span><select id="reportPurpose"><option>Preparedness investment planning</option></select></label><p class="field-label">Suggested report sections</p><div class="check-grid investment-sections"><label><input type="checkbox" checked> Executive summary</label><label><input type="checkbox" checked> Planning problem and supporting evidence</label><label><input type="checkbox" checked> Population and vulnerability context</label><label><input type="checkbox" checked> Shelter-proximity gaps</label><label><input type="checkbox" checked> Priority preparedness actions</label><label><input type="checkbox" checked> Indicative investment options</label><label><input type="checkbox" checked> Evidence and limitations</label><label><input type="checkbox" checked> Supporting map appendix</label></div><div class="report-preview investment-preview"><span>EDITABLE</span><p><b>Preparedness investment brief</b><small>Strategic guidance for funding discussions · illustrative evidence</small></p></div><div class="modal-actions"><button data-close-modal>Cancel</button><button class="primary" id="generateReport">Generate editable investment brief →</button></div></div></div>
 
-  <div class="modal" id="analystModal" role="dialog" aria-modal="true"><div class="modal-card"><div class="modal-head"><div><p class="eyebrow">ADPC ANALYST VALIDATION</p><h2>Review planning evidence</h2></div><button data-close-modal>×</button></div><p class="modal-intro">Record the review state for the candidate-place and vulnerable-people assessment. This does not replace responsible-authority approval.</p><label class="field"><span>Validation status</span><select id="validationStatus"><option>Not reviewed</option><option>Needs evidence</option><option>Provisionally suitable</option><option>Rejected</option></select></label><label class="field"><span>Analyst comments</span><textarea id="analystComments" rows="4" placeholder="Record missing evidence, concerns and required field checks…"></textarea></label><div class="readiness-grid"><span><b>Hazard</b><em class="partial">Partial</em></span><span><b>Capacity method</b><em class="unknown">Unknown</em></span><span><b>Access</b><em class="unknown">Unknown</em></span><span><b>Facility inventory</b><em class="partial">Partial</em></span></div><div class="modal-actions"><button data-close-modal>Cancel</button><button class="primary" id="saveValidation">Save analyst review →</button></div></div></div>
-
   <div class="modal" id="exportModal" role="dialog" aria-modal="true"><div class="modal-card"><div class="modal-head"><div><p class="eyebrow">AOI RISK-MAP DOWNLOAD</p><h2>Download district or sub-district risk map</h2></div><button data-close-modal>×</button></div><p class="modal-intro">The prototype creates a valid SVG map or GeoJSON evidence package. Production PDF, PNG and GeoTIFF rendering will use the same AOI, scenario and provenance contract.</p><div class="export-grid"><button class="selected" data-format="SVG"><b>SVG</b><small>Risk-map graphic</small></button><button data-format="GeoJSON"><b>GeoJSON</b><small>Evidence features</small></button><button data-format="JSON"><b>JSON</b><small>Metadata manifest</small></button><button disabled><b>PNG</b><small>Production renderer</small></button><button disabled><b>GeoTIFF</b><small>Production raster</small></button></div><div class="export-meta"><p><span>AOI</span><b id="exportAOI">Select district or sub-district</b></p><p><span>Scenario</span><b id="exportScenario">RP100 · 1% AEP</b></p><p><span>Status</span><b>Mock geometry/results · Provisional</b></p></div><div class="modal-actions"><button data-close-modal>Cancel</button><button class="primary" id="downloadExport">Download SVG risk map →</button></div></div></div>
 
   <div class="toast" id="toast"><span>✓</span><p id="toastText">Done</p></div>
-  <script src="app.js?v=0.1.8"></script>
+  <script src="app.js?v=0.1.9"></script>
 </body>
 </html>

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.9-prototype
+
+- Removed analyst-validation status, comments, modal, KPI and action controls from the first phase.
+- Removed candidate “Partial”, “Unknown” and “Needs validation” labels.
+- Reframed the five candidates around nearby vulnerable zones and movement-support information.
+- Simplified candidate details to location comparison, movement focus and first-phase limitations.
+
 ## 0.1.8-prototype
 
 - Added a labelled horizontal bar chart to the Vulnerable people map view.

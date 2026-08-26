@@ -6,7 +6,7 @@ A self-contained static review prototype packaged for GitHub, Docker and an Ubun
 
 The prototype supports any Thailand district or sub-district through mocked examples and presents two primary planning viewpoints:
 
-1. **Where could people move?** Candidate evacuation places and validation gaps.
+1. **Where could people move?** Five candidate locations with nearby vulnerable-population zones and movement-planning information.
 2. **Vulnerable people.** Aggregated indicators for assisted-movement planning.
 
 Both viewpoints, together with shelter-proximity gaps, feed an editable **Preparedness investment brief** that provides strategic guidance for funding discussions. A red/yellow/green H/M/L risk map is available as supporting information.
