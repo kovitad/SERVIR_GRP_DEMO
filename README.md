@@ -1,17 +1,16 @@
-# GRP Thailand Evacuation Preparedness Prototype
+# GRP Thailand Flood Evacuation Proximity Planning Prototype
 
 A self-contained static review prototype packaged for GitHub, Docker and an Ubuntu AWS Lightsail instance.
 
 ## Product flow
 
-The prototype supports any Thailand district or Tambon through mocked examples and presents two primary planning viewpoints:
+The prototype supports Thailand district or Tambon examples and provides three connected automated spatial-planning views:
 
-1. **Where could people move?** Candidate evacuation places and validation gaps.
-2. **Vulnerable people.** Aggregated indicators for assisted-movement planning.
+1. **People & vulnerability** — aggregated population-density and vulnerable-population cells.
+2. **Shelter proximity** — candidate shelters, selectable thresholds and nearest-shelter straight-line distance.
+3. **Planning gaps** — areas outside the threshold and automated preparedness strategy guidance.
 
-Both viewpoints feed an editable preparedness budget-request report. A red/yellow/green H/M/L risk map is available as supporting information.
-
-> The AOI names are real examples. Boundaries, candidates, population values and analytical outputs are mocked. This is not an operational warning or shelter-designation system.
+> AOI names are real examples. Boundaries, cells, shelters, distances and results are mocked. Proximity is not capacity coverage, route safety or official shelter assessment.
 
 ## Repository structure
 
@@ -188,9 +187,10 @@ Do not run `docker compose down -v` unless you intentionally want to remove cert
 - Treat `public/` as the deployable application source in this GitHub package.
 - Update `VERSION` and `CHANGELOG.md` for review milestones.
 - Use feature branches and pull requests.
-- Preserve visible `Illustrative`, missing-data and validation states.
+- Preserve visible `Illustrative`, missing-data and method-limitation states.
 - Never commit AWS credentials, personal data or operational facility/vulnerability records.
-- Candidate places must not be described as officially safe without authority evidence.
+- Candidate shelters must not be described as safe, suitable, approved or operational.
+- Do not describe straight-line proximity as walking distance, travel time, route safety or capacity coverage.
 
 ## Production-readiness boundary
 

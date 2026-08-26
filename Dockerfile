@@ -1,7 +1,7 @@
 FROM caddy:2.8.4-alpine
 
-LABEL org.opencontainers.image.title="GRP Thailand Evacuation Preparedness Prototype" \
-      org.opencontainers.image.description="Self-contained static prototype for district/Tambon evacuation planning"
+LABEL org.opencontainers.image.title="GRP Thailand Flood Evacuation Proximity Planning Prototype" \
+      org.opencontainers.image.description="Self-contained static prototype for automated district/Tambon shelter-proximity planning"
 
 COPY Caddyfile /etc/caddy/Caddyfile
 COPY public/ /srv/
