@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.8-prototype
+
+- Added a labelled horizontal bar chart to the Vulnerable people map view.
+- Chart values and bar lengths update consistently for RP20, RP50 and RP100, including scenario changes after an assessment.
+- Added explicit category-overlap and people-versus-households unit warnings.
+
 ## 0.1.7-prototype
 
 - Renamed the output to **Preparedness investment brief**.
