@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.4-prototype
+
+- Replaced user-facing “Tambon” terminology with “sub-district”.
+- Updated the Kham Nam Saep example and AOI level labels consistently.
+
 ## 0.1.3-prototype
 
 - Replaced the one-way result-panel close action with reversible hide/show controls.

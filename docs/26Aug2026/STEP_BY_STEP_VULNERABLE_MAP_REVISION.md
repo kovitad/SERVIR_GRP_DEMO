@@ -8,7 +8,7 @@
 The application source was restored from Git commit `9102adf`, preserving the structured 25 August journey:
 
 1. choose planning purpose;
-2. select district or Tambon;
+2. select district or sub-district;
 3. choose RP20/RP50/RP100;
 4. review candidate evacuation places;
 5. review vulnerable people;

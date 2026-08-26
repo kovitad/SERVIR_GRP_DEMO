@@ -4,7 +4,7 @@ A self-contained static review prototype packaged for GitHub, Docker and an Ubun
 
 ## Product flow
 
-The prototype supports any Thailand district or Tambon through mocked examples and presents two primary planning viewpoints:
+The prototype supports any Thailand district or sub-district through mocked examples and presents two primary planning viewpoints:
 
 1. **Where could people move?** Candidate evacuation places and validation gaps.
 2. **Vulnerable people.** Aggregated indicators for assisted-movement planning.
