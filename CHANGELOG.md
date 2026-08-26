@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.5-prototype
+
+- Added upload guidance for GeoTIFF raster data.
+- Listed supported vector formats: zipped Shapefile, GeoJSON, KML, KMZ and zipped FileGDB.
+- Clarified CRS, Shapefile component and simulated-ingestion requirements.
+
 ## 0.1.4-prototype
 
 - Replaced user-facing “Tambon” terminology with “sub-district”.
