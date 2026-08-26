@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.6-prototype
+
+- Replaced the centre-per-population density ratio with **Shelter proximity and population gaps**.
+- Added selectable 500 m, 1 km and 2 km illustrative thresholds.
+- Added people-by-distance-band results, priority areas, supporting figures and map-layer guidance.
+- Added explicit straight-line, capacity, accessibility, route-safety and approval limitations.
+
 ## 0.1.5-prototype
 
 - Added upload guidance for GeoTIFF raster data.

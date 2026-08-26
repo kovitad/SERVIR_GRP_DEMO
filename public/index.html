@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>SERVIR GRP — Thailand Evacuation Preparedness Planning Prototype</title>
-  <link rel="stylesheet" href="styles.css?v=0.1.5" />
+  <link rel="stylesheet" href="styles.css?v=0.1.6" />
 </head>
 <body>
   <header class="topbar">
@@ -136,7 +136,7 @@
             <div class="vulnerability-map-note"><span>V1–V4</span><p><b>Four aggregated concentration zones are now shown on the map.</b><small>Select a purple hatched zone for indicators and limitations. Use × above to expand the map. No individual or household locations are displayed.</small></p></div>
             <div class="people-grid"><button data-detail="children"><b>3,920</b><small>Children 0–14</small></button><button data-detail="older"><b>2,760</b><small>Older people 65+</small></button><button data-detail="support"><b>930</b><small>Disability support needs*</small></button><button data-detail="mobility"><b>1,480</b><small>Low-mobility households*</small></button></div>
             <p class="micro">*Aggregated illustrative estimates; categories may overlap and must not be summed.</p>
-            <button class="coverage-card" data-detail="coverage"><span>Service coverage indicator</span><b>7.5 centres per 10,000 people ›</b><small>Simple density only; capacity and travel time are not yet included.</small></button>
+            <button class="coverage-card proximity-summary-card" data-detail="coverage"><span>Shelter proximity and population gaps</span><b>11,240 people are farther than 1 km ›</b><small>Of 18,640 people in RP100 extent · straight-line distance · illustrative</small></button>
           </div>
           <div class="tab-content" data-tab-content="guidance">
             <div class="section-title"><b>Risk method and follow-up</b><span>3 checks</span></div>
@@ -164,6 +164,6 @@
   <div class="modal" id="exportModal" role="dialog" aria-modal="true"><div class="modal-card"><div class="modal-head"><div><p class="eyebrow">AOI RISK-MAP DOWNLOAD</p><h2>Download district or sub-district risk map</h2></div><button data-close-modal>×</button></div><p class="modal-intro">The prototype creates a valid SVG map or GeoJSON evidence package. Production PDF, PNG and GeoTIFF rendering will use the same AOI, scenario and provenance contract.</p><div class="export-grid"><button class="selected" data-format="SVG"><b>SVG</b><small>Risk-map graphic</small></button><button data-format="GeoJSON"><b>GeoJSON</b><small>Evidence features</small></button><button data-format="JSON"><b>JSON</b><small>Metadata manifest</small></button><button disabled><b>PNG</b><small>Production renderer</small></button><button disabled><b>GeoTIFF</b><small>Production raster</small></button></div><div class="export-meta"><p><span>AOI</span><b id="exportAOI">Select district or sub-district</b></p><p><span>Scenario</span><b id="exportScenario">RP100 · 1% AEP</b></p><p><span>Status</span><b>Mock geometry/results · Provisional</b></p></div><div class="modal-actions"><button data-close-modal>Cancel</button><button class="primary" id="downloadExport">Download SVG risk map →</button></div></div></div>
 
   <div class="toast" id="toast"><span>✓</span><p id="toastText">Done</p></div>
-  <script src="app.js?v=0.1.5"></script>
+  <script src="app.js?v=0.1.6"></script>
 </body>
 </html>
