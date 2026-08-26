@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>SERVIR GRP — Thailand Evacuation Preparedness Planning Prototype</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=0.1.2" />
 </head>
 <body>
   <header class="topbar">
@@ -162,6 +162,6 @@
   <div class="modal" id="exportModal" role="dialog" aria-modal="true"><div class="modal-card"><div class="modal-head"><div><p class="eyebrow">AOI RISK-MAP DOWNLOAD</p><h2>Download district or Tambon risk map</h2></div><button data-close-modal>×</button></div><p class="modal-intro">The prototype creates a valid SVG map or GeoJSON evidence package. Production PDF, PNG and GeoTIFF rendering will use the same AOI, scenario and provenance contract.</p><div class="export-grid"><button class="selected" data-format="SVG"><b>SVG</b><small>Risk-map graphic</small></button><button data-format="GeoJSON"><b>GeoJSON</b><small>Evidence features</small></button><button data-format="JSON"><b>JSON</b><small>Metadata manifest</small></button><button disabled><b>PNG</b><small>Production renderer</small></button><button disabled><b>GeoTIFF</b><small>Production raster</small></button></div><div class="export-meta"><p><span>AOI</span><b id="exportAOI">Select district or Tambon</b></p><p><span>Scenario</span><b id="exportScenario">RP100 · 1% AEP</b></p><p><span>Status</span><b>Mock geometry/results · Provisional</b></p></div><div class="modal-actions"><button data-close-modal>Cancel</button><button class="primary" id="downloadExport">Download SVG risk map →</button></div></div></div>
 
   <div class="toast" id="toast"><span>✓</span><p id="toastText">Done</p></div>
-  <script src="app.js"></script>
+  <script src="app.js?v=0.1.2"></script>
 </body>
 </html>

@@ -19,8 +19,11 @@
 		@html path / /index.html
 		header @html Cache-Control "no-cache, no-store, must-revalidate"
 
-		@assets path *.css *.js *.png *.svg *.ico
-		header @assets Cache-Control "public, max-age=3600"
+		@codeAssets path *.css *.js
+		header @codeAssets Cache-Control "no-cache, must-revalidate"
+
+		@mediaAssets path *.png *.svg *.ico
+		header @mediaAssets Cache-Control "public, max-age=3600"
 
 		try_files {path} /index.html
 		file_server

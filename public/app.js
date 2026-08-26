@@ -84,8 +84,9 @@ function closeAOI(){aoiMenu.classList.remove('open');}
 function choosePurpose(value){
   purpose=value;
   const labels={budget:'Prepare a flood-risk budget case',preparedness:'Review flood preparedness',improvement:'Review a candidate evacuation place',urban:'Download building-height footprints for risk mapping',riskmap:'Download a district or Tambon risk map'};
-  userMessage(labels[value]);
-  const focus={budget:'risk evidence for a budget discussion',preparedness:'preparedness risk and follow-up',urban:'building-height footprints for urban risk-map analysis',riskmap:'a downloadable AOI risk-map package',improvement:'candidate-place evidence and validation'}[value];
+  const selectedLabel=labels[value]||'Review evacuation planning';
+  userMessage(selectedLabel);
+  const focus={budget:'risk evidence for a budget discussion',preparedness:'preparedness risk and follow-up',urban:'building-height footprints for urban risk-map analysis',riskmap:'a downloadable AOI risk-map package',improvement:'candidate-place evidence and validation'}[value]||'evacuation-planning evidence';
   aiMessage(`<p>Understood. I’ll keep the workflow focused on <b>${focus}</b>.</p><p>Select any Thailand district or Tambon. The examples use real administrative names, while boundaries and results are clearly mocked.</p><button class="inline-action" data-action="select-aoi">Select Thailand district or Tambon</button>`);
   openAOI();
 }

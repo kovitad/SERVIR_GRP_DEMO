@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.2-prototype
+
+- Fixed `undefined` appearing when selecting Prepare a budget case after deployment.
+- Added versioned CSS/JavaScript URLs and revalidation headers to prevent stale mixed releases.
+- Added a safe fallback for unknown planning-purpose values.
+
 ## 0.1.1-prototype
 
 - Restored the systematic 25 August evacuation-planning interface.
