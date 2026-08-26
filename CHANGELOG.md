@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.3-prototype
+
+- Replaced the one-way result-panel close action with reversible hide/show controls.
+- Added a clear **Show planning information** button when the map is expanded.
+- Preserved the active candidate/vulnerable-people view while toggling the panel.
+
 ## 0.1.2-prototype
 
 - Fixed `undefined` appearing when selecting Prepare a budget case after deployment.

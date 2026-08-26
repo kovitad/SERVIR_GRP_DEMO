@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>SERVIR GRP — Thailand Evacuation Preparedness Planning Prototype</title>
-  <link rel="stylesheet" href="styles.css?v=0.1.2" />
+  <link rel="stylesheet" href="styles.css?v=0.1.3" />
 </head>
 <body>
   <header class="topbar">
@@ -108,10 +108,12 @@
 
         <div class="scenario-card" id="scenarioCard"><div class="scenario-icon">≈</div><div><small id="scenarioScope">SELECT AN AOI</small><b id="scenarioTitle">100-year flood extent</b><span>1% annual chance · Static planning scenario</span></div><button data-detail="evidence">Evidence ›</button></div>
 
+        <button class="show-info-panel" id="showPanel" aria-label="Show planning information"><span>▤</span><div><b>Show planning information</b><small>Return to the current result view</small></div></button>
+
         <div class="legend" id="legend"><div><b id="legendTitle">Planning-map legend</b><button id="legendToggle">−</button></div><section class="planning-legend"><label><i class="lg safe-lg">C</i>Candidate evacuation place</label><label class="vulnerability-legend-item"><i class="lg vulnerable-lg">V</i>Aggregated vulnerable-population zone</label><label><i class="lg flood-lg"></i>Illustrative flood extent</label><label><i class="lg unknown-lg">?</i>Missing evidence</label><p class="standard-legend-note">Candidates require analyst, field and responsible-authority validation.</p><p class="vulnerability-legend-note">Zones show illustrative aggregated concentration—not individual or household locations. Categories may overlap.</p></section><section class="risk-view-legend"><label><i class="lg high-lg">H</i>High risk point</label><label><i class="lg medium-lg">M</i>Medium risk point</label><label><i class="lg low-lg">L</i>Low risk point</label><label><i class="lg flood-lg"></i>Illustrative flood extent</label><p>Further-information view. Low/green does not mean safe.</p></section></div>
 
         <aside class="assessment-panel" id="assessmentPanel">
-          <div class="panel-head"><div><small id="panelScenario">SELECT DISTRICT OR TAMBON · RP100</small><h2>Evacuation planning</h2></div><button id="closePanel">×</button></div>
+          <div class="panel-head"><div><small id="panelScenario">SELECT DISTRICT OR TAMBON · RP100</small><h2>Evacuation planning</h2></div><button id="closePanel" aria-label="Hide planning information" title="Hide panel and expand map">×</button></div>
           <div class="panel-alert"><span>!</span><p><b>Two planning viewpoints:</b> where people could move and which vulnerable groups may need support. Candidate places are not officially verified safe.</p></div>
           <div class="kpi-row"><button data-tab="centres"><b>5</b><small>Candidate places</small></button><button data-tab="centres"><b>5</b><small>Need validation</small></button><button data-tab="people"><b>4</b><small>Support indicators</small></button><button data-detail="people"><b>18,640</b><small>People · Illustrative</small></button></div>
           <div class="tabs two-view-tabs"><button class="active" data-tab="centres">Where could people move?</button><button data-tab="people">Vulnerable people</button></div>
@@ -162,6 +164,6 @@
   <div class="modal" id="exportModal" role="dialog" aria-modal="true"><div class="modal-card"><div class="modal-head"><div><p class="eyebrow">AOI RISK-MAP DOWNLOAD</p><h2>Download district or Tambon risk map</h2></div><button data-close-modal>×</button></div><p class="modal-intro">The prototype creates a valid SVG map or GeoJSON evidence package. Production PDF, PNG and GeoTIFF rendering will use the same AOI, scenario and provenance contract.</p><div class="export-grid"><button class="selected" data-format="SVG"><b>SVG</b><small>Risk-map graphic</small></button><button data-format="GeoJSON"><b>GeoJSON</b><small>Evidence features</small></button><button data-format="JSON"><b>JSON</b><small>Metadata manifest</small></button><button disabled><b>PNG</b><small>Production renderer</small></button><button disabled><b>GeoTIFF</b><small>Production raster</small></button></div><div class="export-meta"><p><span>AOI</span><b id="exportAOI">Select district or Tambon</b></p><p><span>Scenario</span><b id="exportScenario">RP100 · 1% AEP</b></p><p><span>Status</span><b>Mock geometry/results · Provisional</b></p></div><div class="modal-actions"><button data-close-modal>Cancel</button><button class="primary" id="downloadExport">Download SVG risk map →</button></div></div></div>
 
   <div class="toast" id="toast"><span>✓</span><p id="toastText">Done</p></div>
-  <script src="app.js?v=0.1.2"></script>
+  <script src="app.js?v=0.1.3"></script>
 </body>
 </html>

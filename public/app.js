@@ -149,7 +149,7 @@ function runAssessment(){
   const msg=aiMessage(`<p>I’m running the illustrative governed workflow.</p><div class="analysis-steps"><div class="step" id="p1"><span>·</span>Validate AOI, scenario and planning inputs</div><div class="step" id="p2"><span>·</span>Screen candidate evacuation places</div><div class="step" id="p3"><span>·</span>Aggregate vulnerable-people indicators</div><div class="step" id="p4"><span>·</span>Prepare evidence and budget-report inputs</div></div>`);
   ['p1','p2','p3','p4'].forEach((id,i)=>setTimeout(()=>{const s=$('#'+id,msg);if(s){s.classList.add('done');$('span',s).textContent='✓';}},350+i*420));
   setTimeout(()=>{
-    assessmentComplete=true;running=false;refreshScenarioUI();mapCanvas.classList.add('results-visible');$('#layerCount').textContent='7';
+    assessmentComplete=true;running=false;refreshScenarioUI();mapCanvas.classList.add('results-visible');showInfoPanel(false);$('#layerCount').textContent='7';
     const d=scenarioData[selectedScenario];const a=currentAOI();
     aiMessage(`<div class="ai-summary"><p><strong>${a.name} · RP${selectedScenario} evacuation-planning review ready.</strong><br><small>Real AOI name · mocked geometry, candidates and population values</small></p><p><b>Viewpoint 1 — Where could people move?</b> Five candidate evacuation places are shown for comparison. They are not officially verified safe; capacity, access, services, ownership and field evidence remain incomplete.</p><p><b>Viewpoint 2 — Vulnerable people.</b> The displayed total of <b>${d.peopleLabel} people is illustrative</b>, with four aggregated support indicators for planning assisted movement.</p><p>Review both viewpoints, record the ADPC analyst status, then generate the editable <b>budget request report</b>.</p><p>The red/yellow/green <b>risk map is available as further information</b> through View risk map; it is not the main planning result.</p></div>`);
   },2200);
@@ -183,6 +183,15 @@ function switchTab(name){
   $$('[data-tab-content]').forEach(c=>c.classList.toggle('active',c.dataset.tabContent===name));
   mapCanvas.classList.toggle('vulnerable-view',name==='people');
   if(name==='people'&&assessmentComplete)showToast('Vulnerable-people map layer shown');
+}
+function hideInfoPanel(){
+  mapCanvas.classList.add('panel-collapsed');
+  showToast('Map expanded · planning information can be reopened');
+}
+function showInfoPanel(announce=true){
+  $('#assessmentPanel').style.display='';
+  mapCanvas.classList.remove('panel-collapsed');
+  if(announce)showToast('Planning information restored');
 }
 function openModal(id){$('#'+id).classList.add('open');}
 function closeModals(){$$('.modal').forEach(m=>m.classList.remove('open'));}
@@ -296,7 +305,8 @@ $('#rerunUpload').addEventListener('click',rerunUpload);
 $('#generateReport').addEventListener('click',generateReport);
 $('#downloadExport').addEventListener('click',prepareExport);
 $('#closeDrawer').addEventListener('click',closeDrawer);backdrop.addEventListener('click',closeDrawer);
-$('#closePanel').addEventListener('click',()=>$('#assessmentPanel').style.display='none');
+$('#closePanel').addEventListener('click',hideInfoPanel);
+$('#showPanel').addEventListener('click',()=>showInfoPanel());
 $('#legendToggle').addEventListener('click',e=>{const legend=$('#legend');legend.classList.toggle('collapsed');e.target.textContent=legend.classList.contains('collapsed')?'+':'−';});
 $('#newChat').addEventListener('click',()=>location.reload());
 $('#sendBtn').addEventListener('click',send);$('#chatInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}});
