@@ -39,6 +39,7 @@ The broader automated shelter-proximity experiment remains archived under [`docs
 │   ├── deploy.sh             # Build, run and health-check
 │   └── update.sh             # Pull and redeploy
 ├── .github/workflows/        # GitHub Actions container smoke test
+├── HANDOVER.md               # Current state, deployment contract and continuation notes
 ├── Caddyfile                 # Static server, compression and security headers
 ├── Dockerfile
 ├── compose.yaml
@@ -46,6 +47,8 @@ The broader automated shelter-proximity experiment remains archived under [`docs
 ```
 
 No external font, JavaScript or CSS CDN is required at runtime.
+
+See [`HANDOVER.md`](HANDOVER.md) before continuing implementation or deploying a new revision.
 
 ## Run locally
 
