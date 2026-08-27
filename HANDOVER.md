@@ -6,9 +6,9 @@
 
 ## Current product state
 
-The deployable prototype is a static Caddy application packaged with Docker. It supports the Thailand evacuation-preparedness planning journey, the SERVIR Global Collaborative theme, and application-wide English/Thai switching.
+The deployable prototype is a static Caddy application packaged with Docker. It supports the Thailand evacuation-preparedness planning journey, a real interactive OpenStreetMap basemap, the SERVIR Global Collaborative theme, and application-wide English/Thai switching.
 
-The latest UI release is **0.2.0**. The language selector is in the top-right header and stores the selected language in browser `localStorage` under `grp-language`.
+The latest UI release is **0.3.0**. The language selector is in the top-right header and stores the selected language in browser `localStorage` under `grp-language`.
 
 ## Source of truth
 
@@ -18,6 +18,8 @@ Use these files for GitHub and deployment work:
 - `public/styles.css` — application styles plus the 27 August SERVIR theme
 - `public/app.js` — prototype interactions and generated planning content
 - `public/i18n.js` — English/Thai runtime localisation, including dynamic DOM content
+- `public/map-integration.js` — Leaflet setup, AOI navigation and map-bound planning overlays
+- `public/vendor/leaflet/` — locally hosted Leaflet 1.9.4 JavaScript, CSS and marker assets
 - `public/assets/servir-global-collaborative.png` — logo extracted from `prototype/27Aug2026/SERVIR Global Platform PoC.pptx` in the original workspace
 - `Dockerfile`, `Caddyfile`, `compose.yaml` — production container package
 - `scripts/bootstrap-ubuntu.sh` — first-time Ubuntu/Lightsail setup
@@ -33,6 +35,9 @@ The parent workspace also has copies under `prototype/`, but **`prototype/github
 - Runtime limit: 256 MB memory and 1 CPU in Compose
 - Restart policy: `unless-stopped`
 - Application health endpoint: `/healthz`
+- Real basemap: public OpenStreetMap standard tiles for low-traffic prototype use; no API key
+- Required attribution is displayed by Leaflet
+- Caddy CSP explicitly permits map images from `https://tile.openstreetmap.org`
 - Container health check verifies `http://127.0.0.1/healthz`
 - Persistent Caddy data/config use named Docker volumes
 - `.env.example` defaults to `SITE_ADDRESS=:80` for static-IP HTTP testing
@@ -68,6 +73,7 @@ cd SERVIR_GRP_DEMO
 - `node --check public/i18n.js`
 - `docker compose config --quiet`
 - Browser validation of EN/TH switching, persistence, dynamic assistant output, the SERVIR theme and result layout
+- Browser validation of OpenStreetMap loading, AOI fly-to, zoom/pan and illustrative Leaflet overlays
 - GitHub Actions now validates both JavaScript files, builds the image, checks `/healthz`, and requests the localisation and logo assets
 
 The local Windows Docker Desktop daemon was not running during the 27 August handover, so a local image build could not be executed there. The GitHub Actions container check is the authoritative build/smoke test; verify its result after each push. The package itself is Linux/Ubuntu/Lightsail compatible.
@@ -79,6 +85,7 @@ The local Windows Docker Desktop daemon was not running during the 27 August han
 3. The prototype displays real AOI names but mocked boundaries, candidates, population and analytical results. Do not weaken these limitations.
 4. No individual or household locations are displayed. Vulnerability categories can overlap and must not be summed.
 5. Low/green risk does not mean safe, and candidate locations are not approved shelters.
+6. The OpenStreetMap basemap is real, but the AOI outline and all analytical overlays remain mocked. Public OSM tiles are appropriate only for this limited prototype; move to a managed or self-hosted provider before significant public traffic.
 
 ## Recommended next checks
 

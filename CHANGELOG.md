@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0-prototype
+
+- Replaced the mocked SVG basemap with a real interactive OpenStreetMap basemap.
+- Added locally hosted Leaflet 1.9.4 with no API key or external JavaScript dependency.
+- Added AOI fly-to behaviour and map-bound illustrative flood, candidate, vulnerability and H/M/L layers.
+- Preserved explicit separation between the real basemap and mocked analytical overlays.
+- Added container CSP and smoke-test coverage for OpenStreetMap tiles and map assets.
+
 ## 0.2.0-prototype
 
 - Applied the 27 August SERVIR presentation colour and typography theme.

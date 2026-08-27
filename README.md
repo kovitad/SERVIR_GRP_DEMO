@@ -17,6 +17,8 @@ Both viewpoints, together with shelter-proximity gaps, feed an editable **Prepar
 
 The interface uses the SERVIR Global Collaborative visual theme and logo. Use the **EN / TH** control in the header to switch the complete application between English and Thai. The selected language persists in the browser.
 
+The interactive basemap uses **OpenStreetMap** through a locally hosted copy of **Leaflet 1.9.4**. It requires no API key. OpenStreetMap tiles are requested directly for this low-traffic prototype and include the required contributor attribution. AOI outlines, flood extents, candidates, vulnerability zones and risk results remain illustrative overlays—not authoritative map data.
+
 ### Step-by-step vulnerable-people map
 
 The 26 August revision preserves this systematic journey and adds only one spatial feature first: selecting **Vulnerable people** displays four purple hatched aggregated zones (V1–V4). Selecting a zone opens its illustrative indicator and limitations. No individual or household locations are shown, and categories may overlap.
@@ -32,6 +34,8 @@ The broader automated shelter-proximity experiment remains archived under [`docs
 │   ├── styles.css
 │   ├── app.js
 │   ├── i18n.js               # English/Thai localisation
+│   ├── map-integration.js     # Leaflet map and planning overlays
+│   ├── vendor/leaflet/        # Locally hosted Leaflet 1.9.4
 │   ├── assets/               # SERVIR brand assets
 │   └── robots.txt
 ├── scripts/

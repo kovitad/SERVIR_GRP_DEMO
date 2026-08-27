@@ -19,6 +19,7 @@ jobs:
         run: |
           node --check public/app.js
           node --check public/i18n.js
+          node --check public/map-integration.js
 
       - name: Validate Compose
         run: docker compose config --quiet
@@ -35,7 +36,10 @@ jobs:
           done
           curl --fail --silent http://127.0.0.1:8080/ | grep -q "Thailand Evacuation Preparedness"
           curl --fail --silent http://127.0.0.1:8080/i18n.js | grep -q "Vulnerable people"
+          curl --fail --silent http://127.0.0.1:8080/map-integration.js | grep -q "tile.openstreetmap.org"
+          curl --fail --silent --output /dev/null http://127.0.0.1:8080/vendor/leaflet/leaflet.js
           curl --fail --silent --output /dev/null http://127.0.0.1:8080/assets/servir-global-collaborative.png
+          curl --fail --silent --head http://127.0.0.1:8080/ | grep -qi "tile.openstreetmap.org"
 
       - name: Show logs on failure
         if: failure()
