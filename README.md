@@ -13,6 +13,10 @@ Both viewpoints, together with shelter-proximity gaps, feed an editable **Prepar
 
 > The AOI names are real examples. Boundaries, candidates, population values and analytical outputs are mocked. This is not an operational warning or shelter-designation system.
 
+## Theme and languages
+
+The interface uses the SERVIR Global Collaborative visual theme and logo. Use the **EN / TH** control in the header to switch the complete application between English and Thai. The selected language persists in the browser.
+
 ### Step-by-step vulnerable-people map
 
 The 26 August revision preserves this systematic journey and adds only one spatial feature first: selecting **Vulnerable people** displays four purple hatched aggregated zones (V1–V4). Selecting a zone opens its illustrative indicator and limitations. No individual or household locations are shown, and categories may overlap.
@@ -27,6 +31,8 @@ The broader automated shelter-proximity experiment remains archived under [`docs
 │   ├── index.html
 │   ├── styles.css
 │   ├── app.js
+│   ├── i18n.js               # English/Thai localisation
+│   ├── assets/               # SERVIR brand assets
 │   └── robots.txt
 ├── scripts/
 │   ├── bootstrap-ubuntu.sh   # Install Docker and configure UFW

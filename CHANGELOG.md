@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.0-prototype
+
+- Applied the 27 August SERVIR presentation colour and typography theme.
+- Added the SERVIR Global Collaborative logo extracted from the presentation source.
+- Added application-wide English/Thai switching for static and dynamically generated interface content.
+- Persisted the selected language in browser local storage.
+
 ## 0.1.9-prototype
 
 - Removed analyst-validation status, comments, modal, KPI and action controls from the first phase.
