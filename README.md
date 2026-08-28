@@ -56,7 +56,7 @@ See [`HANDOVER.md`](HANDOVER.md) before continuing implementation or deploying a
 
 ## AI observability proposal
 
-The team presentation [`GRP_AI_Observability_and_Evaluation_Proposal.pptx`](docs/27Aug2026/GRP_AI_Observability_and_Evaluation_Proposal.pptx) describes the proposed LangGraph + OpenAI + Langfuse Cloud proof of concept, evaluation approach, demonstration flow and success criteria. Its reproducible Python source is stored beside it.
+The 12-slide team presentation [`GRP_AI_Observability_and_Evaluation_Proposal.pptx`](docs/27Aug2026/GRP_AI_Observability_and_Evaluation_Proposal.pptx) describes the proposed LangGraph + OpenAI + Langfuse Cloud proof of concept, deterministic and narrowly judged evaluation approach, calibration process, demonstration flow and success criteria. Its reproducible Python source is stored beside it.
 
 ## Run locally
 

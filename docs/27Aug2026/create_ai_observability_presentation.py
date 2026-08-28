@@ -178,45 +178,73 @@ for i,(v,lbl) in enumerate(metrics):
     x=.98+i*1.88
     text(s,x,4.75,1.55,.38,v,20,DARK,True,font="Roboto Condensed",align=PP_ALIGN.CENTER)
     text(s,x,5.17,1.55,.28,lbl,9,GREY,align=PP_ALIGN.CENTER)
-text(s,.78,6.18,11.8,.30,"Illustrative figures · Langfuse records actual provider usage returned by each generation.",10,GREY,align=PP_ALIGN.CENTER)
+text(s,.78,6.14,11.8,.36,"Observation-first: evaluate the logical root for the final answer, retrieval observations for relevance, and generation observations for groundedness.",10,BLUE,True,align=PP_ALIGN.CENTER)
 
-# 5 — Evaluation
-s=prs.slides.add_slide(blank); header(s,"Turn quality into a repeatable release test","Evaluation",5)
-# loop
-loop=[("GOLDEN QUESTIONS","agreed scenarios"),("RUN","current version"),("SCORE","quality dimensions"),("COMPARE","baseline vs candidate"),("GATE","release decision")]
-for i,(a,b) in enumerate(loop):
-    x=.62+i*2.52
-    c=[BLUE,PURPLE,GREEN,LIGHT_BLUE,AMBER][i]
-    circ=s.shapes.add_shape(MSO_SHAPE.OVAL,Inches(x),Inches(1.80),Inches(1.70),Inches(1.70)); fill(circ,WHITE); line(circ,c,3)
-    text(s,x+.10,2.16,1.50,.28,a,10,c,True,font="Roboto Condensed",align=PP_ALIGN.CENTER)
-    text(s,x+.14,2.52,1.42,.34,b,9,MID,align=PP_ALIGN.CENTER)
-    if i<4: arrow(s,x+1.75,2.65,x+2.35,2.65,GREY,1.6)
-text(s,.72,3.85,4.25,.36,"Initial scorecard",18,DARK,True,font="Roboto Condensed")
-score_items=[("Groundedness","Claims supported by retrieved evidence"),("Citation quality","Correct source IDs and versions"),("Safety","Mandatory limitations included"),("Completeness","Question answered without unsupported gaps"),("Usefulness","Planner rating or reviewer score")]
-rich_lines(s,.72,4.30,5.55,2.15,score_items,12,BLUE,5)
-rect(s,6.72,3.78,5.86,2.55,PALE,border=LINE)
-text(s,7.02,4.08,5.26,.35,"Release comparison",17,DARK,True,font="Roboto Condensed")
-text(s,7.02,4.62,1.55,.25,"BASELINE",9,GREY,True); text(s,10.45,4.62,1.55,.25,"CANDIDATE",9,BLUE,True)
-metrics=[("Groundedness","82%","94%"),("Average latency","3.8 s","2.9 s"),("Cost / request","$0.010","$0.007")]
-for i,(m,a,b) in enumerate(metrics):
-    y=5.00+i*.40; text(s,7.02,y,2.25,.25,m,10,MID); text(s,9.26,y,1.0,.25,a,11,GREY,True,align=PP_ALIGN.RIGHT); text(s,10.78,y,1.0,.25,b,11,GREEN,True,align=PP_ALIGN.RIGHT)
+# 5 — Evaluator design
+s=prs.slides.add_slide(blank); header(s,"Use the cheapest reliable evaluator for each failure mode","Evaluation design",5)
+text(s,.72,1.40,11.4,.40,"Do not ask one “God Evaluator” to produce a vague quality score. Split checks so every failure tells us what to fix.",16,MID)
+# deterministic panel
+rect(s,.72,2.02,5.68,3.72,WHITE,border=LINE)
+pill(s,1.00,2.29,1.55,"CODE CHECKS",GREEN)
+text(s,1.00,2.82,4.95,.46,"Deterministic first",20,DARK,True,font="Roboto Condensed")
+text(s,1.00,3.25,4.95,.34,"Exact · fast · cheap · repeatable",11,GREEN,True)
+rich_lines(s,1.00,3.77,4.92,1.60,[
+("Figures match: ","assessment values equal the expected output"),
+("Evidence exists: ","every citation ID and version resolves"),
+("Schema valid: ","required fields and types are present"),
+("Limitations present: ","mandatory safety statements are included")
+],11,GREEN,4)
+# judge panel
+rect(s,6.67,2.02,5.91,3.72,PALE,border=LINE)
+pill(s,6.95,2.29,1.68,"LLM JUDGES",PURPLE)
+text(s,6.95,2.82,5.02,.46,"Narrow judgment only",20,DARK,True,font="Roboto Condensed")
+text(s,6.95,3.25,5.02,.34,"One criterion · reasoning first · verdict last",11,PURPLE,True)
+rich_lines(s,6.95,3.77,5.05,1.50,[
+("Groundedness: ","are material claims supported by context?"),
+("Question relevance: ","does the answer address the planner’s need?"),
+("Action usefulness: ","are proposed actions relevant and usable?")
+],11,PURPLE,5)
+rect(s,.72,6.02,11.86,.52,PALE,border=LINE)
+text(s,.94,6.13,11.42,.28,"Preferred verdict:  pass  |  fail  |  unknown     ·     Grade outcomes in evidence—not claims in prose.",12,BLUE,True,align=PP_ALIGN.CENTER)
 
-# 6 — Use case
-s=prs.slides.add_slide(blank); header(s,"One simple use case in the current prototype","Demonstration",6)
+# 6 — Calibration and release loop
+s=prs.slides.add_slide(blank); header(s,"Calibrate the judge before trusting the score","Evaluator calibration",6)
+cal=[("1","LABEL","10–20 real cases"),("2","DEFINE","one precise criterion"),("3","PROMPT","context + ignore rules"),("4","TEST","held-out labels"),("5","COMPARE","agreement by class"),("6","ITERATE","review disagreements")]
+for i,(n,a,b) in enumerate(cal):
+    x=.42+i*2.13
+    circ=s.shapes.add_shape(MSO_SHAPE.OVAL,Inches(x+.62),Inches(1.72),Inches(.58),Inches(.58)); fill(circ,[BLUE,GREEN,PURPLE,LIGHT_BLUE,AMBER,BLUE][i])
+    text(s,x+.62,1.84,.58,.24,n,10,WHITE,True,align=PP_ALIGN.CENTER)
+    text(s,x,2.48,1.82,.28,a,11,DARK,True,font="Roboto Condensed",align=PP_ALIGN.CENTER)
+    text(s,x,2.84,1.82,.32,b,9,MID,align=PP_ALIGN.CENTER)
+    if i<5: arrow(s,x+1.72,2.02,x+2.04,2.02,LINE,1.5)
+rect(s,.72,3.55,5.66,2.12,WHITE,border=LINE)
+pill(s,1.00,3.82,1.55,"OFFLINE",BLUE)
+text(s,1.00,4.30,4.95,.38,"Experiments for release decisions",17,DARK,True,font="Roboto Condensed")
+text(s,1.00,4.79,4.95,.56,"Run the same golden questions against baseline and candidate prompt, model or workflow versions.",12,MID)
+rect(s,6.67,3.55,5.91,2.12,PALE,border=LINE)
+pill(s,6.95,3.82,1.55,"ONLINE",GREEN)
+text(s,6.95,4.30,5.05,.38,"Observation-level monitoring",17,DARK,True,font="Roboto Condensed")
+text(s,6.95,4.79,5.05,.56,"Evaluate targeted root, retrieval or generation observations; sample live traffic to control cost.",12,MID)
+rect(s,.72,5.95,11.86,.58,RGBColor(255,245,231),border=AMBER)
+text(s,.94,6.09,11.40,.28,"Warning: 90% overall agreement can hide a judge that always says “pass”. Validate pass, fail and unknown separately.",11,RED,True,align=PP_ALIGN.CENTER)
+
+# 7 — Use case
+s=prs.slides.add_slide(blank); header(s,"One simple use case in the current prototype","Demonstration",7)
 rect(s,.72,1.48,11.86,.72,PALE,border=LINE)
 text(s,1.00,1.66,11.30,.36,'“Why should areas farther than 1 km from candidate shelters be prioritised?”',18,DARK,True,font="Roboto Condensed",align=PP_ALIGN.CENTER)
-flow=[("APP RESULT","18,640 exposed\n11,240 beyond 1 km",BLUE),("RETRIEVE","3 governed\nevidence records",GREEN),("OPENAI","planning explanation\nwith citations",PURPLE),("VALIDATE","citations + safety\nlimitations",AMBER)]
+flow=[("APP RESULT","18,640 exposed\n11,240 beyond 1 km",BLUE),("RETRIEVE","3 governed\nevidence records",GREEN),("OPENAI","planning explanation\nwith citations",PURPLE),("EVALUATE","code checks + narrow\njudge verdicts",AMBER)]
 for i,(a,b,c) in enumerate(flow):
     x=.78+i*3.02; node(s,x,2.70,2.58,1.12,a,b,WHITE,c)
     if i<3: arrow(s,x+2.61,3.25,x+2.92,3.25,GREY,1.5)
 text(s,.72,4.30,4.9,.36,"Answer contract",18,DARK,True,font="Roboto Condensed")
 rich_lines(s,.72,4.72,5.35,1.80,["Short planning explanation","Reported figures with evidence IDs","Recommended follow-up actions","Explicit mocked-data and shelter limitations"],12,BLUE,5)
 rect(s,6.55,4.25,6.03,1.98,WHITE,border=LINE)
-pill(s,6.82,4.52,1.72,"WHY THIS WORKS",GREEN)
-text(s,6.82,5.05,5.40,.82,"It demonstrates retrieval, generation, validation, tokens, cost and evidence provenance—without adding a vector database or sensitive data.",14,DARK,True,font="Roboto Condensed")
+pill(s,6.82,4.52,1.98,"EVALUATION STACK",GREEN)
+text(s,6.82,5.01,5.40,.34,"4 deterministic checks + 3 narrow judges",15,DARK,True,font="Roboto Condensed")
+text(s,6.82,5.43,5.40,.54,"Each score attaches to the relevant observation and explains exactly which failure mode passed, failed or was unknown.",11,MID)
 
-# 7 — Architecture
-s=prs.slides.add_slide(blank); header(s,"Minimal architecture for the proof of concept","Implementation",7)
+# 8 — Architecture
+s=prs.slides.add_slide(blank); header(s,"Minimal architecture for the proof of concept","Implementation",8)
 arch=[("BROWSER","Existing GRP prototype","Question + assessment context",BLUE),
       ("BACKEND API","Node.js service","Keys remain server-side",DARK),
       ("LANGGRAPH","Five-node workflow","Validate · retrieve · generate · check",PURPLE),
@@ -227,21 +255,21 @@ for i,(a,b,c,d) in enumerate(arch):
 # Langfuse below
 rect(s,3.62,3.52,6.08,1.30,PALE,border=BLUE)
 text(s,3.90,3.77,5.5,.30,"LANGFUSE CLOUD",13,BLUE,True,font="Roboto Condensed",align=PP_ALIGN.CENTER)
-text(s,3.90,4.15,5.5,.40,"Trace · spans · generations · tokens · cost · scores",13,DARK,True,align=PP_ALIGN.CENTER)
+text(s,3.90,4.15,5.5,.40,"Root + operation observations · tokens · cost · evaluator scores",12,DARK,True,align=PP_ALIGN.CENTER)
 arrow(s,6.66,3.44,6.66,2.98,BLUE,2)
 rect(s,.72,5.33,11.86,.85,WHITE,border=LINE)
 text(s,.98,5.54,2.15,.28,"PRIVATE ENVIRONMENT",10,RED,True,font="Roboto Condensed")
 text(s,3.10,5.46,8.90,.42,"OPENAI_API_KEY  ·  LANGFUSE_PUBLIC_KEY  ·  LANGFUSE_SECRET_KEY  ·  LANGFUSE_BASE_URL",12,MID,True)
 text(s,.85,6.44,11.55,.26,"No API keys in browser JavaScript or GitHub. No LangGraph API key is required.",11,GREY,align=PP_ALIGN.CENTER)
 
-# 8 — Live demo
-s=prs.slides.add_slide(blank); header(s,"A five-minute team demonstration","Demo flow",8)
+# 9 — Live demo
+s=prs.slides.add_slide(blank); header(s,"A five-minute team demonstration","Demo flow",9)
 steps=[
 ("01","Run assessment","Select Phaya Thai · RP100"),
 ("02","Ask AI","Generate planning explanation"),
 ("03","Inspect answer","Figures · citations · limitations"),
-("04","Open Langfuse","Trace · steps · retrieval · generation"),
-("05","Compare runs","Prompt/model version · score · cost")]
+("04","Open Langfuse","Root · retrieval · generation observations"),
+("05","Compare runs","Code checks · judge verdicts · cost")]
 for i,(n,a,b) in enumerate(steps):
     y=1.45+i*.94
     circ=s.shapes.add_shape(MSO_SHAPE.OVAL,Inches(.78),Inches(y),Inches(.54),Inches(.54)); fill(circ,BLUE if i<4 else GREEN)
@@ -259,12 +287,12 @@ rich_lines(s,6.35,2.35,5.55,3.20,[
 ("Governance: ","access, masking and retention can be controlled")
 ],14,BLUE,10)
 
-# 9 — Proof and measures
-s=prs.slides.add_slide(blank); header(s,"What we want to prove","Success criteria",9)
+# 10 — Proof and measures
+s=prs.slides.add_slide(blank); header(s,"What we want to prove","Success criteria",10)
 proofs=[
 ("REPRODUCE","A reviewer can identify the exact prompt, model, evidence and tool versions behind an answer.",BLUE,"100% traced requests"),
 ("DIAGNOSE","A failed golden question can be traced to retrieval, calculation, tool or generation.",RED,"Cause found < 10 min"),
-("COMPARE","Two workflow versions can be compared with the same questions and scorecard.",PURPLE,"No silent regression"),
+("COMPARE","Two workflow versions can be compared with the same calibrated question set and evaluators.",PURPLE,"No silent regression"),
 ("CONTROL","The team can see and set expectations for latency, tokens and cost.",GREEN,"Cost/request visible"),
 ("GOVERN","Sensitive content is masked and traces follow access and retention policies.",AMBER,"Policy checks pass")]
 for i,(a,b,c,d) in enumerate(proofs):
@@ -273,8 +301,8 @@ for i,(a,b,c,d) in enumerate(proofs):
     text(s,2.50,y+.17,7.65,.42,b,12,DARK,True,font="Roboto Condensed")
     text(s,10.34,y+.23,1.88,.28,d,10,c,True,align=PP_ALIGN.CENTER)
 
-# 10 — benefits and next step
-s=prs.slides.add_slide(blank); header(s,"Start small, prove value, then expand","Recommendation",10)
+# 11 — benefits and next step
+s=prs.slides.add_slide(blank); header(s,"Start small, prove value, then expand","Recommendation",11)
 text(s,.72,1.42,5.45,.35,"Expected benefits",19,DARK,True,font="Roboto Condensed")
 rich_lines(s,.72,1.87,5.45,3.85,[
 "Diagnose incorrect answers faster",
@@ -290,13 +318,30 @@ pill(s,6.78,1.73,1.72,"PROPOSED PILOT",GREEN)
 text(s,6.78,2.24,5.38,.62,"One observable planning explanation",21,DARK,True,font="Roboto Condensed")
 rich_lines(s,6.78,3.00,5.15,1.85,[
 ("Scope: ","one question, one workflow, 5–10 evidence records"),
+("Evaluation: ","4 code checks, 3 judges, 10–20 labeled cases"),
 ("Stack: ","LangGraph + OpenAI + Langfuse Cloud"),
-("Effort: ","approximately 2–4 development days"),
+("Effort: ","2–4 development days plus a team labeling session"),
 ("Decision: ","expand only after the trace and evaluation value is demonstrated")
 ],12,GREEN,7)
 rect(s,6.78,5.20,5.42,.43,BLUE)
 text(s,6.78,5.27,5.42,.25,"NEXT: CREATE LANGFUSE PROJECT + PRIVATE KEYS",10,WHITE,True,font="Roboto Condensed",align=PP_ALIGN.CENTER)
 text(s,.72,6.42,11.86,.36,"The goal is not more logging. The goal is evidence that the AI system behaves as intended.",17,BLUE,True,font="Roboto Condensed",align=PP_ALIGN.CENTER)
+
+# 12 — Design basis
+s=prs.slides.add_slide(blank); header(s,"Design basis and reference material","References",12)
+text(s,.72,1.45,11.35,.42,"The proposed evaluation pattern follows Langfuse’s observation-first and calibrated-evaluator guidance.",17,DARK,True,font="Roboto Condensed")
+refs=[
+("LLM-as-a-Judge","Observation-level evaluators for live traffic; experiments for controlled comparisons; numeric, categorical and boolean scores.","https://langfuse.com/docs/evaluation/evaluation-methods/llm-as-a-judge"),
+("Writing good evaluators","Prefer deterministic checks; one evaluator per failure mode; binary/categorical verdicts; label real cases and calibrate judges.","https://langfuse.com/academy/evaluate/writing-evaluators"),
+("Implementation note","Trace-level evaluators are deprecated for Langfuse v4. The pilot should target logical root and operation-level observations.","Langfuse documentation reviewed for this proposal")]
+for i,(a,b,u) in enumerate(refs):
+    y=2.05+i*1.30; rect(s,.72,y,11.86,1.02,WHITE,border=LINE)
+    pill(s,.98,y+.22,1.82,"REFERENCE "+str(i+1),[BLUE,PURPLE,AMBER][i])
+    text(s,3.02,y+.16,3.05,.29,a,15,DARK,True,font="Roboto Condensed")
+    text(s,3.02,y+.48,8.92,.28,b,10.5,MID)
+    text(s,3.02,y+.76,8.92,.20,u,8,BLUE)
+rect(s,.72,6.20,11.86,.45,PALE,border=LINE)
+text(s,.92,6.30,11.46,.24,"Human review remains the calibration reference. An LLM judge is another AI component and must itself be measured.",11,RED,True,align=PP_ALIGN.CENTER)
 
 # Core metadata
 prs.core_properties.title = "GRP AI Observability and Evaluation Proposal"

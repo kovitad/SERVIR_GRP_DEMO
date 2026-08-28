@@ -89,7 +89,7 @@ The local Windows Docker Desktop daemon was not running during the 27 August han
 
 ## AI observability proposal
 
-A 10-slide team proposal is available at `docs/27Aug2026/GRP_AI_Observability_and_Evaluation_Proposal.pptx`, with reproducible source in `docs/27Aug2026/create_ai_observability_presentation.py`. It proposes one minimal LangGraph + OpenAI + Langfuse Cloud use case: explain why populations beyond the selected shelter-proximity threshold should be prioritised, using governed evidence and a traced citation/limitation check. No observability backend has been implemented yet; this artifact is the agreed planning starting point.
+A 12-slide team proposal is available at `docs/27Aug2026/GRP_AI_Observability_and_Evaluation_Proposal.pptx`, with reproducible source in `docs/27Aug2026/create_ai_observability_presentation.py`. It proposes one minimal LangGraph + OpenAI + Langfuse Cloud use case: explain why populations beyond the selected shelter-proximity threshold should be prioritised, using governed evidence and traced evaluation. The strengthened evaluation design uses deterministic checks where possible, one narrow binary/categorical LLM judge per subjective failure mode, 10–20 human-labeled calibration cases, offline experiments and observation-level production evaluators. No observability backend has been implemented yet; this artifact is the agreed planning starting point.
 
 ## Recommended next checks
 
