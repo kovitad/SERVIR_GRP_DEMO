@@ -87,6 +87,10 @@ The local Windows Docker Desktop daemon was not running during the 27 August han
 5. Low/green risk does not mean safe, and candidate locations are not approved shelters.
 6. The OpenStreetMap basemap is real, but the AOI outline and all analytical overlays remain mocked. Public OSM tiles are appropriate only for this limited prototype; move to a managed or self-hosted provider before significant public traffic.
 
+## AI observability proposal
+
+A 10-slide team proposal is available at `docs/27Aug2026/GRP_AI_Observability_and_Evaluation_Proposal.pptx`, with reproducible source in `docs/27Aug2026/create_ai_observability_presentation.py`. It proposes one minimal LangGraph + OpenAI + Langfuse Cloud use case: explain why populations beyond the selected shelter-proximity threshold should be prioritised, using governed evidence and a traced citation/limitation check. No observability backend has been implemented yet; this artifact is the agreed planning starting point.
+
 ## Recommended next checks
 
 1. Confirm the latest GitHub Actions **Container check** is green.

@@ -54,6 +54,10 @@ No external font, JavaScript or CSS CDN is required at runtime.
 
 See [`HANDOVER.md`](HANDOVER.md) before continuing implementation or deploying a new revision.
 
+## AI observability proposal
+
+The team presentation [`GRP_AI_Observability_and_Evaluation_Proposal.pptx`](docs/27Aug2026/GRP_AI_Observability_and_Evaluation_Proposal.pptx) describes the proposed LangGraph + OpenAI + Langfuse Cloud proof of concept, evaluation approach, demonstration flow and success criteria. Its reproducible Python source is stored beside it.
+
 ## Run locally
 
 Requirements: Docker Engine with the Compose plugin.
