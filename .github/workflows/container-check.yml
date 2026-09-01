@@ -20,27 +20,44 @@ jobs:
           node --check public/app.js
           node --check public/i18n.js
           node --check public/map-integration.js
+          node --check public/observability.js
+          node --check public/auth.js
+          node --check backend/server.js
+          node --check scripts/dev-local.js
 
       - name: Validate Compose
         run: docker compose config --quiet
 
-      - name: Build image
-        run: docker build --tag grp-evacuation-prototype:${{ github.sha }} .
+      - name: Build images
+        run: docker compose build
 
-      - name: Smoke test container
+      - name: Smoke test containers
+        env:
+          ADMIN_USERNAME: ci-admin
+          ADMIN_PASSWORD: ci-admin-password-not-for-production
+          PLANNER_USERNAME: ci-planner
+          PLANNER_PASSWORD: ci-planner-password-not-for-production
         run: |
-          docker run --detach --name grp-smoke -p 8080:80 grp-evacuation-prototype:${{ github.sha }}
-          for i in {1..20}; do
-            curl --fail --silent http://127.0.0.1:8080/healthz && break
+          docker compose up --detach
+          for i in {1..30}; do
+            curl --fail --silent http://127.0.0.1/healthz && break
             sleep 1
           done
-          curl --fail --silent http://127.0.0.1:8080/ | grep -q "Thailand Evacuation Preparedness"
-          curl --fail --silent http://127.0.0.1:8080/i18n.js | grep -q "Vulnerable people"
-          curl --fail --silent http://127.0.0.1:8080/map-integration.js | grep -q "tile.openstreetmap.org"
-          curl --fail --silent --output /dev/null http://127.0.0.1:8080/vendor/leaflet/leaflet.js
-          curl --fail --silent --output /dev/null http://127.0.0.1:8080/assets/servir-global-collaborative.png
-          curl --fail --silent --head http://127.0.0.1:8080/ | grep -qi "tile.openstreetmap.org"
+          curl --fail --silent http://127.0.0.1/ | grep -q "Thailand Evacuation Preparedness"
+          curl --fail --silent http://127.0.0.1/i18n.js | grep -q "Vulnerable people"
+          curl --fail --silent http://127.0.0.1/map-integration.js | grep -q "tile.openstreetmap.org"
+          curl --fail --silent http://127.0.0.1/observability.js | grep -q "Langfuse"
+          curl --fail --silent http://127.0.0.1/auth.js | grep -q "grp-authenticated"
+          test "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1/api/observability/status)" = "401"
+          curl --fail --silent --cookie-jar /tmp/grp-cookies --header 'Content-Type: application/json' --data '{"username":"ci-admin","password":"ci-admin-password-not-for-production"}' http://127.0.0.1/api/auth/login | grep -q '"role":"admin"'
+          curl --fail --silent --cookie /tmp/grp-cookies http://127.0.0.1/api/observability/status | grep -q '"mode":"mock"'
+          curl --fail --silent --cookie /tmp/grp-cookies http://127.0.0.1/api/admin/assurance/dashboard | grep -q '"masterAllowed":false'
+          test "$(curl --silent --cookie /tmp/grp-cookies --header 'Content-Type: application/json' --data '{"action":"enable"}' --output /dev/null --write-out '%{http_code}' http://127.0.0.1/api/admin/ai-access)" = "409"
+          curl --fail --silent --cookie /tmp/grp-cookies --request POST http://127.0.0.1/api/auth/logout | grep -q '"authenticated":false'
+          curl --fail --silent --output /dev/null http://127.0.0.1/vendor/leaflet/leaflet.js
+          curl --fail --silent --output /dev/null http://127.0.0.1/assets/servir-global-collaborative.png
+          curl --fail --silent --head http://127.0.0.1/ | grep -qi "tile.openstreetmap.org"
 
       - name: Show logs on failure
         if: failure()
-        run: docker logs grp-smoke || true
+        run: docker compose logs || true

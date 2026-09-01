@@ -1,5 +1,8 @@
 .env
 *.log
+*.pid
+__pycache__/
+*.pyc
 .DS_Store
 Thumbs.db
 .vscode/

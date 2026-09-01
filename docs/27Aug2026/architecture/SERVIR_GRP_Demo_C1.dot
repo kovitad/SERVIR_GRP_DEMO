@@ -1,0 +1,19 @@
+digraph C1 {
+      graph [label="C1 — SERVIR GRP Demo: System Context\nWho uses the demo and which external services make live observability work", labelloc=t, fontsize=24, fontname="Arial Bold", bgcolor="#FFFFFF", pad=0.35, nodesep=0.8, ranksep=1.0, splines=polyline];
+      node [shape=box, style="rounded,filled", fontname="Arial", fontsize=11, margin="0.18,0.12", penwidth=2]; edge [fontname="Arial", fontsize=9, color="#5F6B70", penwidth=2, arrowsize=0.8];
+      planner [label="Planner / disaster preparedness staff\n[Person]\n\nRuns assessment, asks Explain with AI,\nand gives helpful/not-helpful feedback", fillcolor="#E8F4FA", color="#08427B"];
+      reviewer [label="Product, technical and leadership reviewer\n[Person]\n\nReviews evidence, traces, evaluators,\ncomparison, cost and governance", fillcolor="#E8F4FA", color="#08427B"];
+      grp [label="SERVIR Global Risk Platform Demo\n[Software System]\n\nEvacuation-preparedness planning plus one\nobservable AI explanation for Phaya Thai,\nRP100 and a 1 km threshold\n\nCaddy + JavaScript + Node.js · Type B-lite", fillcolor="#2380B0", fontcolor="white", color="#08427B", width=5.1, height=2.2];
+      osm [label="OpenStreetMap\n[External System]\n\nReal low-traffic basemap tiles", fillcolor="#F3F5F6", color="#5F6B70"];
+      openai [label="OpenAI API\n[External System]\n\nOne planning explanation +\nthree narrow AI judges\n\ngpt-5.2", fillcolor="#E7F4ED", color="#2E7D5B"];
+      langfuse [label="Langfuse Cloud\n[External System]\n\nTraces, observations, scores,\nusage metadata and feedback", fillcolor="#F1EAF5", color="#704090"];
+      {rank=same; planner; grp; openai} {rank=same; reviewer; langfuse}
+      planner -> grp [label="Uses EN/TH planning journey; asks explanation; feedback", color="#2380B0"];
+      reviewer -> grp [label="Reviews five assurance views", color="#2380B0"];
+      grp -> osm [label="Requests basemap tiles"];
+      grp -> openai [label="Governed context → answer and judge verdicts", color="#2E7D5B"];
+      grp -> langfuse [label="Writes live traces, scores and feedback", color="#704090"];
+      reviewer -> langfuse [label="Opens exact trace", color="#704090", style=dashed];
+      footer [shape=plain, label="REAL: OpenStreetMap · OpenAI · Langfuse    |    ILLUSTRATIVE: GRP evidence and analytical values    |    HUMAN REVIEW REQUIRED", fontcolor="#C77724", fontsize=11];
+      {rank=sink; footer}
+    }

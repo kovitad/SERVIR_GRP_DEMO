@@ -1,5 +1,65 @@
 # Changelog
 
+## 0.8.0-prototype
+
+- Made AI generation deny-by-default with the server master lock `AI_FEATURE_ALLOWED=false`.
+- Added an Admin-only AI cost-control panel; runtime access always starts OFF after backend restart.
+- Added time-limited enablement (15 minutes by default), a global explanation budget (five by default), automatic shutoff and immediate Admin disable.
+- Added `AI_REQUIRE_HTTPS=true`: local 127.0.0.1 testing is allowed, while AI generation over public HTTP is blocked.
+- Added per-account/IP request limiting in addition to the global runtime budget.
+- Kept OpenAI/Langfuse keys backend-only and removed admin-only metrics/links from Planner explanation responses.
+- Added clear Planner disabled state and protected Admin API routes for enable/disable controls.
+- Added deployment documentation for HTTPS, AWS secret storage, `.env` permissions, provider spend limits and key rotation.
+
+## 0.7.0-prototype
+
+- Added a single-active-overlay manager so opening an AOI menu, detail drawer or modal automatically closes competing overlays.
+- Prevented detail drawers and upload/report/export modals from stacking over one another.
+- Added Escape-key dismissal for the active modal, drawer, AOI menu, AI Assurance workspace and map-only mode.
+- Added outside-click dismissal for modal backdrops and the AOI menu.
+- Added a **Map only** control that hides chat, planning cards, status, legend and floating result panels while preserving the map toolbar and Leaflet controls.
+- Added **Exit map only** restoration without losing the prior assessment or selected map state.
+- Moved **Show planning information** from a floating map overlay into the toolbar so it cannot cover map figures or markers.
+- Made the collapsed planning panel inert, hidden from accessibility navigation and unable to receive hover/click events until restored.
+- Made AI Assurance and sign-out close transient planning overlays before changing workspace.
+- Connected the Layers control to minimize/expand the layer legend with clear feedback.
+- Added English/Thai localisation for map-only and layer-control states.
+
+## 0.6.0-prototype
+
+- Added an administrator-only AI Assurance Dashboard backed by the 31 August 2026 Langfuse CSV export.
+- Added trace-level normalisation that deduplicates repeated observation scores and excludes the preflight trace from operational KPIs.
+- Added assurance KPIs for deterministic checks, groundedness review, feedback coverage, P95 latency, tokens and estimated cost.
+- Added English/Thai and workflow-completeness filters, evaluator distributions and an explicit action-required assurance state.
+- Added a six-run trace explorer with operation timelines, input/output inspection, model, latency, token, cost and missing-operation details.
+- Added deterministic and AI-judge evaluation details plus a prioritised human-review queue.
+- Added an admin-only dashboard API; planners cannot retrieve the historical trace export.
+- Added per-user AI request, feedback, token, cost, average-latency and last-active reporting for authenticated activity.
+- New Langfuse traces receive the authenticated username as server-controlled `userId` and application role metadata; legacy pre-login traces remain explicitly unattributed.
+- Bundled a normalised static-export dataset for the controlled team demonstration and labelled it separately from live monitoring.
+
+## 0.5.0-prototype
+
+- Added a SERVIR-branded sign-in page for administrator and planner accounts configured through server-side environment variables.
+- Added HttpOnly, SameSite=Strict, eight-hour in-memory sessions plus sign-in throttling and sign-out.
+- Added role-based destinations: administrators enter AI assurance; planners enter the planning workspace.
+- Limited planner assurance navigation to the generated answer and feedback while retaining administrator assurance views.
+- Protected observability status, explanation and feedback API routes from unauthenticated access.
+- Added authentication configuration, validation and authenticated CI smoke coverage.
+
+## 0.4.0-prototype
+
+- Added the Type B-lite server-side observable AI pilot for the Phaya Thai RP100 / 1 km question.
+- Added real OpenAI generation and three narrow judges for groundedness, question relevance and action usefulness.
+- Added real Langfuse traces for validation, evidence retrieval, deterministic results, generation, judge calls and evaluation.
+- Added four deterministic checks and Langfuse scores attached to the evaluation observation.
+- Added planner feedback recording in Langfuse.
+- Added bilingual answer, trace, evaluation, version-comparison and assurance-dashboard screens.
+- Added a separate Node.js backend container and Caddy `/api/*` reverse proxy; provider keys remain server-side.
+- Restricted the live workflow to the approved scenario and added an in-memory five-request/ten-minute pilot rate limit.
+- Added browser-test screenshots and updated deployment, CI, handover and environment documentation.
+- Added editable C1 System Context and C2 Container diagrams in draw.io format with PNG pictures and reproducible Graphviz sources.
+
 ## 0.3.0-prototype
 
 - Replaced the mocked SVG basemap with a real interactive OpenStreetMap basemap.

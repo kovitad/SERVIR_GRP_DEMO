@@ -16,6 +16,7 @@ let uploadType = 'Population';
 let selectedScenario = '100';
 let selectedProximityThreshold = 1000;
 let selectedAOI = null;
+let mapFocusMode = false;
 const aoiData = {
   'phaya-thai': {name:'Phaya Thai District, Bangkok', short:'Phaya Thai District', level:'District', mapLabel:'PHAYA THAI'},
   'warin-chamrap': {name:'Warin Chamrap District, Ubon Ratchathani', short:'Warin Chamrap District', level:'District', mapLabel:'WARIN CHAMRAP'},
@@ -77,8 +78,27 @@ function scrollChat(){messages.scrollTop=messages.scrollHeight;}
 function userMessage(text){const e=document.createElement('div');e.className='message user';e.innerHTML=`<div class="bubble"><p>${text}</p></div>`;messages.appendChild(e);scrollChat();}
 function aiMessage(html){const e=document.createElement('div');e.className='message assistant';e.innerHTML=`<div class="avatar">AI</div><div class="bubble">${html}</div>`;messages.appendChild(e);scrollChat();return e;}
 function showToast(text){$('#toastText').textContent=text;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2600);}
-function openAOI(){aoiMenu.classList.add('open');}
 function closeAOI(){aoiMenu.classList.remove('open');}
+function closeDrawer(){detailDrawer.classList.remove('open');detailDrawer.setAttribute('aria-hidden','true');backdrop.classList.remove('open');}
+function closeModals(){$$('.modal').forEach(m=>{m.classList.remove('open');m.setAttribute('aria-hidden','true');});}
+function closeTransientUI(keep=''){
+  if(keep!=='aoi')closeAOI();
+  if(keep!=='drawer')closeDrawer();
+  if(keep!=='modal')closeModals();
+}
+function openAOI(){closeTransientUI('aoi');aoiMenu.classList.add('open');}
+function toggleMapFocus(force){
+  mapFocusMode=typeof force==='boolean'?force:!mapFocusMode;
+  if(mapFocusMode)closeTransientUI();
+  document.body.classList.toggle('map-focus-mode',mapFocusMode);
+  const button=$('#mapFocusTool'),label=$('.map-focus-label',button);
+  button.setAttribute('aria-pressed',String(mapFocusMode));
+  button.title=mapFocusMode?'Restore planning panels':'Hide panels and show the map only';
+  label.textContent=mapFocusMode?'Exit map only':'Map only';
+  setTimeout(()=>window.GRP_MAP?.map?.invalidateSize(),80);
+  showToast(mapFocusMode?'Map-only view · select Exit map only to restore panels':'Planning panels restored');
+}
+window.GRP_CLOSE_TRANSIENT_UI=()=>closeTransientUI();
 
 function choosePurpose(value){
   purpose=value;
@@ -195,8 +215,7 @@ function openCandidatePlace(id){
   $('#drawerBody').innerHTML=`<div class="drawer-body-hero"><strong>${id}</strong><span>${c.type}</span><span class="status-badge badge-candidate">MOVEMENT-PLANNING INFORMATION</span></div><div class="detail-grid"><div class="detail-card"><b>${c.zones.split(' · ')[0]}</b><small>Nearby vulnerable zone</small></div><div class="detail-card"><b>First phase</b><small>Location comparison</small></div></div><h3>Moving vulnerable people</h3><ul class="detail-list"><li>Nearby aggregated zone <span>${c.zones}</span></li><li>Movement-planning focus <span>${c.movement}</span></li><li>Displayed flood relationship <span>Illustrative map context</span></li><li>Individual or household locations <span>Not displayed</span></li><li>Suitability, capacity and official status <span>Not assessed in this first phase</span></li></ul><div class="ai-note"><b>Planner note:</b> Use this candidate as a location reference for discussing how vulnerable groups might move. It is not a statement that the location is safe, suitable or approved.</div><div class="detail-actions"><button data-detail="safeplaces">Compare all five candidates</button><button class="primary" data-detail="people">View vulnerable-people map</button></div>`;openDrawer();
 }
 function openDetail(key){const d=detailContent[key];if(!d)return;$('#drawerEyebrow').textContent=d.eyebrow;$('#drawerTitle').textContent=d.title;$('#drawerBody').innerHTML=d.html;openDrawer();}
-function openDrawer(){detailDrawer.classList.add('open');detailDrawer.setAttribute('aria-hidden','false');backdrop.classList.add('open');}
-function closeDrawer(){detailDrawer.classList.remove('open');detailDrawer.setAttribute('aria-hidden','true');backdrop.classList.remove('open');}
+function openDrawer(){closeTransientUI('drawer');detailDrawer.classList.add('open');detailDrawer.setAttribute('aria-hidden','false');backdrop.classList.add('open');}
 
 function switchTab(name){
   $$('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));
@@ -205,17 +224,32 @@ function switchTab(name){
   if(name==='people'&&assessmentComplete)showToast('Vulnerable-people map layer shown');
 }
 function hideInfoPanel(){
+  const panel=$('#assessmentPanel'),restore=$('#showPanel');
   mapCanvas.classList.add('panel-collapsed');
-  showToast('Map expanded · planning information can be reopened');
+  panel.setAttribute('aria-hidden','true');panel.inert=true;
+  restore.hidden=false;
+  showToast('Map expanded · use the toolbar to restore planning information');
 }
 function showInfoPanel(announce=true){
-  $('#assessmentPanel').style.display='';
+  const panel=$('#assessmentPanel'),restore=$('#showPanel');
+  panel.style.display='';panel.setAttribute('aria-hidden','false');panel.inert=false;
   mapCanvas.classList.remove('panel-collapsed');
+  restore.hidden=true;
   if(announce)showToast('Planning information restored');
 }
-function openModal(id){$('#'+id).classList.add('open');}
-function closeModals(){$$('.modal').forEach(m=>m.classList.remove('open'));}
+function openModal(id){
+  closeTransientUI('modal');closeModals();
+  const modal=$('#'+id);modal.classList.add('open');modal.setAttribute('aria-hidden','false');
+}
 
+function toggleLayerLegend(){
+  closeTransientUI();
+  if(!assessmentComplete){showToast('Run an assessment to view planning layers');return;}
+  if(mapFocusMode)toggleMapFocus(false);
+  const legend=$('#legend');legend.classList.toggle('collapsed');
+  $('#legendToggle').textContent=legend.classList.contains('collapsed')?'+':'−';
+  showToast(legend.classList.contains('collapsed')?'Layer legend minimized':'Layer legend expanded');
+}
 function promptLocationQuestion(){const input=$('#chatInput');input.value='Where could people move?';input.focus();showToast('Ask the assistant in human language');}
 function startCandidate(){
   if(!assessmentComplete){if(!requireAOI())return;aiMessage('<p>Complete the risk-map simulation before screening a candidate point, so it uses the same AOI and scenario.</p>');return;}
@@ -302,23 +336,42 @@ document.addEventListener('click',e=>{
   const uploadBtn=e.target.closest('[data-upload-type]');if(uploadBtn)selectUploadType(uploadBtn);
   const format=e.target.closest('[data-format]');if(format){$$('[data-format]').forEach(b=>b.classList.remove('selected'));format.classList.add('selected');exportFormat=format.dataset.format;$('#downloadExport').textContent=`Download ${exportFormat} risk map →`;}
   if(e.target.closest('[data-close-modal]'))closeModals();
+  if(aoiMenu.classList.contains('open')&&!e.target.closest('.aoi-wrap')&&!e.target.closest('[data-action="select-aoi"]')&&!e.target.closest('[data-purpose]'))closeAOI();
 });
-$('#aoiSelector').addEventListener('click',()=>aoiMenu.classList.toggle('open'));
+$('#aoiSelector').addEventListener('click',()=>aoiMenu.classList.contains('open')?closeAOI():openAOI());
 $('#aoiSearch').addEventListener('input',e=>{$$('[data-aoi]',aoiMenu).forEach(b=>b.hidden=!b.textContent.toLowerCase().includes(e.target.value.toLowerCase().trim()));});
 $('#candidateTool').addEventListener('click',promptLocationQuestion);
+$('#layersTool').addEventListener('click',toggleLayerLegend);
 $('#uploadTool').addEventListener('click',()=>openModal('uploadModal'));
 $('#attachBtn').addEventListener('click',()=>openModal('uploadModal'));
 $('#exportTool').addEventListener('click',showRiskMap);
 $('#downloadRiskMap').addEventListener('click',showRiskMap);
 $('#createReport').addEventListener('click',()=>openModal('reportModal'));
+$('#mapFocusTool').addEventListener('click',()=>toggleMapFocus());
 $('#mapArt').addEventListener('click',e=>{if(candidateMode&& !e.target.closest('[data-center]'))placeCandidate();});
 $('#demoFile').addEventListener('click',demoFile);
 $('#rerunUpload').addEventListener('click',rerunUpload);
 $('#generateReport').addEventListener('click',generateReport);
 $('#downloadExport').addEventListener('click',prepareExport);
 $('#closeDrawer').addEventListener('click',closeDrawer);backdrop.addEventListener('click',closeDrawer);
+$$('.modal').forEach(modal=>modal.addEventListener('click',e=>{if(e.target===modal)closeModals();}));
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Escape'||$('.assurance-workspace.open'))return;
+  if($('.modal.open'))closeModals();else if(detailDrawer.classList.contains('open'))closeDrawer();else if(aoiMenu.classList.contains('open'))closeAOI();else if(mapFocusMode)toggleMapFocus(false);
+});
+window.addEventListener('grp-close-transient-ui',()=>closeTransientUI());
 $('#closePanel').addEventListener('click',hideInfoPanel);
 $('#showPanel').addEventListener('click',()=>showInfoPanel());
 $('#legendToggle').addEventListener('click',e=>{const legend=$('#legend');legend.classList.toggle('collapsed');e.target.textContent=legend.classList.contains('collapsed')?'+':'−';});
 $('#newChat').addEventListener('click',()=>location.reload());
 $('#sendBtn').addEventListener('click',send);$('#chatInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}});
+
+// Read-only pilot context for the server-side observable AI workflow.
+window.GRP_CONTEXT=()=>({
+  assessmentComplete,
+  aoi:selectedAOI,
+  scenario:selectedScenario,
+  thresholdMetres:selectedProximityThreshold,
+  exposedPeople:scenarioData[selectedScenario].people,
+  beyondThresholdPeople:getProximityStats().outside
+});

@@ -1,0 +1,25 @@
+digraph C2 {
+      graph [label="C2 — SERVIR GRP Demo: Container Architecture\nHow a human action becomes a real OpenAI response and Langfuse trace", labelloc=t, fontsize=24, fontname="Arial Bold", bgcolor="#FFFFFF", pad=0.35, nodesep=0.65, ranksep=0.85, splines=polyline, compound=true];
+      node [shape=box, style="rounded,filled", fontname="Arial", fontsize=10, margin="0.16,0.12", penwidth=2]; edge [fontname="Arial", fontsize=8.5, color="#5F6B70", penwidth=2, arrowsize=0.8];
+      planner [label="Planner / reviewer\n[Person]\n\nPlanning, assurance views, feedback", fillcolor="#E8F4FA", color="#08427B"];
+      tech [label="Technical reviewer\n[Person]\n\nTrace investigation", fillcolor="#E8F4FA", color="#08427B"];
+      subgraph cluster_grp { label="SERVIR GRP Demo software system\nLocal runner or Docker Compose / AWS Lightsail target"; fontsize=14; fontname="Arial Bold"; color="#2380B0"; penwidth=2; style="rounded,dashed"; margin=24;
+        frontend [label="Web application + reverse proxy\n[Container]\n\nEN/TH planning UI, Leaflet map,\nfive assurance views, /api/* proxy\n\nCaddy 2.8 + HTML/CSS/JavaScript", fillcolor="#E8F4FA", color="#2380B0"];
+        backend [label="Observable AI pilot API\n[Container]\n\nValidate → evidence → OpenAI → checks/judges\n→ Langfuse trace/scores/feedback\n\nNode.js 22 · no LangGraph", fillcolor="#E7F4ED", color="#2E7D5B"];
+        evidence [label="Versioned illustrative evidence\n[Embedded Data Store]\n\n3 records · 18,640 exposed ·\n11,240 beyond 1 km", fillcolor="#FFF2DE", color="#C77724"];
+        secrets [label="Server-side configuration\n[Configuration]\n\n.env / approved secret store\nNever browser or Git", fillcolor="#F3F5F6", color="#5F6B70"];
+        frontend -> backend [label="same-origin JSON\n/api/observability/*", color="#2E7D5B"];
+        backend -> evidence [label="reads IDs, versions, values", color="#C77724"];
+        secrets -> backend [label="runtime provider config", style=dashed];
+      }
+      osm [label="OpenStreetMap tiles\n[External System]\nReal basemap", fillcolor="#F3F5F6", color="#5F6B70"];
+      openai [label="OpenAI Responses API\n[External System]\n1 answer + 3 judges · gpt-5.2", fillcolor="#E7F4ED", color="#2E7D5B"];
+      langfuse [label="Langfuse Cloud\n[External System]\nRoot trace · 8 observations ·\nscores · feedback", fillcolor="#F1EAF5", color="#704090"];
+      planner -> frontend [label="HTTPS: assessment, explanation, assurance, feedback", color="#2380B0"];
+      frontend -> osm [label="browser map-tile requests"];
+      backend -> openai [label="answer + judge requests; usage", color="#2E7D5B"];
+      backend -> langfuse [label="trace, spans, generations, scores, feedback", color="#704090"];
+      tech -> langfuse [label="opens trace dashboard", color="#704090", style=dashed];
+      footer [shape=plain, label="CONTROLLED PILOT: Phaya Thai · RP100 · 1 km · basic rate limit · no production authentication/durable quota yet", fontcolor="#C77724", fontsize=11];
+      {rank=sink; footer}
+    }

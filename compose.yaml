@@ -6,6 +6,9 @@ services:
     image: grp-evacuation-prototype:${IMAGE_TAG:-local}
     container_name: grp-evacuation-prototype
     restart: unless-stopped
+    depends_on:
+      observability-backend:
+        condition: service_healthy
     environment:
       SITE_ADDRESS: ${SITE_ADDRESS:-:80}
     ports:
@@ -15,6 +18,43 @@ services:
     volumes:
       - caddy_data:/data
       - caddy_config:/config
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    cpus: 1.0
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  observability-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: grp-observability-backend:${IMAGE_TAG:-local}
+    container_name: grp-observability-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      AI_OBSERVABILITY_MODE: ${AI_OBSERVABILITY_MODE:-mock}
+      AI_FEATURE_ALLOWED: ${AI_FEATURE_ALLOWED:-false}
+      AI_RUNTIME_WINDOW_MINUTES: ${AI_RUNTIME_WINDOW_MINUTES:-15}
+      AI_RUNTIME_REQUEST_BUDGET: ${AI_RUNTIME_REQUEST_BUDGET:-5}
+      AI_REQUIRE_HTTPS: ${AI_REQUIRE_HTTPS:-true}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-5.2}
+      LANGFUSE_PUBLIC_KEY: ${LANGFUSE_PUBLIC_KEY:-}
+      LANGFUSE_SECRET_KEY: ${LANGFUSE_SECRET_KEY:-}
+      LANGFUSE_BASE_URL: ${LANGFUSE_BASE_URL:-https://cloud.langfuse.com}
+      LANGFUSE_ENVIRONMENT: ${LANGFUSE_ENVIRONMENT:-development}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      PLANNER_USERNAME: ${PLANNER_USERNAME:-}
+      PLANNER_PASSWORD: ${PLANNER_PASSWORD:-}
+    expose:
+      - "3000"
     security_opt:
       - no-new-privileges:true
     mem_limit: 256m

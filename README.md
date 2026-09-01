@@ -1,6 +1,46 @@
 # GRP Thailand Evacuation Preparedness Prototype
 
-A self-contained static review prototype packaged for GitHub, Docker and an Ubuntu AWS Lightsail instance.
+A bilingual planning prototype with a static Caddy frontend and a restricted server-side Type B-lite OpenAI/Langfuse observability pilot, packaged for GitHub, Docker and Ubuntu AWS Lightsail.
+
+## Role-based access
+
+The application starts with a sign-in page backed by server-side sessions. Configure separate administrator and planner accounts in the ignored `.env` file:
+
+- **Administrator** — enters the AI Assurance Dashboard, trace explorer and evaluation/review views, and can return to planning.
+- **Planner** — enters the planning workspace, can request the controlled AI explanation and submit feedback, but does not receive the administrator trace/comparison/dashboard navigation.
+
+Credentials are checked only by the Node.js backend and are never sent in frontend assets. Sessions use an HttpOnly, SameSite=Strict cookie, expire after eight hours and are held in memory for this controlled prototype. A backend restart signs everyone out. Use an approved identity provider and durable session store before broader or production use.
+
+## Personal API key and cost control
+
+AI generation is now deny-by-default and protected by two independent controls:
+
+1. **Environment master lock:** `AI_FEATURE_ALLOWED=false` prevents any administrator from enabling generation. Change it to `true` and restart only for a controlled demonstration.
+2. **Admin runtime window:** after the restart, AI still starts OFF. Admin must open AI Assurance and enable a short window. The default window is 15 minutes with a global budget of five explanation attempts; it automatically switches off when either limit is reached.
+
+The OpenAI and Langfuse keys remain only in the backend environment. They are never returned by the status, dashboard or Planner APIs. Planner responses also exclude admin trace metrics and Langfuse links. Explanation requests remain restricted to the fixed Phaya Thai/RP100/1 km contract and have per-account/IP rate limiting.
+
+`AI_REQUIRE_HTTPS=true` allows local `127.0.0.1` testing but blocks AI generation over public HTTP. Login over public HTTP is not secure because credentials and session cookies can be intercepted. Configure a DNS name and Caddy automatic HTTPS before enabling personal-token access on AWS.
+
+Controlled enable/disable procedure:
+
+```dotenv
+AI_OBSERVABILITY_MODE=live
+AI_FEATURE_ALLOWED=true
+AI_RUNTIME_WINDOW_MINUTES=15
+AI_RUNTIME_REQUEST_BUDGET=5
+AI_REQUIRE_HTTPS=true
+```
+
+Restart, sign in as Admin, and use **Enable 15 min · 5 requests**. Select **Disable now** when finished. For the safest shutdown, return `AI_FEATURE_ALLOWED=false` and restart.
+
+Root or Docker-administrator access can inspect container environment variables. Move provider keys to an approved AWS secret store before broader production use, restrict `.env` file permissions, set provider-side spend limits and rotate the key if exposure is suspected.
+
+## Workspace and overlay behaviour
+
+Release 0.7.0 keeps one transient surface active at a time: opening an AOI menu, detail drawer or upload/report/export modal closes the others. Escape closes the active surface, and modal backdrops can be selected to dismiss them.
+
+Use **Map only** in the map toolbar to hide chat, result cards, status and legend while preserving map navigation. Select **Exit map only** to restore the exact planning state. The Layers control minimizes or expands the map legend after an assessment.
 
 ## Product flow
 
@@ -25,6 +65,12 @@ The 26 August revision preserves this systematic journey and adds only one spati
 
 The broader automated shelter-proximity experiment remains archived under [`docs/26Aug2026/`](docs/26Aug2026/) for possible later incremental work.
 
+## Type B-lite AI observability pilot
+
+After completing **Phaya Thai · RP100**, select **Explain with AI**. The server-side workflow generates a real OpenAI explanation, runs four deterministic checks and three narrow AI judges, writes operations/generations/scores to Langfuse, and records planner helpful/not-helpful feedback. **AI assurance** opens the answer, trace, evaluation, comparison and dashboard views.
+
+The live pilot accepts only the approved Phaya Thai/RP100/1 km contract. The GRP evidence and values remain illustrative. LangGraph is not part of this Type B-lite implementation. Comparison baseline and historical dashboard values are fixtures; the current answer, trace, usage, judges and feedback are live.
+
 ## Repository structure
 
 ```text
@@ -35,9 +81,15 @@ The broader automated shelter-proximity experiment remains archived under [`docs
 │   ├── app.js
 │   ├── i18n.js               # English/Thai localisation
 │   ├── map-integration.js     # Leaflet map and planning overlays
+│   ├── observability.js       # Live assurance interactions and five views
+│   ├── observability.css      # Assurance workspace styling
+│   ├── auth.js / auth.css     # Sign-in, session restoration and role-based UI
 │   ├── vendor/leaflet/        # Locally hosted Leaflet 1.9.4
 │   ├── assets/               # SERVIR brand assets
 │   └── robots.txt
+├── backend/
+│   ├── server.js              # OpenAI workflow, checks, judges and Langfuse ingestion
+│   └── Dockerfile             # Internal Node.js service
 ├── scripts/
 │   ├── bootstrap-ubuntu.sh   # Install Docker and configure UFW
 │   ├── deploy.sh             # Build, run and health-check
@@ -54,23 +106,57 @@ No external font, JavaScript or CSS CDN is required at runtime.
 
 See [`HANDOVER.md`](HANDOVER.md) before continuing implementation or deploying a new revision.
 
-## AI observability proposal
+## Administrator assurance dashboard
 
-The 12-slide team presentation [`GRP_AI_Observability_and_Evaluation_Proposal.pptx`](docs/27Aug2026/GRP_AI_Observability_and_Evaluation_Proposal.pptx) describes the proposed LangGraph + OpenAI + Langfuse Cloud proof of concept, deterministic and narrowly judged evaluation approach, calibration process, demonstration flow and success criteria. Its reproducible Python source is stored beside it.
+Release 0.6.0 includes an administrator-only demonstration dashboard built from the normalised `backend/data/langfuse-dashboard-2026-08-31.json` dataset. It represents six explanation traces from the 31 August Langfuse CSV export and excludes the preflight trace from operational KPIs. The dashboard provides:
+
+- trace-level KPIs, evaluator distributions and explicit fail/unknown states;
+- language and workflow-completeness filters;
+- operation-level trace inspection;
+- deterministic and AI-judge evaluation reasons;
+- a prioritised human-review queue; and
+- latency, tokens and estimated cost; and
+- per-user authenticated requests, feedback, tokens, cost, average latency and last activity.
+
+Historical traces created before login tracking are explicitly grouped as **Unattributed (pre-login export)**. New traces receive the authenticated username as a server-controlled Langfuse `userId`; runtime usage is in memory and resets with a backend restart.
+
+This is visibly labelled as a **static export**, not live Langfuse monitoring. The next data stage is an approved Langfuse API ingestion process and durable analytics store.
+
+## AI observability design
+
+The 12-slide [`GRP_AI_Observability_and_Evaluation_Proposal.pptx`](docs/27Aug2026/GRP_AI_Observability_and_Evaluation_Proposal.pptx) provides the design basis. The implemented Type B-lite pilot uses OpenAI and Langfuse but manually orchestrates its narrow workflow in Node.js rather than using LangGraph. See the editable [`C1/C2 draw.io architecture`](docs/27Aug2026/architecture/SERVIR_GRP_Demo_C1_C2.drawio), the accompanying [architecture pictures and guide](docs/27Aug2026/architecture/README.md), and [`HANDOVER.md`](HANDOVER.md) for the exact live/fixture boundary and remaining governance work.
 
 ## Run locally
 
-Requirements: Docker Engine with the Compose plugin.
+### Without Docker
+
+Requires Node.js 22 or newer. The local runner reads the ignored `.env`, starts the backend, serves the frontend and proxies `/api/*` without exposing keys to the browser.
+
+```bash
+cp .env.example .env       # Skip if your configured .env already exists
+node scripts/dev-local.js
+```
+
+Open `http://127.0.0.1:8080`. Press **Ctrl+C** to stop both services.
+
+### With Docker
+
+Requires Docker Engine with the Compose plugin.
 
 ```bash
 cp .env.example .env
+# Set ADMIN_USERNAME, ADMIN_PASSWORD, PLANNER_USERNAME and PLANNER_PASSWORD.
+# Keep AI_OBSERVABILITY_MODE=mock for static review, or set live and populate
+# server-side OpenAI/Langfuse credentials for the approved controlled pilot.
 docker compose up -d --build
 curl http://localhost/healthz
+curl -c cookies.txt -H 'Content-Type: application/json' \
+  -d '{"username":"YOUR_USERNAME","password":"YOUR_PASSWORD"}' \
+  http://localhost/api/auth/login
+curl -b cookies.txt http://localhost/api/observability/status
 ```
 
-Open `http://localhost`.
-
-Stop the service:
+Open `http://localhost`. Stop with:
 
 ```bash
 docker compose down
@@ -159,7 +245,18 @@ For automatic HTTPS with a domain:
 
 ```dotenv
 SITE_ADDRESS=prototype.example.org
-IMAGE_TAG=0.1.0
+IMAGE_TAG=0.5.0
+ADMIN_USERNAME=
+ADMIN_PASSWORD=
+PLANNER_USERNAME=
+PLANNER_PASSWORD=
+AI_OBSERVABILITY_MODE=live
+OPENAI_API_KEY=
+OPENAI_MODEL=gpt-5.2
+LANGFUSE_PUBLIC_KEY=
+LANGFUSE_SECRET_KEY=
+LANGFUSE_BASE_URL=https://cloud.langfuse.com
+LANGFUSE_ENVIRONMENT=development
 ```
 
 Caddy obtains and renews the TLS certificate automatically. Ports 80 and 443 must be publicly reachable.
@@ -176,6 +273,8 @@ Check status:
 docker compose ps
 docker compose logs --tail=100
 curl -I http://127.0.0.1/healthz
+# Sign in through the application, or use the cookie-based example above before
+# requesting the protected /api/observability/status endpoint.
 ```
 
 ### 6. Update later
@@ -208,7 +307,7 @@ Do not run `docker compose down -v` unless you intentionally want to remove cert
 
 ## Maintenance workflow
 
-- Treat `public/` as the deployable application source in this GitHub package.
+- Treat `public/` and `backend/` as the deployable application sources in this GitHub package.
 - Update `VERSION` and `CHANGELOG.md` for review milestones.
 - Use feature branches and pull requests.
 - Preserve visible `Illustrative`, missing-data and validation states.
@@ -217,4 +316,4 @@ Do not run `docker compose down -v` unless you intentionally want to remove cert
 
 ## Production-readiness boundary
 
-This container is deployment-ready as a **static prototype**, not as an operational disaster-management service. A production release still requires authentication/authorization decisions, authoritative data adapters, audit storage, privacy controls, monitoring, backup/recovery and approved scientific methods.
+This Compose package is deployment-ready as a **controlled Type B-lite prototype**, not as an operational disaster-management service. It has role-based prototype accounts, in-memory sessions, a fixed scenario and basic in-memory rate limiting, but not production identity or durable quotas. A broader release still requires an approved identity provider and account lifecycle, durable sessions and authorization policy, approved cloud access/masking/retention, cost budgets, authoritative data adapters, evaluator calibration, privacy controls, monitoring, backup/recovery and approved scientific methods.
