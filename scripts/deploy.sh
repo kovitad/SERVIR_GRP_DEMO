@@ -9,6 +9,7 @@ if [[ ! -f .env ]]; then
 fi
 
 chmod 600 .env
+python3 scripts/env_control.py validate
 docker compose config --quiet
 docker compose build --pull
 docker compose up -d --remove-orphans

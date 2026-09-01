@@ -5,6 +5,7 @@ cd "$(dirname "$0")/.."
 
 git pull --ff-only
 chmod 600 .env
+python3 scripts/env_control.py validate
 docker compose build --pull
 docker compose up -d --remove-orphans
 docker image prune -f

@@ -8,7 +8,7 @@ fi
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
-apt-get install -y ca-certificates curl gnupg git ufw
+apt-get install -y ca-certificates curl gnupg git python3 ufw
 
 have_docker=false
 if command -v docker >/dev/null 2>&1; then

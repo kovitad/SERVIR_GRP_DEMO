@@ -45,8 +45,10 @@ Use these files for GitHub and deployment work:
 - `Dockerfile`, `Caddyfile`, `compose.yaml` — frontend/backend container package and `/api/*` reverse proxy
 - `scripts/dev-local.js` — zero-dependency local frontend/backend runner on `127.0.0.1:8080`
 - `scripts/bootstrap-ubuntu.sh` — first-time Ubuntu/Lightsail setup
-- `scripts/deploy.sh` — initial build/deploy and health check
-- `scripts/update.sh` — pull, rebuild, restart and health check
+- `scripts/deploy.sh` — validate environment, initial build/deploy and health check
+- `scripts/update.sh` — pull, validate environment, rebuild, restart and health check
+- `scripts/env_control.py` — secret-safe `.env` validation and AI master-state updates
+- `scripts/ai-master.sh` — AWS operator commands for AI status/allow/lock without displaying or changing provider keys
 
 The parent workspace also has copies under `prototype/`, but **`prototype/github/public/` is the deployable GitHub source of truth**. Synchronise intentionally if work begins in the parent prototype.
 
@@ -85,11 +87,29 @@ cp .env.example .env
 curl -f http://127.0.0.1/healthz
 ```
 
-Subsequent deployment:
+Subsequent normal code deployment:
 
 ```bash
 cd SERVIR_GRP_DEMO
 ./scripts/update.sh
+```
+
+If new `.env` controls are introduced, pull first, compare `.env.example`, amend the existing ignored `.env`, validate and rerun update:
+
+```bash
+git pull --ff-only
+# edit .env without replacing provider secrets
+python3 scripts/env_control.py status
+python3 scripts/env_control.py validate
+./scripts/update.sh
+```
+
+AI master control does not require a full application rebuild:
+
+```bash
+./scripts/ai-master.sh status
+./scripts/ai-master.sh allow  # requires live providers + DNS/HTTPS; runtime remains OFF
+./scripts/ai-master.sh lock   # stops backend first, locks, then recreates it
 ```
 
 ## Validation completed
@@ -209,7 +229,7 @@ Use `AI_OBSERVABILITY_MODE=mock` when credentials or cloud approval are unavaila
 ## Recommended next checks
 
 1. Push the committed release and confirm GitHub Actions **Container check** builds both images and passes the locked-AI smoke test.
-2. Before AWS deployment, point DNS to the Lightsail static IP and set `SITE_ADDRESS=your.domain.example` so Caddy provides HTTPS.
+2. Before AWS deployment, point DNS to the Lightsail static IP and set `SITE_ADDRESS=your.domain.example` so Caddy provides HTTPS. Use `scripts/env_control.py validate` before deployment and `scripts/ai-master.sh` rather than hand-editing the AI master for each demo.
 3. Keep `AI_FEATURE_ALLOWED=false` for the first static dashboard/planning demonstration.
 4. Store approved provider secrets on the server or in AWS Secrets Manager, never in Git; verify `.env` permissions and provider-side spend limits.
 5. Run `./scripts/deploy.sh`, verify `docker compose ps`, confirm port 3000 is not public and test Admin/Planner access over HTTPS.

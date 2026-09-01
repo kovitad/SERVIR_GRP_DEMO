@@ -1,4 +1,4 @@
-.PHONY: build up down restart logs health validate
+.PHONY: build up down restart logs health validate ai-status ai-allow ai-lock
 
 build:
 	docker compose build
@@ -19,6 +19,15 @@ health:
 	curl -fsS http://127.0.0.1/healthz && echo
 	docker compose ps
 
+ai-status:
+	./scripts/ai-master.sh status
+
+ai-allow:
+	./scripts/ai-master.sh allow
+
+ai-lock:
+	./scripts/ai-master.sh lock
+
 validate:
 	node --check public/app.js
 	node --check public/i18n.js
@@ -27,4 +36,6 @@ validate:
 	node --check public/auth.js
 	node --check backend/server.js
 	node --check scripts/dev-local.js
+	python -m py_compile scripts/env_control.py
+	python scripts/env_control.py validate
 	docker compose config --quiet

@@ -32,7 +32,15 @@ AI_RUNTIME_REQUEST_BUDGET=5
 AI_REQUIRE_HTTPS=true
 ```
 
-Restart, sign in as Admin, and use **Enable 15 min · 5 requests**. Select **Disable now** when finished. For the safest shutdown, return `AI_FEATURE_ALLOWED=false` and restart.
+On AWS, use the deployment helpers rather than manually editing the master flag:
+
+```bash
+./scripts/ai-master.sh status
+./scripts/ai-master.sh allow   # validates HTTPS/providers, recreates backend; runtime remains OFF
+./scripts/ai-master.sh lock    # stops backend first, locks and recreates it
+```
+
+After `allow`, sign in as Admin and use **Enable 15 min · 5 requests**. Select **Disable now** when finished, then run `./scripts/ai-master.sh lock` for the safest shutdown. These commands never print or modify provider secret values.
 
 Root or Docker-administrator access can inspect container environment variables. Move provider keys to an approved AWS secret store before broader production use, restrict `.env` file permissions, set provider-side spend limits and rotate the key if exposure is suspected.
 
@@ -279,8 +287,30 @@ curl -I http://127.0.0.1/healthz
 
 ### 6. Update later
 
+For a normal code-only release, the ignored `.env` remains unchanged:
+
 ```bash
 ./scripts/update.sh
+```
+
+When a release introduces new environment controls, use this explicit sequence:
+
+```bash
+git pull --ff-only
+# Compare .env.example, then amend only the required values in the existing .env.
+python3 scripts/env_control.py status
+python3 scripts/env_control.py validate
+./scripts/update.sh
+```
+
+`update.sh` performs another safe fast-forward check, validates the existing environment, rebuilds and restarts. Git never overwrites `.env` because it is ignored.
+
+For AI on/off changes, do not rebuild the whole application and do not expose the key:
+
+```bash
+./scripts/ai-master.sh allow
+# Admin opens the short runtime window in AI Assurance.
+./scripts/ai-master.sh lock
 ```
 
 ## Operations
@@ -289,6 +319,9 @@ Common commands:
 
 ```bash
 make health
+make ai-status
+make ai-allow
+make ai-lock
 make logs
 make restart
 docker compose stats

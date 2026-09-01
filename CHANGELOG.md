@@ -10,6 +10,8 @@
 - Kept OpenAI/Langfuse keys backend-only and removed admin-only metrics/links from Planner explanation responses.
 - Added clear Planner disabled state and protected Admin API routes for enable/disable controls.
 - Added deployment documentation for HTTPS, AWS secret storage, `.env` permissions, provider spend limits and key rotation.
+- Added secret-safe environment validation and `ai-master.sh status|allow|lock` AWS operator commands so AI state changes recreate only the backend and never print or alter provider keys.
+- Deployment/update now validate account and AI configuration before rebuilding; Ubuntu bootstrap explicitly installs Python 3 for these controls.
 
 ## 0.7.0-prototype
 
