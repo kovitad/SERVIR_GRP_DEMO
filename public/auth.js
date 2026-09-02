@@ -4,6 +4,8 @@
   const error = document.querySelector('#loginError');
   const submit = document.querySelector('#loginSubmit');
   const username = document.querySelector('#loginUsername');
+  const demoAccess = document.querySelector('#demoAccess');
+  const demoPlannerLogin = document.querySelector('#demoPlannerLogin');
 
   async function request(path, options = {}) {
     const response = await fetch(path,{cache:'no-store',credentials:'same-origin',...options});
@@ -39,9 +41,24 @@
     if(openDestination && user.role==='admin') setTimeout(()=>document.querySelector('#aiAssuranceBtn')?.click(),0);
   }
 
+  async function demoLogin() {
+    error.textContent='';demoPlannerLogin.disabled=true;demoPlannerLogin.textContent='Opening Planner workspace…';
+    try { const data=await request('/api/auth/demo-planner',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});showApplication(data.user,true); }
+    catch(failure){showLogin(failure.message);}
+    finally{demoPlannerLogin.disabled=false;demoPlannerLogin.textContent='Continue as demo Planner';}
+  }
+
+  async function configureDemoAccess() {
+    try {
+      const data=await request('/api/auth/demo-status');
+      demoAccess.hidden=!data.plannerQuickLogin;
+      if(data.plannerQuickLogin&&new URLSearchParams(location.search).get('demo')==='planner')await demoLogin();
+    } catch { demoAccess.hidden=true; }
+  }
+
   async function restoreSession() {
     try { const data=await request('/api/auth/session'); showApplication(data.user,true); }
-    catch { showLogin(); }
+    catch { showLogin(); await configureDemoAccess(); }
   }
 
   form.addEventListener('submit',async event=>{
@@ -54,6 +71,8 @@
     } catch (failure) { error.textContent=failure.message; form.password.select(); }
     finally { submit.disabled=false; submit.textContent='Sign in securely'; }
   });
+
+  demoPlannerLogin.addEventListener('click',demoLogin);
 
   document.addEventListener('click',async event=>{
     if(!event.target.closest('[data-auth-logout]')) return;

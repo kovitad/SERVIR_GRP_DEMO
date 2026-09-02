@@ -1,6 +1,6 @@
 # GRP Thailand Evacuation Preparedness Prototype
 
-A bilingual planning prototype with a static Caddy frontend and a restricted server-side Type B-lite OpenAI/Langfuse observability pilot, packaged for GitHub, Docker and Ubuntu AWS Lightsail.
+A bilingual planning prototype with a static Caddy frontend, persistent hub feedback collection and a restricted server-side Type B-lite OpenAI/Langfuse observability pilot, packaged for GitHub, Docker and Ubuntu AWS Lightsail.
 
 ## Role-based access
 
@@ -11,6 +11,16 @@ The application starts with a sign-in page backed by server-side sessions. Confi
 
 Credentials are checked only by the Node.js backend and are never sent in frontend assets. Sessions use an HttpOnly, SameSite=Strict cookie, expire after eight hours and are held in memory for this controlled prototype. A backend restart signs everyone out. Use an approved identity provider and durable session store before broader or production use.
 
+Set `DEMO_QUICK_LOGIN=true` to show **Continue as demo Planner** and support the shareable `/?demo=planner` link. The backend creates a Planner-only session without returning the configured password. There is deliberately no Admin quick-login endpoint; administrators must use private credentials.
+
+## Hub feedback collection
+
+Signed-in users can submit feedback containing a name, one of the six hub codes (EAP, TSA, SA, WA, ESA or CA) or Other, a category, text, an optional HTTP/HTTPS document link and one optional attachment up to 1 MB. Allowed attachments are PNG, JPG/JPEG, WebP and DOCX. The backend checks extension and file signature and stores files under generated names.
+
+Feedback persists in the `feedback_data` Docker volume. Administrators can open **Feedback inbox**, update each submission to New, Reviewed, Follow-up or Closed, download attachments and export CSV. Planner accounts cannot list, manage or download other users' feedback.
+
+Back up the volume before replacing the server. This low-volume file-backed store is suitable for the controlled prototype, not a replacement for an approved database, malware scanning, retention policy or records-management process.
+
 ## Personal API key and cost control
 
 AI generation is now deny-by-default and protected by two independent controls:
@@ -20,7 +30,7 @@ AI generation is now deny-by-default and protected by two independent controls:
 
 The OpenAI and Langfuse keys remain only in the backend environment. They are never returned by the status, dashboard or Planner APIs. Planner responses also exclude admin trace metrics and Langfuse links. Explanation requests remain restricted to the fixed Phaya Thai/RP100/1 km contract and have per-account/IP rate limiting.
 
-`AI_REQUIRE_HTTPS=true` allows local `127.0.0.1` testing but blocks AI generation over public HTTP. Login over public HTTP is not secure because credentials and session cookies can be intercepted. Configure a DNS name and Caddy automatic HTTPS before enabling personal-token access on AWS.
+`AI_REQUIRE_HTTPS=true` allows local `127.0.0.1` testing but blocks AI generation over public HTTP. For the accepted temporary no-AI demonstration, `SITE_ADDRESS=:80`, `AI_REQUIRE_HTTPS=false` and `AI_FEATURE_ALLOWED=false` permit HTTP planning and feedback collection. Names, comments, links, attachments and session cookies are not encrypted over HTTP; configure DNS and Caddy automatic HTTPS before collecting sensitive material or enabling personal-token access.
 
 Controlled enable/disable procedure:
 
@@ -92,6 +102,7 @@ The live pilot accepts only the approved Phaya Thai/RP100/1 km contract. The GRP
 │   ├── observability.js       # Live assurance interactions and five views
 │   ├── observability.css      # Assurance workspace styling
 │   ├── auth.js / auth.css     # Sign-in, session restoration and role-based UI
+│   ├── feedback.js/.css       # Submission form and Admin feedback inbox
 │   ├── vendor/leaflet/        # Locally hosted Leaflet 1.9.4
 │   ├── assets/               # SERVIR brand assets
 │   └── robots.txt
@@ -253,12 +264,15 @@ For automatic HTTPS with a domain:
 
 ```dotenv
 SITE_ADDRESS=prototype.example.org
-IMAGE_TAG=0.5.0
+IMAGE_TAG=0.9.0
 ADMIN_USERNAME=
 ADMIN_PASSWORD=
 PLANNER_USERNAME=
 PLANNER_PASSWORD=
-AI_OBSERVABILITY_MODE=live
+DEMO_QUICK_LOGIN=true
+AI_OBSERVABILITY_MODE=mock
+AI_FEATURE_ALLOWED=false
+AI_REQUIRE_HTTPS=true
 OPENAI_API_KEY=
 OPENAI_MODEL=gpt-5.2
 LANGFUSE_PUBLIC_KEY=
@@ -293,17 +307,17 @@ For a normal code-only release, the ignored `.env` remains unchanged:
 ./scripts/update.sh
 ```
 
-When a release introduces new environment controls, use this explicit sequence:
+To upgrade an existing 0.8.0 Lightsail deployment, retain the existing ignored `.env` and run:
 
 ```bash
 git pull --ff-only
-# Compare .env.example, then amend only the required values in the existing .env.
+python3 scripts/env_control.py migrate
 python3 scripts/env_control.py status
 python3 scripts/env_control.py validate
 ./scripts/update.sh
 ```
 
-`update.sh` performs another safe fast-forward check, validates the existing environment, rebuilds and restarts. Git never overwrites `.env` because it is ignored.
+The migration adds `DEMO_QUICK_LOGIN=true` only if it is absent and does not display or alter passwords/provider keys. Compose creates the new persistent `feedback_data` volume automatically. `update.sh` performs another safe fast-forward check, migration and validation before rebuilding and restarting. Git never overwrites `.env` because it is ignored.
 
 For AI on/off changes, do not rebuild the whole application and do not expose the key:
 
@@ -319,6 +333,7 @@ Common commands:
 
 ```bash
 make health
+make feedback-backup
 make ai-status
 make ai-allow
 make ai-lock
@@ -330,13 +345,14 @@ docker compose down
 
 Caddy access logs are sent to container stdout. Docker rotates logs at 10 MB with three retained files.
 
-Persistent Caddy certificate/configuration data is stored in named Docker volumes:
+Persistent Caddy certificate/configuration and feedback data are stored in named Docker volumes. Create a feedback archive after review sessions and copy it to approved storage outside the instance:
 
 ```bash
-docker volume ls | grep caddy
+docker volume ls
+./scripts/feedback-backup.sh
 ```
 
-Do not run `docker compose down -v` unless you intentionally want to remove certificate data.
+Do not run `docker compose down -v` during a normal update. It deletes the Caddy and feedback volumes.
 
 ## Maintenance workflow
 

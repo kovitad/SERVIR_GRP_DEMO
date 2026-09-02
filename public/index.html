@@ -5,9 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>SERVIR GRP — Thailand Evacuation Preparedness Planning Prototype</title>
   <link rel="stylesheet" href="vendor/leaflet/leaflet.css?v=1.9.4" />
-  <link rel="stylesheet" href="styles.css?v=0.8.0" />
-  <link rel="stylesheet" href="observability.css?v=0.8.0" />
-  <link rel="stylesheet" href="auth.css?v=0.8.0" />
+  <link rel="stylesheet" href="styles.css?v=0.9.0" />
+  <link rel="stylesheet" href="observability.css?v=0.9.0" />
+  <link rel="stylesheet" href="auth.css?v=0.9.0" />
+  <link rel="stylesheet" href="feedback.css?v=0.9.0" />
 </head>
 <body class="auth-pending">
   <section class="login-shell" id="loginShell" aria-label="Sign in">
@@ -22,6 +23,7 @@
         <label class="login-field"><span>Username</span><input id="loginUsername" name="username" type="text" autocomplete="username" required maxlength="128" /></label>
         <label class="login-field"><span>Password</span><input name="password" type="password" autocomplete="current-password" required maxlength="512" /></label>
         <button class="login-submit" id="loginSubmit" type="submit">Sign in securely</button>
+        <div class="demo-access" id="demoAccess" hidden><span>or</span><button type="button" id="demoPlannerLogin">Continue as demo Planner</button><small>No password or AI token required</small></div>
         <p class="login-error" id="loginError" role="alert" aria-live="polite"></p>
         <div class="login-security"><span>🔒</span><span><b>Role-based access</b><br />Administrators enter AI assurance; planners enter the planning workspace.</span></div>
       </form>
@@ -31,7 +33,7 @@
   <header class="topbar">
     <div class="brand"><img src="assets/servir-global-collaborative.png" alt="SERVIR Global Collaborative" /><span class="product-name">GLOBAL RISK PLATFORM</span></div>
     <div class="workspace-title"><span class="status-dot"></span>Evacuation preparedness planning <em>Prototype</em></div>
-    <div class="top-actions"><button type="button" class="assurance-entry admin-only" id="aiAssuranceBtn"><span>◎</span> AI assurance</button><div class="language-switcher" role="group" aria-label="Language"><button type="button" data-language="en">EN</button><button type="button" data-language="th">TH</button></div><button class="help-btn">?</button><div class="user-menu"><span data-auth-initials>U</span><span data-auth-username>User<small data-auth-role>Workspace</small></span></div><button type="button" class="logout-btn" data-auth-logout>Sign out</button></div>
+    <div class="top-actions"><button type="button" class="feedback-entry" data-feedback-open><span>✎</span> Feedback</button><button type="button" class="feedback-entry admin-only" data-feedback-inbox><span>▤</span> Feedback inbox</button><button type="button" class="assurance-entry admin-only" id="aiAssuranceBtn"><span>◎</span> AI assurance</button><div class="language-switcher" role="group" aria-label="Language"><button type="button" data-language="en">EN</button><button type="button" data-language="th">TH</button></div><button class="help-btn">?</button><div class="user-menu"><span data-auth-initials>U</span><span data-auth-username>User<small data-auth-role>Workspace</small></span></div><button type="button" class="logout-btn" data-auth-logout>Sign out</button></div>
   </header>
 
   <main class="app-shell">
@@ -130,7 +132,7 @@
         <div class="zoom"><button>＋</button><button>−</button><button>⌖</button></div>
         <div class="map-scale">2 km</div>
 
-        <div class="scenario-card" id="scenarioCard"><div class="scenario-icon">≈</div><div><small id="scenarioScope">SELECT AN AOI</small><b id="scenarioTitle">100-year flood extent</b><span>1% annual chance · Static planning scenario</span></div><button data-detail="evidence">Evidence ›</button></div>
+        <div class="scenario-card" id="scenarioCard" title="View scenario evidence and limitations"><div class="scenario-icon" aria-hidden="true">ⓘ</div><div><small id="scenarioScope">SELECT AN AOI</small><b id="scenarioTitle">100-year flood extent</b><span>1% annual chance · Static planning scenario</span></div><button data-detail="evidence" aria-label="View scenario evidence and limitations">Evidence ›</button></div>
 
         <div class="legend" id="legend"><div><b id="legendTitle">Planning-map legend</b><button id="legendToggle">−</button></div><section class="planning-legend"><label><i class="lg safe-lg">C</i>Candidate evacuation place</label><label class="vulnerability-legend-item"><i class="lg vulnerable-lg">V</i>Aggregated vulnerable-population zone</label><label><i class="lg flood-lg"></i>Illustrative flood extent</label><p class="standard-legend-note">Five candidate locations are shown with vulnerable-people movement information. Suitability and capacity are not assessed in this first phase.</p><p class="vulnerability-legend-note">Zones show illustrative aggregated concentration—not individual or household locations. Categories may overlap.</p></section><section class="risk-view-legend"><label><i class="lg high-lg">H</i>High risk point</label><label><i class="lg medium-lg">M</i>Medium risk point</label><label><i class="lg low-lg">L</i>Low risk point</label><label><i class="lg flood-lg"></i>Illustrative flood extent</label><p>Further-information view. Low/green does not mean safe.</p></section></div>
 
@@ -176,7 +178,7 @@
   </main>
 
   <section class="assurance-workspace" id="assuranceWorkspace" aria-hidden="true">
-    <header><div><p>TYPE B-LITE · LIVE PILOT</p><h1 id="assuranceTitle">AI assurance</h1></div><div class="assurance-head-actions"><span id="assuranceConnection">Checking live service…</span><span class="assurance-head-user" data-auth-username>User</span><div class="language-switcher" role="group" aria-label="Language"><button type="button" data-language="en">EN</button><button type="button" data-language="th">TH</button></div><button type="button" id="assuranceBack">← Back to planning</button><button type="button" data-auth-logout>Sign out</button></div></header>
+    <header><div><p>TYPE B-LITE · LIVE PILOT</p><h1 id="assuranceTitle">AI assurance</h1></div><div class="assurance-head-actions"><span id="assuranceConnection">Checking live service…</span><span class="assurance-head-user" data-auth-username>User</span><button type="button" data-feedback-open>Give feedback</button><button type="button" class="admin-only" data-feedback-inbox>Feedback inbox</button><div class="language-switcher" role="group" aria-label="Language"><button type="button" data-language="en">EN</button><button type="button" data-language="th">TH</button></div><button type="button" id="assuranceBack">← Back to planning</button><button type="button" data-auth-logout>Sign out</button></div></header>
     <div id="assuranceContent"></div>
   </section>
 
@@ -189,12 +191,17 @@
 
   <div class="modal" id="exportModal" role="dialog" aria-modal="true"><div class="modal-card"><div class="modal-head"><div><p class="eyebrow">AOI RISK-MAP DOWNLOAD</p><h2>Download district or sub-district risk map</h2></div><button data-close-modal>×</button></div><p class="modal-intro">The prototype creates a valid SVG map or GeoJSON evidence package. Production PDF, PNG and GeoTIFF rendering will use the same AOI, scenario and provenance contract.</p><div class="export-grid"><button class="selected" data-format="SVG"><b>SVG</b><small>Risk-map graphic</small></button><button data-format="GeoJSON"><b>GeoJSON</b><small>Evidence features</small></button><button data-format="JSON"><b>JSON</b><small>Metadata manifest</small></button><button disabled><b>PNG</b><small>Production renderer</small></button><button disabled><b>GeoTIFF</b><small>Production raster</small></button></div><div class="export-meta"><p><span>AOI</span><b id="exportAOI">Select district or sub-district</b></p><p><span>Scenario</span><b id="exportScenario">RP100 · 1% AEP</b></p><p><span>Status</span><b>Mock geometry/results · Provisional</b></p></div><div class="modal-actions"><button data-close-modal>Cancel</button><button class="primary" id="downloadExport">Download SVG risk map →</button></div></div></div>
 
+  <div class="modal feedback-modal" id="feedbackModal" role="dialog" aria-modal="true" aria-hidden="true"><div class="modal-card feedback-card"><div class="modal-head"><div><p class="eyebrow">HELP IMPROVE THIS USE CASE</p><h2>Share feedback</h2></div><button type="button" data-close-modal aria-label="Close">×</button></div><p class="modal-intro">Tell the product team what would make this planning use case more useful. You may submit text, a document link, or one small attachment.</p><form id="feedbackForm"><div class="feedback-fields two"><label><span>Name *</span><input name="name" required maxlength="100" autocomplete="name" /></label><label><span>Hub *</span><select name="hub" required><option value="">Select hub</option><option>EAP</option><option>TSA</option><option>SA</option><option>WA</option><option>ESA</option><option>CA</option><option>Other</option></select></label></div><div class="feedback-fields"><label><span>Category *</span><select name="category" required><option value="">Select category</option><option value="question">Question</option><option value="suggestion">Suggestion / feature request</option><option value="problem">Problem / usability issue</option><option value="data-correction">Data or evidence correction</option><option value="comment">Comment</option><option value="compliment">Compliment</option><option value="other">Other</option></select></label><label><span>Feedback</span><textarea name="message" maxlength="5000" rows="5" placeholder="What worked, what was unclear, or what should we improve?"></textarea></label><label><span>Optional document link</span><input name="documentUrl" type="url" maxlength="1000" placeholder="https://…" /></label><label class="feedback-file"><span>Optional attachment · maximum 1 MB</span><input name="attachment" type="file" accept=".png,.jpg,.jpeg,.webp,.docx,image/png,image/jpeg,image/webp,application/vnd.openxmlformats-officedocument.wordprocessingml.document" /><small>PNG, JPG, WebP or DOCX only</small></label></div><div class="feedback-progress" id="feedbackProgress" hidden><i></i><span>Uploading…</span></div><p class="feedback-message" id="feedbackMessage" role="status" aria-live="polite"></p><div class="modal-actions"><button type="button" data-close-modal>Cancel</button><button class="primary" id="feedbackSubmit" type="submit">Submit feedback</button></div></form></div></div>
+
+  <div class="modal feedback-modal" id="feedbackInboxModal" role="dialog" aria-modal="true" aria-hidden="true"><div class="modal-card feedback-inbox-card"><div class="modal-head"><div><p class="eyebrow">ADMINISTRATION</p><h2>Hub feedback inbox</h2></div><button type="button" data-close-modal aria-label="Close">×</button></div><div class="feedback-inbox-tools"><p id="feedbackInboxSummary">Loading feedback…</p><a href="/api/admin/feedback/export.csv" download>Export CSV</a></div><div class="feedback-inbox" id="feedbackInbox"></div></div></div>
+
   <div class="toast" id="toast"><span>✓</span><p id="toastText">Done</p></div>
   <script src="vendor/leaflet/leaflet.js?v=1.9.4"></script>
-  <script src="i18n.js?v=0.8.0"></script>
-  <script src="app.js?v=0.8.0"></script>
-  <script src="map-integration.js?v=0.8.0"></script>
-  <script src="observability.js?v=0.8.0"></script>
-  <script src="auth.js?v=0.8.0"></script>
+  <script src="i18n.js?v=0.9.0"></script>
+  <script src="app.js?v=0.9.0"></script>
+  <script src="map-integration.js?v=0.9.0"></script>
+  <script src="observability.js?v=0.9.0"></script>
+  <script src="auth.js?v=0.9.0"></script>
+  <script src="feedback.js?v=0.9.0"></script>
 </body>
 </html>

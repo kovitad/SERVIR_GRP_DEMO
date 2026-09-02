@@ -1,4 +1,6 @@
 .env
+storage/
+backups/
 *.log
 *.pid
 __pycache__/

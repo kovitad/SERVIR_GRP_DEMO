@@ -9,6 +9,7 @@ if [[ ! -f .env ]]; then
 fi
 
 chmod 600 .env
+python3 scripts/env_control.py migrate
 python3 scripts/env_control.py validate
 docker compose config --quiet
 docker compose build --pull

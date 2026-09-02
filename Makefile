@@ -1,4 +1,4 @@
-.PHONY: build up down restart logs health validate ai-status ai-allow ai-lock
+.PHONY: build up down restart logs health validate feedback-backup ai-status ai-allow ai-lock
 
 build:
 	docker compose build
@@ -19,6 +19,9 @@ health:
 	curl -fsS http://127.0.0.1/healthz && echo
 	docker compose ps
 
+feedback-backup:
+	./scripts/feedback-backup.sh
+
 ai-status:
 	./scripts/ai-master.sh status
 
@@ -34,6 +37,7 @@ validate:
 	node --check public/map-integration.js
 	node --check public/observability.js
 	node --check public/auth.js
+	node --check public/feedback.js
 	node --check backend/server.js
 	node --check scripts/dev-local.js
 	python -m py_compile scripts/env_control.py

@@ -22,10 +22,11 @@ jobs:
           node --check public/map-integration.js
           node --check public/observability.js
           node --check public/auth.js
+          node --check public/feedback.js
           node --check backend/server.js
           node --check scripts/dev-local.js
           python3 -m py_compile scripts/env_control.py
-          bash -n scripts/bootstrap-ubuntu.sh scripts/deploy.sh scripts/update.sh scripts/ai-master.sh
+          bash -n scripts/bootstrap-ubuntu.sh scripts/deploy.sh scripts/update.sh scripts/ai-master.sh scripts/feedback-backup.sh
 
       - name: Validate Compose
         run: docker compose config --quiet
@@ -39,6 +40,7 @@ jobs:
           ADMIN_PASSWORD: ci-admin-password-not-for-production
           PLANNER_USERNAME: ci-planner
           PLANNER_PASSWORD: ci-planner-password-not-for-production
+          DEMO_QUICK_LOGIN: "true"
         run: |
           docker compose up --detach
           for i in {1..30}; do
@@ -50,8 +52,17 @@ jobs:
           curl --fail --silent http://127.0.0.1/map-integration.js | grep -q "tile.openstreetmap.org"
           curl --fail --silent http://127.0.0.1/observability.js | grep -q "Langfuse"
           curl --fail --silent http://127.0.0.1/auth.js | grep -q "grp-authenticated"
+          curl --fail --silent http://127.0.0.1/feedback.js | grep -q "api/feedback"
           test "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1/api/observability/status)" = "401"
+          curl --fail --silent http://127.0.0.1/api/auth/demo-status | grep -q '"plannerQuickLogin":true'
+          curl --fail --silent --cookie-jar /tmp/planner-cookies --header 'Content-Type: application/json' --data '{}' http://127.0.0.1/api/auth/demo-planner | grep -q '"role":"planner"'
+          curl --fail --silent --cookie /tmp/planner-cookies --header 'Content-Type: application/json' --data '{"name":"CI Planner","hub":"EAP","category":"comment","message":"Automated feedback smoke test"}' http://127.0.0.1/api/feedback | grep -q '"recorded":true'
+          test "$(curl --silent --cookie /tmp/planner-cookies --output /dev/null --write-out '%{http_code}' http://127.0.0.1/api/admin/feedback)" = "403"
           curl --fail --silent --cookie-jar /tmp/grp-cookies --header 'Content-Type: application/json' --data '{"username":"ci-admin","password":"ci-admin-password-not-for-production"}' http://127.0.0.1/api/auth/login | grep -q '"role":"admin"'
+          curl --fail --silent --cookie /tmp/grp-cookies http://127.0.0.1/api/admin/feedback | grep -q '"name":"CI Planner"'
+          curl --fail --silent --cookie /tmp/grp-cookies http://127.0.0.1/api/admin/feedback/export.csv | grep -q 'CI Planner'
+          ./scripts/feedback-backup.sh
+          test -s "$(find backups -name 'grp-feedback-*.tgz' | head -1)"
           curl --fail --silent --cookie /tmp/grp-cookies http://127.0.0.1/api/observability/status | grep -q '"mode":"mock"'
           curl --fail --silent --cookie /tmp/grp-cookies http://127.0.0.1/api/admin/assurance/dashboard | grep -q '"masterAllowed":false'
           test "$(curl --silent --cookie /tmp/grp-cookies --header 'Content-Type: application/json' --data '{"action":"enable"}' --output /dev/null --write-out '%{http_code}' http://127.0.0.1/api/admin/ai-access)" = "409"

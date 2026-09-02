@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.9.0-prototype
+
+- Added optional one-click Planner demo access without exposing account credentials; Admin access remains password-protected.
+- Added authenticated hub feedback submission with name, hub, category, text, optional HTTP/HTTPS document link and an optional 1 MB PNG/JPG/WebP/DOCX attachment.
+- Added server-side file-signature checks, generated storage names, submission rate limiting and persistent Docker storage.
+- Added an Admin-only feedback inbox with status management, protected attachment downloads and CSV export.
+- Added safe migration of the missing Planner quick-login setting for existing Lightsail `.env` files and a feedback-volume backup script.
+- Added upload progress, feedback reference numbers and CI/API/browser coverage for the new workflow.
+- Fixed map controls appearing above the preparedness investment-brief dialog and other global overlays.
+- Reduced the large flood-scenario evidence card to a compact secondary information icon; RP scenario context remains in the status bar.
+- Permitted an explicitly configured HTTP-only demonstration while retaining a clear warning that feedback and session traffic are not encrypted.
+
 ## 0.8.0-prototype
 
 - Made AI generation deny-by-default with the server master lock `AI_FEATURE_ALLOWED=false`.

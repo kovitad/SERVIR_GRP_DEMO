@@ -6,6 +6,7 @@ LABEL org.opencontainers.image.title="GRP AI Observability Backend" \
 WORKDIR /app
 COPY server.js ./server.js
 COPY data ./data
+RUN mkdir -p /app/storage && chown node:node /app/storage
 
 ENV NODE_ENV=production \
     PORT=3000

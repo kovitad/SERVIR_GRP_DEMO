@@ -53,6 +53,10 @@ services:
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
       PLANNER_USERNAME: ${PLANNER_USERNAME:-}
       PLANNER_PASSWORD: ${PLANNER_PASSWORD:-}
+      DEMO_QUICK_LOGIN: ${DEMO_QUICK_LOGIN:-false}
+      FEEDBACK_STORAGE_DIR: /app/storage
+    volumes:
+      - feedback_data:/app/storage
     expose:
       - "3000"
     security_opt:
@@ -68,3 +72,4 @@ services:
 volumes:
   caddy_data:
   caddy_config:
+  feedback_data:

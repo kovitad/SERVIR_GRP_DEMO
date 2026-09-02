@@ -1,5 +1,7 @@
 const http = require('node:http');
 const crypto = require('node:crypto');
+const fs = require('node:fs');
+const path = require('node:path');
 const DASHBOARD_DATA = require('./data/langfuse-dashboard-2026-08-31.json');
 
 const PORT = Number(process.env.PORT || 3000);
@@ -18,7 +20,14 @@ const ADMIN_USERNAME = process.env.ADMIN_USERNAME || '';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '';
 const PLANNER_USERNAME = process.env.PLANNER_USERNAME || '';
 const PLANNER_PASSWORD = process.env.PLANNER_PASSWORD || '';
+const DEMO_QUICK_LOGIN = String(process.env.DEMO_QUICK_LOGIN || 'false').toLowerCase() === 'true';
+const FEEDBACK_STORAGE_DIR = path.resolve(process.env.FEEDBACK_STORAGE_DIR || './storage');
+const FEEDBACK_FILE = path.join(FEEDBACK_STORAGE_DIR, 'feedback.json');
 const MAX_BODY = 32 * 1024;
+const MAX_FEEDBACK_BODY = 1500 * 1024;
+const MAX_ATTACHMENT = 1024 * 1024;
+const FEEDBACK_HUBS = new Set(['EAP','TSA','SA','WA','ESA','CA','Other']);
+const FEEDBACK_CATEGORIES = new Set(['question','suggestion','problem','data-correction','comment','compliment','other']);
 const RATE_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT = 5;
 const LOGIN_WINDOW_MS = 15 * 60 * 1000;
@@ -27,6 +36,7 @@ const SESSION_TTL_MS = 8 * 60 * 60 * 1000;
 const SESSION_COOKIE = 'grp_session';
 const rateBuckets = new Map();
 const loginBuckets = new Map();
+const feedbackBuckets = new Map();
 const sessions = new Map();
 const usageEvents = [];
 const aiRuntime = {enabled:false,enabledAt:null,expiresAt:null,remainingRequests:0,enabledBy:null};
@@ -59,11 +69,18 @@ function json(res, status, value) {
   res.end(body);
 }
 
-function readJson(req) {
+function readJson(req, limit = MAX_BODY) {
   return new Promise((resolve, reject) => {
-    let raw = '';
-    req.on('data', chunk => { raw += chunk; if (Buffer.byteLength(raw) > MAX_BODY) reject(new Error('Request too large')); });
-    req.on('end', () => { try { resolve(raw ? JSON.parse(raw) : {}); } catch { reject(new Error('Invalid JSON')); } });
+    let raw = '', failed = false;
+    req.on('data', chunk => {
+      if (failed) return;
+      raw += chunk;
+      if (Buffer.byteLength(raw) > limit) { failed = true; reject(new Error('Request too large')); }
+    });
+    req.on('end', () => {
+      if (failed) return;
+      try { resolve(raw ? JSON.parse(raw) : {}); } catch { reject(new Error('Invalid JSON')); }
+    });
     req.on('error', reject);
   });
 }
@@ -120,6 +137,12 @@ function authenticate(username, password) {
   if (safeEqual(username, ADMIN_USERNAME) && safeEqual(password, ADMIN_PASSWORD)) return {username:ADMIN_USERNAME, role:'admin'};
   if (safeEqual(username, PLANNER_USERNAME) && safeEqual(password, PLANNER_PASSWORD)) return {username:PLANNER_USERNAME, role:'planner'};
   return null;
+}
+function startSession(req, res, account) {
+  const token = crypto.randomBytes(32).toString('base64url');
+  sessions.set(token,{username:account.username,role:account.role,createdAt:Date.now(),expiresAt:Date.now()+SESSION_TTL_MS});
+  res.setHeader('Set-Cookie',sessionCookie(req,token));
+  return json(res,200,{authenticated:true,user:account});
 }
 function providersConfigured() { return Boolean(OPENAI_API_KEY && LANGFUSE_PUBLIC_KEY && LANGFUSE_SECRET_KEY); }
 function disableAIRuntime() { Object.assign(aiRuntime,{enabled:false,enabledAt:null,expiresAt:null,remainingRequests:0,enabledBy:null}); }
@@ -264,7 +287,7 @@ async function explain(payload, actor, req) {
     output:{answer:generation.text,limitations:LIMITATIONS[language]},
     userId:actor?.username || undefined,
     metadata:{environment:LANGFUSE_ENVIRONMENT,pilot:'Type B-lite',humanReviewRequired:true,evidenceIds:EVIDENCE.map(x=>x.id),applicationRole:actor?.role||'unknown'},
-    tags:['grp','type-b-lite','shelter-proximity',language,actor?.role||'unknown'], release:'0.8.0', version:'grp-observability-pilot-v1.0', public:false
+    tags:['grp','type-b-lite','shelter-proximity',language,actor?.role||'unknown'], release:'0.9.0', version:'grp-observability-pilot-v1.0', public:false
   };
   const events = [event('trace-create',traceBody,iso(traceStart))];
   for (const op of operations) {
@@ -337,10 +360,90 @@ function allowRequest(req, session) {
   recent.push(now);rateBuckets.set(key,recent);return true;
 }
 
+function allowFeedback(req, session) {
+  const key=`${session.username}:${clientAddress(req)}`;
+  const now=Date.now(), recent=(feedbackBuckets.get(key)||[]).filter(x=>now-x<60*60*1000);
+  if(recent.length>=10){feedbackBuckets.set(key,recent);return false;}
+  recent.push(now);feedbackBuckets.set(key,recent);return true;
+}
+function ensureFeedbackStorage() {
+  fs.mkdirSync(FEEDBACK_STORAGE_DIR,{recursive:true});
+  if(!fs.existsSync(FEEDBACK_FILE))fs.writeFileSync(FEEDBACK_FILE,'[]\n',{encoding:'utf8',mode:0o600});
+}
+function loadFeedback() {
+  ensureFeedbackStorage();
+  try { const value=JSON.parse(fs.readFileSync(FEEDBACK_FILE,'utf8')); return Array.isArray(value)?value:[]; }
+  catch { throw new Error('Feedback store is unavailable'); }
+}
+function saveFeedback(items) {
+  ensureFeedbackStorage();
+  const temporary=`${FEEDBACK_FILE}.${process.pid}.tmp`;
+  fs.writeFileSync(temporary,JSON.stringify(items,null,2)+'\n',{encoding:'utf8',mode:0o600});
+  fs.renameSync(temporary,FEEDBACK_FILE);
+}
+function cleanText(value, maximum) { return String(value||'').trim().slice(0,maximum); }
+function validDocumentUrl(value) {
+  if(!value)return '';
+  try { const parsed=new URL(value); return ['http:','https:'].includes(parsed.protocol)?parsed.toString():''; }
+  catch { return ''; }
+}
+function attachmentType(file) {
+  const name=cleanText(file?.name,180), extension=path.extname(name).toLowerCase();
+  if(!['.png','.jpg','.jpeg','.webp','.docx'].includes(extension))throw new Error('Attachment type is not allowed');
+  if(typeof file?.data!=='string'||!file.data)throw new Error('Attachment data is missing');
+  let buffer;
+  try { buffer=Buffer.from(file.data,'base64'); } catch { throw new Error('Attachment data is invalid'); }
+  if(!buffer.length||buffer.length>MAX_ATTACHMENT)throw new Error('Attachment must be 1 MB or smaller');
+  const png=buffer.length>8&&buffer.subarray(0,8).equals(Buffer.from([0x89,0x50,0x4e,0x47,0x0d,0x0a,0x1a,0x0a]));
+  const jpeg=buffer.length>3&&buffer[0]===0xff&&buffer[1]===0xd8&&buffer[2]===0xff;
+  const webp=buffer.length>12&&buffer.subarray(0,4).toString()==='RIFF'&&buffer.subarray(8,12).toString()==='WEBP';
+  const docx=buffer.length>4&&buffer[0]===0x50&&buffer[1]===0x4b&&buffer.includes(Buffer.from('[Content_Types].xml'))&&buffer.includes(Buffer.from('word/'));
+  const matched=(extension==='.png'&&png)||(['.jpg','.jpeg'].includes(extension)&&jpeg)||(extension==='.webp'&&webp)||(extension==='.docx'&&docx);
+  if(!matched)throw new Error('Attachment content does not match its file type');
+  const mime=extension==='.png'?'image/png':extension==='.webp'?'image/webp':['.jpg','.jpeg'].includes(extension)?'image/jpeg':'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+  return {name,extension,mime,buffer};
+}
+function submitFeedback(payload, actor) {
+  const name=cleanText(payload.name,100), hub=cleanText(payload.hub,20), category=cleanText(payload.category,40);
+  const message=cleanText(payload.message,5000), rawUrl=cleanText(payload.documentUrl,1000), documentUrl=validDocumentUrl(rawUrl);
+  if(name.length<2)throw new Error('Name is required');
+  if(!FEEDBACK_HUBS.has(hub))throw new Error('Select a valid hub');
+  if(!FEEDBACK_CATEGORIES.has(category))throw new Error('Select a valid feedback category');
+  if(rawUrl&&!documentUrl)throw new Error('Document link must use HTTP or HTTPS');
+  if(!message&&!documentUrl&&!payload.attachment)throw new Error('Add feedback text, a document link or an attachment');
+  const id=crypto.randomUUID(), submittedAt=iso();
+  const reference=`FB-${submittedAt.slice(0,10).replaceAll('-','')}-${id.slice(0,6).toUpperCase()}`;
+  let attachment=null;
+  if(payload.attachment){
+    const file=attachmentType(payload.attachment), storageName=`${id}${file.extension}`;
+    ensureFeedbackStorage();fs.writeFileSync(path.join(FEEDBACK_STORAGE_DIR,storageName),file.buffer,{mode:0o600});
+    attachment={originalName:file.name,storageName,mime:file.mime,size:file.buffer.length};
+  }
+  const item={id,reference,submittedAt,name,hub,category,message,documentUrl,attachment,status:'new',submittedBy:actor.username};
+  const items=loadFeedback();items.unshift(item);saveFeedback(items);
+  return {recorded:true,reference,submittedAt};
+}
+function feedbackPublicItem(item) {
+  return {...item,attachment:item.attachment?{name:item.attachment.originalName,size:item.attachment.size,url:`/api/admin/feedback/attachment/${item.id}`}:null};
+}
+function csvCell(value) { let text=String(value??''); if(/^[=+\-@]/.test(text))text=`'${text}`; return `"${text.replaceAll('"','""')}"`; }
+function feedbackCsv(items) {
+  const headers=['Reference','Submitted at','Name','Hub','Category','Status','Feedback','Document URL','Attachment','Submitted by'];
+  const rows=items.map(item=>[item.reference,item.submittedAt,item.name,item.hub,item.category,item.status,item.message,item.documentUrl,item.attachment?.originalName||'',item.submittedBy]);
+  return [headers,...rows].map(row=>row.map(csvCell).join(',')).join('\r\n')+'\r\n';
+}
+function sendFile(res, status, body, type, filename) {
+  res.writeHead(status,{'Content-Type':type,'Content-Length':body.length,'Content-Disposition':`attachment; filename="${String(filename).replace(/[^a-zA-Z0-9._-]/g,'_')}"`,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
+  res.end(body);
+}
+
 const SERVER_STARTED_AT = iso();
 const server = http.createServer(async (req, res) => {
   try {
-    if (req.method === 'GET' && req.url === '/healthz') return json(res,200,{status:'ok',mode:MODE,openaiConfigured:Boolean(OPENAI_API_KEY),langfuseConfigured:Boolean(LANGFUSE_PUBLIC_KEY&&LANGFUSE_SECRET_KEY),authConfigured:authConfigured()});
+    if (req.method === 'GET' && req.url === '/healthz') return json(res,200,{status:'ok',mode:MODE,openaiConfigured:Boolean(OPENAI_API_KEY),langfuseConfigured:Boolean(LANGFUSE_PUBLIC_KEY&&LANGFUSE_SECRET_KEY),authConfigured:authConfigured(),demoQuickLogin:DEMO_QUICK_LOGIN});
+    if (req.method === 'GET' && req.url === '/api/auth/demo-status') {
+      return json(res,200,{plannerQuickLogin:DEMO_QUICK_LOGIN&&Boolean(PLANNER_USERNAME)});
+    }
     if (req.method === 'POST' && req.url === '/api/auth/login') {
       if (!authConfigured()) return json(res,503,{error:'Application accounts are not configured.'});
       if (loginRateLimited(req)) return json(res,429,{error:'Too many sign-in attempts. Try again later.'});
@@ -348,10 +451,13 @@ const server = http.createServer(async (req, res) => {
       const account = authenticate(String(payload.username || '').slice(0,128), String(payload.password || '').slice(0,512));
       if (!account) { recordLoginFailure(req); return json(res,401,{error:'Invalid username or password.'}); }
       loginBuckets.delete(clientAddress(req));
-      const token = crypto.randomBytes(32).toString('base64url');
-      sessions.set(token,{username:account.username,role:account.role,createdAt:Date.now(),expiresAt:Date.now()+SESSION_TTL_MS});
-      res.setHeader('Set-Cookie',sessionCookie(req,token));
-      return json(res,200,{authenticated:true,user:account});
+      return startSession(req,res,account);
+    }
+    if (req.method === 'POST' && req.url === '/api/auth/demo-planner') {
+      if(!DEMO_QUICK_LOGIN)return json(res,404,{error:'Demo Planner access is not enabled.'});
+      if(!PLANNER_USERNAME)return json(res,503,{error:'The Planner demo account is not configured.'});
+      if(loginRateLimited(req))return json(res,429,{error:'Too many access attempts. Try again later.'});
+      return startSession(req,res,{username:PLANNER_USERNAME,role:'planner'});
     }
     if (req.method === 'GET' && req.url === '/api/auth/session') {
       const session = getSession(req);
@@ -363,6 +469,38 @@ const server = http.createServer(async (req, res) => {
       if (session) sessions.delete(session.token);
       res.setHeader('Set-Cookie',sessionCookie(req,'',0));
       return json(res,200,{authenticated:false});
+    }
+    if (req.method === 'POST' && req.url === '/api/feedback') {
+      const session=requireSession(req,res);if(!session)return;
+      if(!allowFeedback(req,session))return json(res,429,{error:'Feedback submission limit reached. Try again later.'});
+      return json(res,201,submitFeedback(await readJson(req,MAX_FEEDBACK_BODY),session));
+    }
+    if (req.method === 'GET' && req.url === '/api/admin/feedback') {
+      if(!requireSession(req,res,['admin']))return;
+      return json(res,200,{items:loadFeedback().map(feedbackPublicItem)});
+    }
+    if (req.method === 'GET' && req.url === '/api/admin/feedback/export.csv') {
+      if(!requireSession(req,res,['admin']))return;
+      const body=Buffer.from(feedbackCsv(loadFeedback()),'utf8');
+      return sendFile(res,200,body,'text/csv; charset=utf-8','grp-feedback.csv');
+    }
+    if (req.method === 'GET' && req.url.startsWith('/api/admin/feedback/attachment/')) {
+      if(!requireSession(req,res,['admin']))return;
+      const id=req.url.slice('/api/admin/feedback/attachment/'.length);
+      const item=loadFeedback().find(value=>value.id===id);
+      if(!item?.attachment)return json(res,404,{error:'Attachment not found.'});
+      const file=path.join(FEEDBACK_STORAGE_DIR,item.attachment.storageName);
+      if(!fs.existsSync(file))return json(res,404,{error:'Attachment file not found.'});
+      return sendFile(res,200,fs.readFileSync(file),item.attachment.mime,item.attachment.originalName);
+    }
+    if (req.method === 'POST' && req.url === '/api/admin/feedback/status') {
+      if(!requireSession(req,res,['admin']))return;
+      const payload=await readJson(req), statuses=new Set(['new','reviewed','follow-up','closed']);
+      if(!statuses.has(payload.status))return json(res,400,{error:'Invalid feedback status.'});
+      const items=loadFeedback(), item=items.find(value=>value.id===payload.id);
+      if(!item)return json(res,404,{error:'Feedback not found.'});
+      item.status=payload.status;item.updatedAt=iso();saveFeedback(items);
+      return json(res,200,{updated:true,item:feedbackPublicItem(item)});
     }
     if (req.method === 'GET' && req.url === '/api/admin/assurance/dashboard') {
       if (!requireSession(req,res,['admin'])) return;
@@ -402,7 +540,7 @@ const server = http.createServer(async (req, res) => {
     return json(res,404,{error:'Not found'});
   } catch (error) {
     console.error(new Date().toISOString(), req.method, req.url, error.message);
-    const clientError = ['Invalid JSON','Request too large','Invalid trace ID','Feedback must be up or down','The live pilot supports only Phaya Thai, RP100 and the 1 km threshold.'].includes(error.message);
+    const clientError = ['Invalid JSON','Request too large','Invalid trace ID','Feedback must be up or down','The live pilot supports only Phaya Thai, RP100 and the 1 km threshold.','Name is required','Select a valid hub','Select a valid feedback category','Document link must use HTTP or HTTPS','Add feedback text, a document link or an attachment','Attachment type is not allowed','Attachment data is missing','Attachment data is invalid','Attachment must be 1 MB or smaller','Attachment content does not match its file type'].includes(error.message);
     return json(res,clientError?400:502,{error:clientError?error.message:'The observable AI request could not be completed.',detail:process.env.NODE_ENV==='development'?error.message:undefined});
   }
 });

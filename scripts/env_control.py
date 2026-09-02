@@ -117,6 +117,7 @@ def status(values: dict[str, str]) -> None:
     master = truthy(values.get("AI_FEATURE_ALLOWED"))
     print(f"Site address: {values.get('SITE_ADDRESS') or '(not configured)'}")
     print(f"Accounts configured: {'yes' if all(values.get(k) for k in ('ADMIN_USERNAME','ADMIN_PASSWORD','PLANNER_USERNAME','PLANNER_PASSWORD')) else 'no'}")
+    print(f"Planner quick login: {'enabled' if truthy(values.get('DEMO_QUICK_LOGIN')) else 'disabled'}")
     print(f"AI mode: {values.get('AI_OBSERVABILITY_MODE') or 'mock'}")
     print(f"AI environment master: {'ALLOWED' if master else 'LOCKED'}")
     print(f"HTTPS required: {'yes' if truthy(values.get('AI_REQUIRE_HTTPS','true')) else 'no'}")
@@ -127,7 +128,7 @@ def status(values: dict[str, str]) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("command", choices=["validate", "status", "allow", "lock"])
+    parser.add_argument("command", choices=["validate", "status", "migrate", "allow", "lock"])
     parser.add_argument("--env-file", type=Path, default=ENV_FILE)
     args = parser.parse_args()
     path = args.env_file.resolve()
@@ -138,6 +139,17 @@ def main() -> int:
 
     if args.command == "status":
         status(values)
+        return 0
+    if args.command == "migrate":
+        added: list[str] = []
+        if "DEMO_QUICK_LOGIN" not in values:
+            update_value(path, "DEMO_QUICK_LOGIN", "true")
+            added.append("DEMO_QUICK_LOGIN=true")
+        if added:
+            print("Added missing non-secret release controls: " + ", ".join(added))
+        else:
+            print("No environment migration required.")
+        print("Existing account, provider and AI control values were not changed or displayed.")
         return 0
     if args.command == "lock":
         update_value(path, "AI_FEATURE_ALLOWED", "false")

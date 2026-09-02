@@ -1,6 +1,6 @@
 # AI / developer handover
 
-**Last updated:** 1 September 2026
+**Last updated:** 2 September 2026
 **Repository:** `https://github.com/kovitad/SERVIR_GRP_DEMO.git`  
 **Branch:** `main`
 
@@ -8,7 +8,7 @@
 
 The deployable prototype now consists of a Caddy frontend and a separate server-side Node.js API packaged with Docker Compose. It supports the Thailand evacuation-preparedness journey, a real interactive OpenStreetMap basemap, SERVIR branding, application-wide EN/TH switching and a live Type B-lite AI observability pilot.
 
-The latest release is **0.8.0**. AI generation is deny-by-default behind an environment master lock, starts runtime OFF after every restart, and can be enabled only by Admin for a short time/request-budget window. Public HTTP generation is blocked when `AI_REQUIRE_HTTPS=true`; local 127.0.0.1 testing remains available. The release also includes the 0.7.0 overlay/map-only UX and the 0.6.0 assurance dashboard/per-user usage.
+The latest release is **0.9.0**. It adds optional one-click Planner-only demo access and persistent hub feedback collection with an Admin-only management inbox. AI generation is deny-by-default behind an environment master lock, starts runtime OFF after every restart, and can be enabled only by Admin for a short time/request-budget window. Public HTTP generation is blocked when `AI_REQUIRE_HTTPS=true`; local 127.0.0.1 testing remains available. The release also includes the 0.7.0 overlay/map-only UX and the 0.6.0 assurance dashboard/per-user usage.
 
 It includes server-side sign-in for administrator and planner roles plus an administrator-only assurance dashboard based on the normalised 31 August Langfuse export. New live traces receive the authenticated username as server-controlled Langfuse `userId`, and the dashboard reports per-user requests, feedback, tokens, cost, average latency and last activity since backend start; historical pre-login traces remain unattributed. Administrators enter the dashboard, trace explorer and evaluation/review views. Planners enter the planning workspace and can use the controlled explanation/feedback flow only while Admin has opened an approved runtime window.
 
@@ -16,15 +16,16 @@ The pilot remains restricted to one question for Phaya Thai, RP100 and the 1 km 
 
 ## Current handover snapshot — what we are up to
 
-- **Local state:** validated and running at `http://127.0.0.1:8080` through `scripts/dev-local.js`.
+- **Local state:** validated with Docker Desktop and running at `http://127.0.0.1` through Caddy and Docker Compose; both containers are healthy.
 - **AI state now:** OFF and environment-locked because the ignored local `.env` has `AI_FEATURE_ALLOWED=false`. Planner sees **AI disabled by admin**; direct explanation attempts return HTTP 423 without calling OpenAI.
 - **Admin control:** AI Assurance displays the environment lock, runtime state, automatic expiry and remaining global request budget. If the server master is allowed, Admin can enable 15 minutes / 5 requests by default and can disable immediately.
-- **Transport protection:** `AI_REQUIRE_HTTPS=true` allows local loopback testing but blocks generation over public HTTP. A public AWS live-AI demo therefore needs DNS and HTTPS.
-- **Authentication:** Admin and Planner roles use backend sessions; historical dashboard and toggle APIs are Admin-only.
+- **Transport state:** the accepted temporary demo uses `SITE_ADDRESS=:80` and permits HTTP while AI remains environment-locked. HTTP does not encrypt names, feedback, attachments, credentials or session cookies; use DNS/HTTPS before collecting sensitive content or enabling AI.
+- **Authentication:** Admin and Planner roles use backend sessions; `DEMO_QUICK_LOGIN=true` permits one-click Planner access only, while Admin remains behind private credentials. Historical dashboard, feedback-management and AI-toggle APIs are Admin-only.
+- **Hub feedback:** signed-in users can submit text, an HTTP/HTTPS document link or one validated 1 MB PNG/JPG/WebP/DOCX attachment. Feedback persists in the `feedback_data` Docker volume; Admin can review status, download attachments and export CSV.
 - **Assurance dashboard:** six normalised historical Langfuse traces, evaluation distributions, trace detail, human-review queue and authenticated runtime usage.
-- **Planning UX:** competing overlays auto-close, Escape/outside-click dismissal is supported, hidden planning information is inert, the restore control is in the toolbar, and Map only is reversible.
+- **Planning UX:** competing overlays auto-close, Escape/outside-click dismissal is supported, hidden planning information is inert, the restore control is in the toolbar, and Map only is reversible. Global dialogs now remain above all Leaflet/map controls, and flood-scenario evidence is a compact secondary information icon.
 - **Deployment state:** packaged for Docker Compose/Lightsail but not yet deployed from this release. Backend port 3000 remains internal.
-- **Runtime persistence boundary:** sessions, Admin AI enablement and per-user runtime aggregates reset on backend restart. Langfuse traces persist according to the configured project policy.
+- **Persistence boundary:** hub feedback and attachments persist in the Docker `feedback_data` volume. Sessions, Admin AI enablement and per-user runtime aggregates reset on backend restart. Langfuse traces persist according to the configured project policy.
 
 ## Source of truth
 
@@ -36,8 +37,9 @@ Use these files for GitHub and deployment work:
 - `public/i18n.js` — English/Thai runtime localisation, including dynamic DOM content
 - `public/map-integration.js` — Leaflet setup, AOI navigation and map-bound planning overlays
 - `public/observability.js` and `public/observability.css` — bilingual answer, trace, evaluation, comparison and dashboard experience
-- `public/auth.js` and `public/auth.css` — login, session restoration, sign-out and role-based UI
-- `backend/server.js` — authentication/session and admin dashboard APIs plus restricted server-side OpenAI workflow, deterministic checks, narrow judges, Langfuse ingestion and feedback
+- `public/auth.js` and `public/auth.css` — login, Planner quick access, session restoration, sign-out and role-based UI
+- `public/feedback.js` and `public/feedback.css` — feedback submission, upload progress and Admin inbox
+- `backend/server.js` — authentication/session, persistent feedback and admin dashboard APIs plus restricted server-side OpenAI workflow, deterministic checks, narrow judges, Langfuse ingestion and feedback
 - `backend/data/langfuse-dashboard-2026-08-31.json` — six normalised pilot traces from the static 31 August export; demonstration source, not live monitoring
 - `backend/Dockerfile` — unprivileged Node.js backend image
 - `public/vendor/leaflet/` — locally hosted Leaflet 1.9.4 JavaScript, CSS and marker assets
@@ -46,8 +48,9 @@ Use these files for GitHub and deployment work:
 - `scripts/dev-local.js` — zero-dependency local frontend/backend runner on `127.0.0.1:8080`
 - `scripts/bootstrap-ubuntu.sh` — first-time Ubuntu/Lightsail setup
 - `scripts/deploy.sh` — validate environment, initial build/deploy and health check
-- `scripts/update.sh` — pull, validate environment, rebuild, restart and health check
-- `scripts/env_control.py` — secret-safe `.env` validation and AI master-state updates
+- `scripts/update.sh` — pull, migrate missing non-secret controls, validate environment, rebuild, restart and health check
+- `scripts/feedback-backup.sh` — create a permission-restricted archive of the persistent feedback store
+- `scripts/env_control.py` — secret-safe `.env` migration/validation and AI master-state updates
 - `scripts/ai-master.sh` — AWS operator commands for AI status/allow/lock without displaying or changing provider keys
 
 The parent workspace also has copies under `prototype/`, but **`prototype/github/public/` is the deployable GitHub source of truth**. Synchronise intentionally if work begins in the parent prototype.
@@ -63,8 +66,8 @@ The parent workspace also has copies under `prototype/`, but **`prototype/github
 - Required attribution is displayed by Leaflet
 - Caddy CSP explicitly permits map images from `https://tile.openstreetmap.org`
 - Container health check verifies `http://127.0.0.1/healthz`
-- Persistent Caddy data/config use named Docker volumes
-- `.env.example` defaults to `SITE_ADDRESS=:80`, `AI_OBSERVABILITY_MODE=mock`, `AI_FEATURE_ALLOWED=false` and `AI_REQUIRE_HTTPS=true`; both roles require populated account variables; live provider configuration alone cannot enable generation without the environment lock and Admin runtime window
+- Persistent Caddy data/config and hub feedback use named Docker volumes (`caddy_data`, `caddy_config`, `feedback_data`)
+- `.env.example` defaults to `SITE_ADDRESS=:80`, `DEMO_QUICK_LOGIN=true`, `AI_OBSERVABILITY_MODE=mock`, `AI_FEATURE_ALLOWED=false` and `AI_REQUIRE_HTTPS=false` for the accepted temporary HTTP/no-AI demo; both roles require populated account variables; live provider configuration alone cannot enable generation without the environment lock and Admin runtime window
 - Set `SITE_ADDRESS=your.domain.example` after DNS points to the Lightsail static IP for Caddy automatic HTTPS
 
 Lightsail also needs ports 22, 80 and 443 enabled in its networking firewall. The bootstrap script configures the matching Ubuntu UFW rules and installs Docker Engine plus the Compose plugin.
@@ -87,22 +90,53 @@ cp .env.example .env
 curl -f http://127.0.0.1/healthz
 ```
 
-Subsequent normal code deployment:
+### Upgrade the existing AWS/Lightsail Docker deployment from 0.8.0
+
+The server already has Docker and an existing ignored `.env`. Do not replace that file because it may contain private Admin credentials or provider settings.
+
+```bash
+cd SERVIR_GRP_DEMO
+
+git pull --ff-only
+
+# The new script adds DEMO_QUICK_LOGIN=true only when the setting is absent.
+# It never prints or changes account passwords or provider keys.
+python3 scripts/env_control.py migrate
+python3 scripts/env_control.py status
+python3 scripts/env_control.py validate
+
+./scripts/update.sh
+curl -f http://127.0.0.1/healthz
+docker compose ps
+```
+
+Compose automatically creates the new persistent `feedback_data` volume during `update.sh`. Existing Caddy volumes are retained. The backend restarts, so existing login sessions and temporary AI runtime state reset; stored feedback survives subsequent rebuilds/restarts.
+
+Verify after upgrade:
+
+1. Open `http://LIGHTSAIL_STATIC_IP/?demo=planner` and confirm one-click Planner access.
+2. Submit one temporary text feedback item.
+3. Sign out, sign in with the private Admin account and open **Feedback inbox**.
+4. Change its status and export CSV.
+5. Create the first backup with `./scripts/feedback-backup.sh`.
+
+For subsequent normal code deployments:
 
 ```bash
 cd SERVIR_GRP_DEMO
 ./scripts/update.sh
 ```
 
-If new `.env` controls are introduced, pull first, compare `.env.example`, amend the existing ignored `.env`, validate and rerun update:
+`update.sh` now runs the safe environment migration before validation. It preserves existing values and only supplies missing non-secret release controls.
+
+Back up hub feedback after meaningful review sessions:
 
 ```bash
-git pull --ff-only
-# edit .env without replacing provider secrets
-python3 scripts/env_control.py status
-python3 scripts/env_control.py validate
-./scripts/update.sh
+./scripts/feedback-backup.sh
+# Copy backups/grp-feedback-*.tgz to approved storage outside the instance.
 ```
+
+Never run `docker compose down -v` during a normal update; `-v` deletes feedback and Caddy volumes.
 
 AI master control does not require a full application rebuild:
 
@@ -117,6 +151,8 @@ AI master control does not require a full application rebuild:
 - `node --check` for frontend JavaScript, `backend/server.js` and `scripts/dev-local.js`
 - Local runner smoke test confirmed the homepage and live backend status through `127.0.0.1:8080`
 - `docker compose config --quiet`
+- Docker Desktop image build and healthy-container startup for release 0.9.0
+- API and browser validation of Planner quick login, text feedback, PNG/DOCX validation, the 1 MB limit, Admin isolation, status updates, CSV export and restart persistence
 - OpenAI model-access and Responses API preflight succeeded for `gpt-5.2`
 - Langfuse authentication and ingestion preflight succeeded
 - Live English and Thai pilot requests generated OpenAI answers and real Langfuse traces
@@ -128,21 +164,22 @@ AI master control does not require a full application rebuild:
 - Browser validation of OpenStreetMap loading, AOI fly-to, zoom/pan and illustrative Leaflet overlays
 - GitHub Actions now validates frontend/backend JavaScript, builds both Compose images, checks frontend health and the backend status route, and requests required assets
 
-The local Windows Docker Desktop daemon was still unavailable during the 28 August implementation, so a local container build could not be completed. The live backend and browser flow were exercised through a local development proxy. GitHub Actions remains the authoritative container build/smoke test after push.
+Docker Desktop was available for the 0.9.0 implementation. Both images built successfully, containers became healthy, and local API/browser tests covered Planner quick access, feedback submission, Admin isolation, status changes, CSV export and persistence across a backend restart.
 
 ## Important implementation notes
 
-1. Authentication uses eight-hour in-memory sessions with an HttpOnly, SameSite=Strict cookie and login throttling. Backend restarts sign users out. Environment-variable passwords and in-memory sessions are controlled-prototype measures; use an approved identity provider, password hashing, durable sessions and formal account lifecycle controls before broader use.
-2. `i18n.js` translates initial and dynamically inserted DOM text with a `MutationObserver`. Add new English UI phrases to its exact dictionary or ordered fragment list whenever `app.js` gains user-facing content.
-3. Preserve technical identifiers such as AOI, RP20/RP50/RP100, CRS, GeoJSON and H/M/L where appropriate.
-4. The prototype displays real AOI names but mocked boundaries, candidates, population and analytical results. Do not weaken these limitations.
-5. No individual or household locations are displayed. Vulnerability categories can overlap and must not be summed.
-6. Low/green risk does not mean safe, and candidate locations are not approved shelters.
-7. The OpenStreetMap basemap is real, but the AOI outline and all analytical overlays remain mocked. Public OSM tiles are appropriate only for this limited prototype; move to a managed or self-hosted provider before significant public traffic.
-8. Provider credentials exist only in ignored local `.env` or an approved deployment secret store. Never expose them through frontend JavaScript, screenshots, logs or Git.
-9. The backend accepts only Phaya Thai, RP100 and 1 km. It applies per-account/IP rate limiting plus an Admin-controlled global time/request budget. These are controlled-demo cost protections—not durable production quota enforcement or abuse prevention.
-10. The comparison baseline and historical dashboard values are demonstration fixtures. The current run, OpenAI usage, evaluator results, trace and feedback are live. Do not describe Screen 4 as a completed controlled Langfuse experiment.
-11. Cost is an application estimate using configured GPT-5.2 token rates; provider billing and Langfuse model pricing are authoritative.
+1. Authentication uses eight-hour in-memory sessions with an HttpOnly, SameSite=Strict cookie and login throttling. One-click demo access is Planner-only and controlled by `DEMO_QUICK_LOGIN`; Admin has no quick-login endpoint and retains private credential access. Backend restarts sign users out. Use an approved identity provider, password hashing, durable sessions and formal account lifecycle controls before broader use.
+2. Hub feedback is a low-volume file-backed prototype service. Back up the `feedback_data` volume and introduce an approved database, malware scanning, retention/deletion policy and records controls before broader collection.
+3. `i18n.js` translates initial and dynamically inserted DOM text with a `MutationObserver`. Add new English UI phrases to its exact dictionary or ordered fragment list whenever user-facing content is added.
+4. Preserve technical identifiers such as AOI, RP20/RP50/RP100, CRS, GeoJSON and H/M/L where appropriate.
+5. The prototype displays real AOI names but mocked boundaries, candidates, population and analytical results. Do not weaken these limitations.
+6. No individual or household locations are displayed. Vulnerability categories can overlap and must not be summed.
+7. Low/green risk does not mean safe, and candidate locations are not approved shelters.
+8. The OpenStreetMap basemap is real, but the AOI outline and all analytical overlays remain mocked. Public OSM tiles are appropriate only for this limited prototype; move to a managed or self-hosted provider before significant public traffic.
+9. Provider credentials exist only in ignored local `.env` or an approved deployment secret store. Never expose them through frontend JavaScript, screenshots, logs or Git.
+10. The backend accepts only Phaya Thai, RP100 and 1 km. It applies per-account/IP rate limiting plus an Admin-controlled global time/request budget. These are controlled-demo cost protections—not durable production quota enforcement or abuse prevention.
+11. The comparison baseline and historical dashboard values are demonstration fixtures. The current run, OpenAI usage, evaluator results, trace and feedback are live. Do not describe Screen 4 as a completed controlled Langfuse experiment.
+12. Cost is an application estimate using configured GPT-5.2 token rates; provider billing and Langfuse model pricing are authoritative.
 
 ## AI observability and evaluation — implemented Type B-lite pilot
 
