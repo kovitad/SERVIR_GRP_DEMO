@@ -26,7 +26,7 @@
 		@codeAssets path *.css *.js
 		header @codeAssets Cache-Control "no-cache, must-revalidate"
 
-		@mediaAssets path *.png *.svg *.ico
+		@mediaAssets path *.png *.webp *.svg *.ico
 		header @mediaAssets Cache-Control "public, max-age=3600"
 
 		try_files {path} /index.html

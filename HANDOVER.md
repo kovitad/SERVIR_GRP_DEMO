@@ -8,7 +8,7 @@
 
 The deployable prototype now consists of a Caddy frontend and a separate server-side Node.js API packaged with Docker Compose. It supports the Thailand evacuation-preparedness journey, a real interactive OpenStreetMap basemap, SERVIR branding, application-wide EN/TH switching and a live Type B-lite AI observability pilot.
 
-The latest release is **0.9.0**. It adds optional one-click Planner-only demo access and persistent hub feedback collection with an Admin-only management inbox. AI generation is deny-by-default behind an environment master lock, starts runtime OFF after every restart, and can be enabled only by Admin for a short time/request-budget window. Public HTTP generation is blocked when `AI_REQUIRE_HTTPS=true`; local 127.0.0.1 testing remains available. The release also includes the 0.7.0 overlay/map-only UX and the 0.6.0 assurance dashboard/per-user usage.
+The latest release is **0.9.1**. It presents the login cover as a responsive Thailand reference experience using the supplied flood-planning artwork, while retaining the 0.9.0 one-click Planner access and persistent hub feedback collection with an Admin-only management inbox. AI generation is deny-by-default behind an environment master lock, starts runtime OFF after every restart, and can be enabled only by Admin for a short time/request-budget window. Public HTTP generation is blocked when `AI_REQUIRE_HTTPS=true`; local 127.0.0.1 testing remains available. The release also includes the 0.7.0 overlay/map-only UX and the 0.6.0 assurance dashboard/per-user usage.
 
 It includes server-side sign-in for administrator and planner roles plus an administrator-only assurance dashboard based on the normalised 31 August Langfuse export. New live traces receive the authenticated username as server-controlled Langfuse `userId`, and the dashboard reports per-user requests, feedback, tokens, cost, average latency and last activity since backend start; historical pre-login traces remain unattributed. Administrators enter the dashboard, trace explorer and evaluation/review views. Planners enter the planning workspace and can use the controlled explanation/feedback flow only while Admin has opened an approved runtime window.
 
@@ -23,6 +23,7 @@ The pilot remains restricted to one question for Phaya Thai, RP100 and the 1 km 
 - **Authentication:** Admin and Planner roles use backend sessions; `DEMO_QUICK_LOGIN=true` permits one-click Planner access only, while Admin remains behind private credentials. Historical dashboard, feedback-management and AI-toggle APIs are Admin-only.
 - **Hub feedback:** signed-in users can submit text, an HTTP/HTTPS document link or one validated 1 MB PNG/JPG/WebP/DOCX attachment. Feedback persists in the `feedback_data` Docker volume; Admin can review status, download attachments and export CSV.
 - **Assurance dashboard:** six normalised historical Langfuse traces, evaluation distributions, trace detail, human-review queue and authenticated runtime usage.
+- **Login UX:** the cover clearly describes a Thailand reference experience—not a mandatory frontend for every Hub. The supplied flood-planning artwork is decorative, desktop retains two panels, and mobile prioritises the login form while hiding nonessential artwork.
 - **Planning UX:** competing overlays auto-close, Escape/outside-click dismissal is supported, hidden planning information is inert, the restore control is in the toolbar, and Map only is reversible. Global dialogs now remain above all Leaflet/map controls, and flood-scenario evidence is a compact secondary information icon.
 - **Deployment state:** packaged for Docker Compose/Lightsail but not yet deployed from this release. Backend port 3000 remains internal.
 - **Persistence boundary:** hub feedback and attachments persist in the Docker `feedback_data` volume. Sessions, Admin AI enablement and per-user runtime aggregates reset on backend restart. Langfuse traces persist according to the configured project policy.
@@ -43,6 +44,8 @@ Use these files for GitHub and deployment work:
 - `backend/data/langfuse-dashboard-2026-08-31.json` — six normalised pilot traces from the static 31 August export; demonstration source, not live monitoring
 - `backend/Dockerfile` — unprivileged Node.js backend image
 - `public/vendor/leaflet/` — locally hosted Leaflet 1.9.4 JavaScript, CSS and marker assets
+- `public/assets/thailand-flood-planning-cover.webp` — web-optimised decorative artwork from the approved 2 September login-cover instruction
+- `docs/02Sep2026/LOGIN_COVER_UPDATE.md` and screenshots — design decision, changed files and desktop/mobile evidence
 - `public/assets/servir-global-collaborative.png` — logo extracted from `prototype/27Aug2026/SERVIR Global Platform PoC.pptx` in the original workspace
 - `Dockerfile`, `Caddyfile`, `compose.yaml` — frontend/backend container package and `/api/*` reverse proxy
 - `scripts/dev-local.js` — zero-dependency local frontend/backend runner on `127.0.0.1:8080`
@@ -151,7 +154,7 @@ AI master control does not require a full application rebuild:
 - `node --check` for frontend JavaScript, `backend/server.js` and `scripts/dev-local.js`
 - Local runner smoke test confirmed the homepage and live backend status through `127.0.0.1:8080`
 - `docker compose config --quiet`
-- Docker Desktop image build and healthy-container startup for release 0.9.0
+- Docker Desktop image build and healthy-container startup for release 0.9.1
 - API and browser validation of Planner quick login, text feedback, PNG/DOCX validation, the 1 MB limit, Admin isolation, status updates, CSV export and restart persistence
 - OpenAI model-access and Responses API preflight succeeded for `gpt-5.2`
 - Langfuse authentication and ingestion preflight succeeded
@@ -164,7 +167,7 @@ AI master control does not require a full application rebuild:
 - Browser validation of OpenStreetMap loading, AOI fly-to, zoom/pan and illustrative Leaflet overlays
 - GitHub Actions now validates frontend/backend JavaScript, builds both Compose images, checks frontend health and the backend status route, and requests required assets
 
-Docker Desktop was available for the 0.9.0 implementation. Both images built successfully, containers became healthy, and local API/browser tests covered Planner quick access, feedback submission, Admin isolation, status changes, CSV export and persistence across a backend restart.
+Docker Desktop was available for the 0.9.0–0.9.1 implementation. Both images built successfully, containers became healthy, and local API/browser tests covered Planner quick access, feedback submission, Admin isolation, status changes, CSV export and persistence across a backend restart.
 
 ## Important implementation notes
 

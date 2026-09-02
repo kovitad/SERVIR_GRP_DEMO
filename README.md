@@ -2,6 +2,10 @@
 
 A bilingual planning prototype with a static Caddy frontend, persistent hub feedback collection and a restricted server-side Type B-lite OpenAI/Langfuse observability pilot, packaged for GitHub, Docker and Ubuntu AWS Lightsail.
 
+## Thailand reference-experience login cover
+
+Release 0.9.1 presents this deployment as one Thailand reference experience—not the single frontend every Hub must use. The desktop cover uses the supplied flood-planning artwork as a decorative layer, while essential context remains accessible HTML text. Mobile prioritises the login form and hides the nonessential artwork. See [`docs/02Sep2026/LOGIN_COVER_UPDATE.md`](docs/02Sep2026/LOGIN_COVER_UPDATE.md) for screenshots and the implementation summary.
+
 ## Role-based access
 
 The application starts with a sign-in page backed by server-side sessions. Configure separate administrator and planner accounts in the ignored `.env` file:
@@ -264,7 +268,7 @@ For automatic HTTPS with a domain:
 
 ```dotenv
 SITE_ADDRESS=prototype.example.org
-IMAGE_TAG=0.9.0
+IMAGE_TAG=0.9.1
 ADMIN_USERNAME=
 ADMIN_PASSWORD=
 PLANNER_USERNAME=

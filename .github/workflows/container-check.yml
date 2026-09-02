@@ -69,6 +69,7 @@ jobs:
           curl --fail --silent --cookie /tmp/grp-cookies --request POST http://127.0.0.1/api/auth/logout | grep -q '"authenticated":false'
           curl --fail --silent --output /dev/null http://127.0.0.1/vendor/leaflet/leaflet.js
           curl --fail --silent --output /dev/null http://127.0.0.1/assets/servir-global-collaborative.png
+          curl --fail --silent --output /dev/null http://127.0.0.1/assets/thailand-flood-planning-cover.webp
           curl --fail --silent --head http://127.0.0.1/ | grep -qi "tile.openstreetmap.org"
 
       - name: Show logs on failure

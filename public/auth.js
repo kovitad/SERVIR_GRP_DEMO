@@ -45,7 +45,7 @@
     error.textContent='';demoPlannerLogin.disabled=true;demoPlannerLogin.textContent='Opening Planner workspace…';
     try { const data=await request('/api/auth/demo-planner',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});showApplication(data.user,true); }
     catch(failure){showLogin(failure.message);}
-    finally{demoPlannerLogin.disabled=false;demoPlannerLogin.textContent='Continue as demo Planner';}
+    finally{demoPlannerLogin.disabled=false;demoPlannerLogin.textContent='Continue as demo planner';}
   }
 
   async function configureDemoAccess() {

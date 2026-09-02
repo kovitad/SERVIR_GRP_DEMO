@@ -287,7 +287,7 @@ async function explain(payload, actor, req) {
     output:{answer:generation.text,limitations:LIMITATIONS[language]},
     userId:actor?.username || undefined,
     metadata:{environment:LANGFUSE_ENVIRONMENT,pilot:'Type B-lite',humanReviewRequired:true,evidenceIds:EVIDENCE.map(x=>x.id),applicationRole:actor?.role||'unknown'},
-    tags:['grp','type-b-lite','shelter-proximity',language,actor?.role||'unknown'], release:'0.9.0', version:'grp-observability-pilot-v1.0', public:false
+    tags:['grp','type-b-lite','shelter-proximity',language,actor?.role||'unknown'], release:'0.9.1', version:'grp-observability-pilot-v1.0', public:false
   };
   const events = [event('trace-create',traceBody,iso(traceStart))];
   for (const op of operations) {

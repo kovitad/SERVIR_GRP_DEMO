@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9.1-prototype
+
+- Redesigned the login cover as a clearly labelled Thailand reference experience rather than a mandatory Hub frontend.
+- Added the supplied Thailand flood-planning artwork as decorative, responsive cover imagery while retaining the SERVIR identity and accessible text contrast.
+- Updated the login-panel instructions for authorised access and one-click demo Planner entry without changing authentication behaviour.
+- Prioritised the login form on small screens and hides nonessential artwork on mobile.
+
 ## 0.9.0-prototype
 
 - Added optional one-click Planner demo access without exposing account credentials; Admin access remains password-protected.
