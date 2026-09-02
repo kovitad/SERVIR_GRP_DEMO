@@ -21,7 +21,7 @@ Set `DEMO_QUICK_LOGIN=true` to show **Continue as demo Planner** and support the
 
 Signed-in users can submit feedback containing a name, one of the six hub codes (EAP, TSA, SA, WA, ESA or CA) or Other, a category, text, an optional HTTP/HTTPS document link and one optional attachment up to 1 MB. Allowed attachments are PNG, JPG/JPEG, WebP and DOCX. The backend checks extension and file signature and stores files under generated names.
 
-Feedback persists in the `feedback_data` Docker volume. Administrators can open **Feedback inbox**, update each submission to New, Reviewed, Follow-up or Closed, download attachments and export CSV. Planner accounts cannot list, manage or download other users' feedback.
+A valid email address is required and is used only to request clarification or follow up on the submitted feedback. Feedback persists in the `feedback_data` Docker volume. Administrators can open **Feedback inbox**, update each submission to New, Reviewed, Follow-up or Closed, download attachments and export CSV. Planner accounts cannot list, manage or download other users' feedback.
 
 Back up the volume before replacing the server. This low-volume file-backed store is suitable for the controlled prototype, not a replacement for an approved database, malware scanning, retention policy or records-management process.
 
@@ -268,7 +268,7 @@ For automatic HTTPS with a domain:
 
 ```dotenv
 SITE_ADDRESS=prototype.example.org
-IMAGE_TAG=0.9.1
+IMAGE_TAG=0.9.2
 ADMIN_USERNAME=
 ADMIN_PASSWORD=
 PLANNER_USERNAME=

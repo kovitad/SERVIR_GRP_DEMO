@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9.2-prototype
+
+- Added a required email address to hub feedback so the product team can request clarification or follow up.
+- Added browser and server-side email validation plus a clear purpose notice in the feedback form.
+- Added email contact links to the Admin inbox and an Email column to CSV exports.
+- Kept legacy submissions readable with an explicit indication when email was not collected.
+
 ## 0.9.1-prototype
 
 - Redesigned the login cover as a clearly labelled Thailand reference experience rather than a mandatory Hub frontend.

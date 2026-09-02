@@ -8,7 +8,7 @@
 
 The deployable prototype now consists of a Caddy frontend and a separate server-side Node.js API packaged with Docker Compose. It supports the Thailand evacuation-preparedness journey, a real interactive OpenStreetMap basemap, SERVIR branding, application-wide EN/TH switching and a live Type B-lite AI observability pilot.
 
-The latest release is **0.9.1**. It presents the login cover as a responsive Thailand reference experience using the supplied flood-planning artwork, while retaining the 0.9.0 one-click Planner access and persistent hub feedback collection with an Admin-only management inbox. AI generation is deny-by-default behind an environment master lock, starts runtime OFF after every restart, and can be enabled only by Admin for a short time/request-budget window. Public HTTP generation is blocked when `AI_REQUIRE_HTTPS=true`; local 127.0.0.1 testing remains available. The release also includes the 0.7.0 overlay/map-only UX and the 0.6.0 assurance dashboard/per-user usage.
+The latest release is **0.9.2**. It requires a validated feedback email address for clarification/follow-up and exposes it only through the Admin inbox/export. It retains the 0.9.1 responsive Thailand reference-experience cover with the supplied flood-planning artwork and the 0.9.0 one-click Planner access and persistent hub feedback collection with an Admin-only management inbox. AI generation is deny-by-default behind an environment master lock, starts runtime OFF after every restart, and can be enabled only by Admin for a short time/request-budget window. Public HTTP generation is blocked when `AI_REQUIRE_HTTPS=true`; local 127.0.0.1 testing remains available. The release also includes the 0.7.0 overlay/map-only UX and the 0.6.0 assurance dashboard/per-user usage.
 
 It includes server-side sign-in for administrator and planner roles plus an administrator-only assurance dashboard based on the normalised 31 August Langfuse export. New live traces receive the authenticated username as server-controlled Langfuse `userId`, and the dashboard reports per-user requests, feedback, tokens, cost, average latency and last activity since backend start; historical pre-login traces remain unattributed. Administrators enter the dashboard, trace explorer and evaluation/review views. Planners enter the planning workspace and can use the controlled explanation/feedback flow only while Admin has opened an approved runtime window.
 
@@ -21,7 +21,7 @@ The pilot remains restricted to one question for Phaya Thai, RP100 and the 1 km 
 - **Admin control:** AI Assurance displays the environment lock, runtime state, automatic expiry and remaining global request budget. If the server master is allowed, Admin can enable 15 minutes / 5 requests by default and can disable immediately.
 - **Transport state:** the accepted temporary demo uses `SITE_ADDRESS=:80` and permits HTTP while AI remains environment-locked. HTTP does not encrypt names, feedback, attachments, credentials or session cookies; use DNS/HTTPS before collecting sensitive content or enabling AI.
 - **Authentication:** Admin and Planner roles use backend sessions; `DEMO_QUICK_LOGIN=true` permits one-click Planner access only, while Admin remains behind private credentials. Historical dashboard, feedback-management and AI-toggle APIs are Admin-only.
-- **Hub feedback:** signed-in users can submit text, an HTTP/HTTPS document link or one validated 1 MB PNG/JPG/WebP/DOCX attachment. Feedback persists in the `feedback_data` Docker volume; Admin can review status, download attachments and export CSV.
+- **Hub feedback:** signed-in users provide a name, validated email address and Hub, then can submit text, an HTTP/HTTPS document link or one validated 1 MB PNG/JPG/WebP/DOCX attachment. Feedback persists in the `feedback_data` Docker volume; Admin can review status, download attachments and export CSV.
 - **Assurance dashboard:** six normalised historical Langfuse traces, evaluation distributions, trace detail, human-review queue and authenticated runtime usage.
 - **Login UX:** the cover clearly describes a Thailand reference experience—not a mandatory frontend for every Hub. The supplied flood-planning artwork is decorative, desktop retains two panels, and mobile prioritises the login form while hiding nonessential artwork.
 - **Planning UX:** competing overlays auto-close, Escape/outside-click dismissal is supported, hidden planning information is inert, the restore control is in the toolbar, and Map only is reversible. Global dialogs now remain above all Leaflet/map controls, and flood-scenario evidence is a compact secondary information icon.
@@ -154,7 +154,7 @@ AI master control does not require a full application rebuild:
 - `node --check` for frontend JavaScript, `backend/server.js` and `scripts/dev-local.js`
 - Local runner smoke test confirmed the homepage and live backend status through `127.0.0.1:8080`
 - `docker compose config --quiet`
-- Docker Desktop image build and healthy-container startup for release 0.9.1
+- Docker Desktop image build and healthy-container startup for release 0.9.2
 - API and browser validation of Planner quick login, text feedback, PNG/DOCX validation, the 1 MB limit, Admin isolation, status updates, CSV export and restart persistence
 - OpenAI model-access and Responses API preflight succeeded for `gpt-5.2`
 - Langfuse authentication and ingestion preflight succeeded
@@ -172,7 +172,7 @@ Docker Desktop was available for the 0.9.0–0.9.1 implementation. Both images b
 ## Important implementation notes
 
 1. Authentication uses eight-hour in-memory sessions with an HttpOnly, SameSite=Strict cookie and login throttling. One-click demo access is Planner-only and controlled by `DEMO_QUICK_LOGIN`; Admin has no quick-login endpoint and retains private credential access. Backend restarts sign users out. Use an approved identity provider, password hashing, durable sessions and formal account lifecycle controls before broader use.
-2. Hub feedback is a low-volume file-backed prototype service. Back up the `feedback_data` volume and introduce an approved database, malware scanning, retention/deletion policy and records controls before broader collection.
+2. Hub feedback includes personal information (name and email) for stated clarification/follow-up. Restrict Admin access, protect backups and establish an appropriate privacy/retention notice before wider collection. It is a low-volume file-backed prototype service. Back up the `feedback_data` volume and introduce an approved database, malware scanning, retention/deletion policy and records controls before broader collection.
 3. `i18n.js` translates initial and dynamically inserted DOM text with a `MutationObserver`. Add new English UI phrases to its exact dictionary or ordered fragment list whenever user-facing content is added.
 4. Preserve technical identifiers such as AOI, RP20/RP50/RP100, CRS, GeoJSON and H/M/L where appropriate.
 5. The prototype displays real AOI names but mocked boundaries, candidates, population and analytical results. Do not weaken these limitations.

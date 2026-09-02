@@ -287,7 +287,7 @@ async function explain(payload, actor, req) {
     output:{answer:generation.text,limitations:LIMITATIONS[language]},
     userId:actor?.username || undefined,
     metadata:{environment:LANGFUSE_ENVIRONMENT,pilot:'Type B-lite',humanReviewRequired:true,evidenceIds:EVIDENCE.map(x=>x.id),applicationRole:actor?.role||'unknown'},
-    tags:['grp','type-b-lite','shelter-proximity',language,actor?.role||'unknown'], release:'0.9.1', version:'grp-observability-pilot-v1.0', public:false
+    tags:['grp','type-b-lite','shelter-proximity',language,actor?.role||'unknown'], release:'0.9.2', version:'grp-observability-pilot-v1.0', public:false
   };
   const events = [event('trace-create',traceBody,iso(traceStart))];
   for (const op of operations) {
@@ -382,6 +382,7 @@ function saveFeedback(items) {
   fs.renameSync(temporary,FEEDBACK_FILE);
 }
 function cleanText(value, maximum) { return String(value||'').trim().slice(0,maximum); }
+function validEmail(value) { return value.length<=254&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value); }
 function validDocumentUrl(value) {
   if(!value)return '';
   try { const parsed=new URL(value); return ['http:','https:'].includes(parsed.protocol)?parsed.toString():''; }
@@ -404,9 +405,10 @@ function attachmentType(file) {
   return {name,extension,mime,buffer};
 }
 function submitFeedback(payload, actor) {
-  const name=cleanText(payload.name,100), hub=cleanText(payload.hub,20), category=cleanText(payload.category,40);
+  const name=cleanText(payload.name,100), email=cleanText(payload.email,254).toLowerCase(), hub=cleanText(payload.hub,20), category=cleanText(payload.category,40);
   const message=cleanText(payload.message,5000), rawUrl=cleanText(payload.documentUrl,1000), documentUrl=validDocumentUrl(rawUrl);
   if(name.length<2)throw new Error('Name is required');
+  if(!validEmail(email))throw new Error('Enter a valid email address');
   if(!FEEDBACK_HUBS.has(hub))throw new Error('Select a valid hub');
   if(!FEEDBACK_CATEGORIES.has(category))throw new Error('Select a valid feedback category');
   if(rawUrl&&!documentUrl)throw new Error('Document link must use HTTP or HTTPS');
@@ -419,7 +421,7 @@ function submitFeedback(payload, actor) {
     ensureFeedbackStorage();fs.writeFileSync(path.join(FEEDBACK_STORAGE_DIR,storageName),file.buffer,{mode:0o600});
     attachment={originalName:file.name,storageName,mime:file.mime,size:file.buffer.length};
   }
-  const item={id,reference,submittedAt,name,hub,category,message,documentUrl,attachment,status:'new',submittedBy:actor.username};
+  const item={id,reference,submittedAt,name,email,hub,category,message,documentUrl,attachment,status:'new',submittedBy:actor.username};
   const items=loadFeedback();items.unshift(item);saveFeedback(items);
   return {recorded:true,reference,submittedAt};
 }
@@ -428,8 +430,8 @@ function feedbackPublicItem(item) {
 }
 function csvCell(value) { let text=String(value??''); if(/^[=+\-@]/.test(text))text=`'${text}`; return `"${text.replaceAll('"','""')}"`; }
 function feedbackCsv(items) {
-  const headers=['Reference','Submitted at','Name','Hub','Category','Status','Feedback','Document URL','Attachment','Submitted by'];
-  const rows=items.map(item=>[item.reference,item.submittedAt,item.name,item.hub,item.category,item.status,item.message,item.documentUrl,item.attachment?.originalName||'',item.submittedBy]);
+  const headers=['Reference','Submitted at','Name','Email','Hub','Category','Status','Feedback','Document URL','Attachment','Submitted by'];
+  const rows=items.map(item=>[item.reference,item.submittedAt,item.name,item.email||'',item.hub,item.category,item.status,item.message,item.documentUrl,item.attachment?.originalName||'',item.submittedBy]);
   return [headers,...rows].map(row=>row.map(csvCell).join(',')).join('\r\n')+'\r\n';
 }
 function sendFile(res, status, body, type, filename) {
@@ -540,7 +542,7 @@ const server = http.createServer(async (req, res) => {
     return json(res,404,{error:'Not found'});
   } catch (error) {
     console.error(new Date().toISOString(), req.method, req.url, error.message);
-    const clientError = ['Invalid JSON','Request too large','Invalid trace ID','Feedback must be up or down','The live pilot supports only Phaya Thai, RP100 and the 1 km threshold.','Name is required','Select a valid hub','Select a valid feedback category','Document link must use HTTP or HTTPS','Add feedback text, a document link or an attachment','Attachment type is not allowed','Attachment data is missing','Attachment data is invalid','Attachment must be 1 MB or smaller','Attachment content does not match its file type'].includes(error.message);
+    const clientError = ['Invalid JSON','Request too large','Invalid trace ID','Feedback must be up or down','The live pilot supports only Phaya Thai, RP100 and the 1 km threshold.','Name is required','Enter a valid email address','Select a valid hub','Select a valid feedback category','Document link must use HTTP or HTTPS','Add feedback text, a document link or an attachment','Attachment type is not allowed','Attachment data is missing','Attachment data is invalid','Attachment must be 1 MB or smaller','Attachment content does not match its file type'].includes(error.message);
     return json(res,clientError?400:502,{error:clientError?error.message:'The observable AI request could not be completed.',detail:process.env.NODE_ENV==='development'?error.message:undefined});
   }
 });

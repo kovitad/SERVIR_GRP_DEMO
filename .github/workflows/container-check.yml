@@ -56,10 +56,10 @@ jobs:
           test "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1/api/observability/status)" = "401"
           curl --fail --silent http://127.0.0.1/api/auth/demo-status | grep -q '"plannerQuickLogin":true'
           curl --fail --silent --cookie-jar /tmp/planner-cookies --header 'Content-Type: application/json' --data '{}' http://127.0.0.1/api/auth/demo-planner | grep -q '"role":"planner"'
-          curl --fail --silent --cookie /tmp/planner-cookies --header 'Content-Type: application/json' --data '{"name":"CI Planner","hub":"EAP","category":"comment","message":"Automated feedback smoke test"}' http://127.0.0.1/api/feedback | grep -q '"recorded":true'
+          curl --fail --silent --cookie /tmp/planner-cookies --header 'Content-Type: application/json' --data '{"name":"CI Planner","email":"ci-planner@example.org","hub":"EAP","category":"comment","message":"Automated feedback smoke test"}' http://127.0.0.1/api/feedback | grep -q '"recorded":true'
           test "$(curl --silent --cookie /tmp/planner-cookies --output /dev/null --write-out '%{http_code}' http://127.0.0.1/api/admin/feedback)" = "403"
           curl --fail --silent --cookie-jar /tmp/grp-cookies --header 'Content-Type: application/json' --data '{"username":"ci-admin","password":"ci-admin-password-not-for-production"}' http://127.0.0.1/api/auth/login | grep -q '"role":"admin"'
-          curl --fail --silent --cookie /tmp/grp-cookies http://127.0.0.1/api/admin/feedback | grep -q '"name":"CI Planner"'
+          curl --fail --silent --cookie /tmp/grp-cookies http://127.0.0.1/api/admin/feedback | grep -q '"email":"ci-planner@example.org"'
           curl --fail --silent --cookie /tmp/grp-cookies http://127.0.0.1/api/admin/feedback/export.csv | grep -q 'CI Planner'
           ./scripts/feedback-backup.sh
           test -s "$(find backups -name 'grp-feedback-*.tgz' | head -1)"
