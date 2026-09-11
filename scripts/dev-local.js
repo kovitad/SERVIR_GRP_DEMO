@@ -49,6 +49,7 @@ function staticFile(req,res){
   const relative=requestPath==='/'?'index.html':requestPath.replace(/^\/+/, '');
   let file=path.resolve(publicDir,relative);
   if(!file.startsWith(publicDir+path.sep)){res.writeHead(403);return res.end('Forbidden');}
+  if(fs.existsSync(file)&&fs.statSync(file).isDirectory())file=path.join(file,'index.html');
   if(!fs.existsSync(file)||!fs.statSync(file).isFile())file=path.join(publicDir,'index.html');
   const headers={'Content-Type':mime[path.extname(file).toLowerCase()]||'application/octet-stream','Cache-Control':path.basename(file)==='index.html'?'no-store':'no-cache'};
   res.writeHead(200,headers);
@@ -56,7 +57,7 @@ function staticFile(req,res){
   fs.createReadStream(file).pipe(res);
 }
 
-const server=http.createServer((req,res)=>req.url.startsWith('/api/')?proxy(req,res):staticFile(req,res));
+const server=http.createServer((req,res)=>(req.url.startsWith('/api/')||req.url==='/healthz')?proxy(req,res):staticFile(req,res));
 server.listen(port,host,()=>{
   console.log(`\nGRP local pilot: http://${host}:${port}`);
   console.log(`Protected status: http://${host}:${port}/api/observability/status (sign in first)`);

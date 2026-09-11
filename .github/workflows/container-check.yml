@@ -23,7 +23,9 @@ jobs:
           node --check public/observability.js
           node --check public/auth.js
           node --check public/feedback.js
+          node --check public/workflow.js
           node --check backend/server.js
+          node --check backend/prototype-service.js
           node --check scripts/dev-local.js
           python3 -m py_compile scripts/env_control.py
           bash -n scripts/bootstrap-ubuntu.sh scripts/deploy.sh scripts/update.sh scripts/ai-master.sh scripts/feedback-backup.sh
@@ -53,12 +55,25 @@ jobs:
           curl --fail --silent http://127.0.0.1/observability.js | grep -q "Langfuse"
           curl --fail --silent http://127.0.0.1/auth.js | grep -q "grp-authenticated"
           curl --fail --silent http://127.0.0.1/feedback.js | grep -q "api/feedback"
+          curl --fail --silent http://127.0.0.1/workflow.js | grep -q "contribute_submit"
+          test "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1/api/v1/areas)" = "401"
           test "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1/api/observability/status)" = "401"
           curl --fail --silent http://127.0.0.1/api/auth/demo-status | grep -q '"plannerQuickLogin":true'
           curl --fail --silent --cookie-jar /tmp/planner-cookies --header 'Content-Type: application/json' --data '{}' http://127.0.0.1/api/auth/demo-planner | grep -q '"role":"planner"'
+          curl --fail --silent --cookie /tmp/planner-cookies http://127.0.0.1/api/v1/me | grep -q '"canUpload":true'
+          curl --fail --silent --cookie /tmp/planner-cookies http://127.0.0.1/api/v1/mcp/tools | grep -q '"toolCount":15'
+          curl --fail --silent --cookie /tmp/planner-cookies http://127.0.0.1/api/v1/mcp/tools | grep -q '"tool":"compute_run","status":"unimplemented-upstream"'
+          curl --fail --silent --cookie /tmp/planner-cookies http://127.0.0.1/api/v1/mcp/tools | grep -q '"tool":"contribute_submit","status":"unimplemented-upstream"'
+          curl --fail --silent --cookie /tmp/planner-cookies http://127.0.0.1/api/v1/mcp/tools | grep -q '"id":"grp-flood","kind":"SIG domain-pack extension","exposedAsMcpTool":false'
+          test "$(curl --fail --silent --cookie /tmp/planner-cookies http://127.0.0.1/api/v1/mcp/tools | grep -o '"name":"grp_' | wc -l)" = "0"
+          curl --fail --silent --cookie /tmp/planner-cookies --header 'Content-Type: application/json' --data '{"areaId":"phaya-thai","returnPeriod":100,"datasetIds":{"boundary":"platform-boundary-th-2026","flood":"platform-jrc-rp100","centres":"platform-centres-th-2026","vulnerability":"platform-vulnerability-th-2026"}}' http://127.0.0.1/api/v1/assessments | grep -q '"state":"queued"'
+          curl --fail --silent --cookie /tmp/planner-cookies --header 'Content-Type: application/json' --data '{"areaId":"phaya-thai","returnPeriods":[100,500],"datasetIds":{"boundary":"platform-boundary-th-2026","centres":"platform-centres-th-2026","vulnerability":"platform-vulnerability-th-2026"}}' http://127.0.0.1/api/v1/comparisons > /tmp/comparison.json
+          node -e "const c=require('/tmp/comparison.json').comparison; if(c.schemaVersion!==2||!c.insights?.headline||c.method.id!=='mock_rp_comparison_v0.11'||c.progression.length!==7||c.transitionSummary.newlyExposed!==2||c.transitionSummary.comparableCentres!==6) process.exit(1); for(const p of c.progression) if(p.exposed+p.notExposed+p.unable!==8||p.assessable!==p.exposed+p.notExposed) process.exit(1);"
+          grep -q 'not a forecast or an official local flood map' /tmp/comparison.json
           curl --fail --silent --cookie /tmp/planner-cookies --header 'Content-Type: application/json' --data '{"name":"CI Planner","email":"ci-planner@example.org","hub":"EAP","category":"comment","message":"Automated feedback smoke test"}' http://127.0.0.1/api/feedback | grep -q '"recorded":true'
           test "$(curl --silent --cookie /tmp/planner-cookies --output /dev/null --write-out '%{http_code}' http://127.0.0.1/api/admin/feedback)" = "403"
           curl --fail --silent --cookie-jar /tmp/grp-cookies --header 'Content-Type: application/json' --data '{"username":"ci-admin","password":"ci-admin-password-not-for-production"}' http://127.0.0.1/api/auth/login | grep -q '"role":"admin"'
+          curl --fail --silent --cookie /tmp/grp-cookies http://127.0.0.1/api/v1/admin/assessments | grep -q '"hubRest":"working-prototype"'
           curl --fail --silent --cookie /tmp/grp-cookies http://127.0.0.1/api/admin/feedback | grep -q '"email":"ci-planner@example.org"'
           curl --fail --silent --cookie /tmp/grp-cookies http://127.0.0.1/api/admin/feedback/export.csv | grep -q 'CI Planner'
           ./scripts/feedback-backup.sh

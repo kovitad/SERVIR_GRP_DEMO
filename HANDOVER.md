@@ -1,6 +1,8 @@
 # AI / developer handover
 
-**Last updated:** 2 September 2026
+> **Current release handover:** Read [`docs/11Sep2026/HANDOVER_RELEASE_0.10.1.md`](docs/11Sep2026/HANDOVER_RELEASE_0.10.1.md) for the concise delivered scope, localhost fixes, completed validation, persistence/security boundaries and next actions. The earlier [`../07Sep2026/HANDOVER_MCP_ALIGNMENT_AND_MVP1_MOCK.md`](../07Sep2026/HANDOVER_MCP_ALIGNMENT_AND_MVP1_MOCK.md) remains useful background when operating in the full parent workspace, but release 0.10.1 integrates that refinement into the deployable interface.
+
+**Last updated:** 11 September 2026
 **Repository:** `https://github.com/kovitad/SERVIR_GRP_DEMO.git`  
 **Branch:** `main`
 
@@ -8,7 +10,7 @@
 
 The deployable prototype now consists of a Caddy frontend and a separate server-side Node.js API packaged with Docker Compose. It supports the Thailand evacuation-preparedness journey, a real interactive OpenStreetMap basemap, SERVIR branding, application-wide EN/TH switching and a live Type B-lite AI observability pilot.
 
-The latest release is **0.9.2**. It requires a validated feedback email address for clarification/follow-up and exposes it only through the Admin inbox/export. It retains the 0.9.1 responsive Thailand reference-experience cover with the supplied flood-planning artwork and the 0.9.0 one-click Planner access and persistent hub feedback collection with an Admin-only management inbox. AI generation is deny-by-default behind an environment master lock, starts runtime OFF after every restart, and can be enabled only by Admin for a short time/request-budget window. Public HTTP generation is blocked when `AI_REQUIRE_HTTPS=true`; local 127.0.0.1 testing remains available. The release also includes the 0.7.0 overlay/map-only UX and the 0.6.0 assurance dashboard/per-user usage.
+The latest working release is **0.10.1**. It includes prepared-data upload/save, source selection, seven static RP choices, persistent static assessments, a data-preparation support route and explicit execution traceability in the existing Planner workspace. The 10 September architecture review corrects the SIG boundary: the Hub owns private data and the canonical assessment API; SIG keeps the existing `assemble_pack` extension, with a proposed `grp-flood.gather(target, focus, trace, extras)` connector reading an authorised stored result. Do not invent new `grp_*` MCP tools or make MVP1 wait for the declared `compute_run` and `contribute_submit` gaps. The invited tester confirmed Google authentication and fresh-session enumeration of 15 SIG MCP tools; supplied staging captures show Food Security working and Risk not connected. The prototype labels the connector and evidence loop as simulations and does not claim a SIG receipt or GIS execution. Planner **Determine evacuation-centre exposure** persists a trace; Admin **Workflow traces** renders its linked SIG MCP staging rehearsal, grouped 15-tool inventory and per-step developer-next instructions. The 11 September comparison refinement now derives its headline, comparable-set transition groups, A/B summaries, seven-RP progression, schematic synchronized maps, vulnerability overlap, attention table and evidence panel from one persisted backend fixture response. It retains validated feedback email collection, the responsive Thailand cover, one-click Planner access, Admin-only feedback/assurance controls and deny-by-default AI generation. Public HTTP generation remains blocked when `AI_REQUIRE_HTTPS=true`; local 127.0.0.1 testing remains available.
 
 It includes server-side sign-in for administrator and planner roles plus an administrator-only assurance dashboard based on the normalised 31 August Langfuse export. New live traces receive the authenticated username as server-controlled Langfuse `userId`, and the dashboard reports per-user requests, feedback, tokens, cost, average latency and last activity since backend start; historical pre-login traces remain unattributed. Administrators enter the dashboard, trace explorer and evaluation/review views. Planners enter the planning workspace and can use the controlled explanation/feedback flow only while Admin has opened an approved runtime window.
 
@@ -16,7 +18,7 @@ The pilot remains restricted to one question for Phaya Thai, RP100 and the 1 km 
 
 ## Current handover snapshot — what we are up to
 
-- **Local state:** validated with Docker Desktop and running at `http://127.0.0.1` through Caddy and Docker Compose; both containers are healthy.
+- **Local state:** validated at `http://localhost:8080/?demo=planner` through the local frontend/backend runner. `/healthz` reports prototype API version 2. Docker Compose configuration passes and both images build successfully.
 - **AI state now:** OFF and environment-locked because the ignored local `.env` has `AI_FEATURE_ALLOWED=false`. Planner sees **AI disabled by admin**; direct explanation attempts return HTTP 423 without calling OpenAI.
 - **Admin control:** AI Assurance displays the environment lock, runtime state, automatic expiry and remaining global request budget. If the server master is allowed, Admin can enable 15 minutes / 5 requests by default and can disable immediately.
 - **Transport state:** the accepted temporary demo uses `SITE_ADDRESS=:80` and permits HTTP while AI remains environment-locked. HTTP does not encrypt names, feedback, attachments, credentials or session cookies; use DNS/HTTPS before collecting sensitive content or enabling AI.
@@ -24,7 +26,7 @@ The pilot remains restricted to one question for Phaya Thai, RP100 and the 1 km 
 - **Hub feedback:** signed-in users provide a name, validated email address and Hub, then can submit text, an HTTP/HTTPS document link or one validated 1 MB PNG/JPG/WebP/DOCX attachment. Feedback persists in the `feedback_data` Docker volume; Admin can review status, download attachments and export CSV.
 - **Assurance dashboard:** six normalised historical Langfuse traces, evaluation distributions, trace detail, human-review queue and authenticated runtime usage.
 - **Login UX:** the cover clearly describes a Thailand reference experience—not a mandatory frontend for every Hub. The supplied flood-planning artwork is decorative, desktop retains two panels, and mobile prioritises the login form while hiding nonessential artwork.
-- **Planning UX:** competing overlays auto-close, Escape/outside-click dismissal is supported, hidden planning information is inert, the restore control is in the toolbar, and Map only is reversible. Global dialogs now remain above all Leaflet/map controls, and flood-scenario evidence is a compact secondary information icon.
+- **Planning UX:** competing overlays auto-close, Escape/outside-click dismissal is supported, hidden planning information is inert, the restore control is in the toolbar, and Map only is reversible. Global dialogs remain above Leaflet controls. The RP comparison validates response schema version and shows a clear restart/deploy message for version mismatch; comparison mini-map CSS is scoped so it cannot shrink the main Leaflet map.
 - **Deployment state:** packaged for Docker Compose/Lightsail but not yet deployed from this release. Backend port 3000 remains internal.
 - **Persistence boundary:** hub feedback and attachments persist in the Docker `feedback_data` volume. Sessions, Admin AI enablement and per-user runtime aggregates reset on backend restart. Langfuse traces persist according to the configured project policy.
 
@@ -40,7 +42,9 @@ Use these files for GitHub and deployment work:
 - `public/observability.js` and `public/observability.css` — bilingual answer, trace, evaluation, comparison and dashboard experience
 - `public/auth.js` and `public/auth.css` — login, Planner quick access, session restoration, sign-out and role-based UI
 - `public/feedback.js` and `public/feedback.css` — feedback submission, upload progress and Admin inbox
+- `public/workflow.js` and `public/workflow.css` — prepared-data catalogue, assessment, trace and RP-comparison experience
 - `backend/server.js` — authentication/session, persistent feedback and admin dashboard APIs plus restricted server-side OpenAI workflow, deterministic checks, narrow judges, Langfuse ingestion and feedback
+- `backend/prototype-service.js` — protected persistent upload/catalogue, assessment, RP comparison, support and workflow-trace prototype APIs
 - `backend/data/langfuse-dashboard-2026-08-31.json` — six normalised pilot traces from the static 31 August export; demonstration source, not live monitoring
 - `backend/Dockerfile` — unprivileged Node.js backend image
 - `public/vendor/leaflet/` — locally hosted Leaflet 1.9.4 JavaScript, CSS and marker assets
@@ -154,7 +158,8 @@ AI master control does not require a full application rebuild:
 - `node --check` for frontend JavaScript, `backend/server.js` and `scripts/dev-local.js`
 - Local runner smoke test confirmed the homepage and live backend status through `127.0.0.1:8080`
 - `docker compose config --quiet`
-- Docker Desktop image build and healthy-container startup for release 0.9.2
+- Docker Desktop image build and healthy-container startup for release 0.10.0
+- Prepared CSV upload, validation, save/reuse, static assessment and REST/MCP traceability browser flow
 - API and browser validation of Planner quick login, text feedback, PNG/DOCX validation, the 1 MB limit, Admin isolation, status updates, CSV export and restart persistence
 - OpenAI model-access and Responses API preflight succeeded for `gpt-5.2`
 - Langfuse authentication and ingestion preflight succeeded

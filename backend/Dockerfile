@@ -4,7 +4,7 @@ LABEL org.opencontainers.image.title="GRP AI Observability Backend" \
       org.opencontainers.image.description="Server-side OpenAI and Langfuse Type B-lite pilot"
 
 WORKDIR /app
-COPY server.js ./server.js
+COPY server.js prototype-service.js ./
 COPY data ./data
 RUN mkdir -p /app/storage && chown node:node /app/storage
 

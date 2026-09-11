@@ -1,5 +1,35 @@
 # Changelog
 
+## 0.10.1-prototype
+
+- Fixed the local `localhost:8080` comparison crash caused by a stale backend returning the older comparison shape; comparison responses now carry a schema version, the frontend rejects incompatible responses clearly, local `/healthz` proxies correctly and workflow assets use the 0.10.1 cache key.
+- Scoped the comparison-map canvas styles so they no longer override the main Leaflet canvas and shrink the Planner map to 155 px high.
+- Reviewed the 10 September developer architecture specification and supplied MCP staging captures; confirmed that Food Security is connected in staging while Risk is not.
+- Corrected the integration story from invented `grp_*` tool aliases and compute/contribute contract rehearsals to the existing SIG `assemble_pack` extension boundary.
+- Defined `grp-flood.gather(target, focus, trace, extras)` as a proposed domain-pack connector to the protected Hub result API—not a new MCP tool.
+- Kept `compute_run` and `contribute_submit` visible as upstream gaps, but marked them as non-blocking for MVP1 because private contribution and analytics remain Hub-owned.
+- Updated Planner/Admin execution traces so local IDs are placeholders, no SIG pack/report/receipt is claimed, and working Hub REST is separated from the unconnected SIG path.
+- Added a 10 September architecture-alignment review and prioritised hardening backlog.
+- Added the tester-confirmed SIG MCP inventory of 15 tools, grouped into discovery, evidence pipeline, data/retrieval and UI/design capabilities; authentication/enumeration evidence remains separate from prototype execution truth.
+- Renamed the Planner trigger to **Determine evacuation-centre exposure**; every click persists an assessment/trace record.
+- Replaced meaningless one-option source dropdowns with **Active source · automatically selected** cards. A selector now appears only when a genuine platform/Hub alternative exists.
+- Added an Admin **SIG MCP staging journey** rehearsal linked to the selected assessment, showing the real use-case sequence, status of every boundary and a concrete “Developer next” instruction for each missing integration step.
+- Implemented the 11 September RP-comparison mockup around one persisted backend result: annual chances, comparable-set deltas, seven-scenario progression, synchronized schematic A/B maps, difference view, vulnerability overlap, attention-ordered center table, evidence and limitations. All values remain explicitly illustrative.
+
+## 0.10.0-prototype
+
+- Integrated the v0.7 prepared-local-data requirement into the deployed Planner interface rather than creating another standalone mock UI.
+- Added real browser upload for prepared centre CSV/GeoJSON and flood TIFF/GeoTIFF files, with explicit schema, CRS, units, NoData and file-size checks.
+- Added a persistent file-backed development database for validated uploads, current saved datasets, assessments, support requests and traceability records.
+- Added platform-versus-saved-local source selection and seven RP choices (RP10, RP20, RP50, RP75, RP100, RP200 and RP500).
+- Added asynchronous mock assessment states and one canonical static result shared by the Planner display, simulated REST path and simulated MCP tool path.
+- Added trace, correlation, assessment, support and receipt references with explicit simulated/scientific-approval boundaries.
+- Added an Admin-only **Workflow traces** explorer showing every persisted Planner assessment, operation timeline, immutable source snapshot, centre result/reason record, warnings and receipt.
+- Added the required **Need help preparing your data?** human-support route without automatically attaching private files or bypassing validation.
+- Aligned Planner and Admin workflows to the SERVIR runbook by exposing `contribute_submit` and `compute_run` as declared upstream gaps, mapping working REST intake/assessment behavior as contract rehearsals, and tracing the proposed `assemble_pack → verify_groundedness → record_receipt` chain without claiming operational MCP or GIS capability.
+- Restored the proposed RP comparison capability in the live workflow: two platform flood scenarios are compared for one area while boundary, centres, vulnerability and method remain fixed; paired counts and centre-status transitions are persisted and visible to Admin assurance.
+- Added a visible **My Hub data catalogue** after upload, with persistent dataset/contribution identifiers, source metadata, checksum, input role and explicit Ready → Selected for next run → Applied to result states; Admin assurance shows catalogue versions and assessment usage without exposing raw files.
+
 ## 0.9.2-prototype
 
 - Added a required email address to hub feedback so the product team can request clarification or follow up.

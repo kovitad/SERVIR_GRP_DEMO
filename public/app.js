@@ -25,14 +25,22 @@ const aoiData = {
 const currentAOI=()=>selectedAOI?aoiData[selectedAOI]:null;
 const safeName=s=>(s||'Thailand_AOI').replace(/[^a-z0-9]+/gi,'_').replace(/^_|_$/g,'');
 const scenarioData = {
+  '10': {people:6200, peopleLabel:'6,200', children:'1,300', older:'920', support:'310', mobility:'490', atRisk:0, density:'22.5', probability:'10% annual chance'},
   '20': {people:8420, peopleLabel:'8,420', children:'1,770', older:'1,250', support:'420', mobility:'670', atRisk:1, density:'16.6', probability:'5% annual chance'},
   '50': {people:12760, peopleLabel:'12,760', children:'2,680', older:'1,890', support:'640', mobility:'1,010', atRisk:2, density:'11.0', probability:'2% annual chance'},
-  '100': {people:18640, peopleLabel:'18,640', children:'3,920', older:'2,760', support:'930', mobility:'1,480', atRisk:3, density:'7.5', probability:'1% annual chance'}
+  '75': {people:15400, peopleLabel:'15,400', children:'3,240', older:'2,280', support:'770', mobility:'1,220', atRisk:2, density:'9.0', probability:'1.33% annual chance'},
+  '100': {people:18640, peopleLabel:'18,640', children:'3,920', older:'2,760', support:'930', mobility:'1,480', atRisk:3, density:'7.5', probability:'1% annual chance'},
+  '200': {people:22600, peopleLabel:'22,600', children:'4,750', older:'3,350', support:'1,130', mobility:'1,790', atRisk:4, density:'5.5', probability:'0.5% annual chance'},
+  '500': {people:27800, peopleLabel:'27,800', children:'5,840', older:'4,120', support:'1,390', mobility:'2,200', atRisk:5, density:'3.5', probability:'0.2% annual chance'}
 };
 const riskLevels = {
+  '10': {high:[],medium:['C-02','C-04'],low:['C-01','C-03','C-05','C-06','C-07','C-08']},
   '20': {high:['C-06'],medium:['C-02','C-04'],low:['C-01','C-03','C-05','C-07','C-08']},
   '50': {high:['C-06','C-07'],medium:['C-02','C-04','C-08'],low:['C-01','C-03','C-05']},
-  '100': {high:['C-06','C-07','C-08'],medium:['C-02','C-04'],low:['C-01','C-03','C-05']}
+  '75': {high:['C-06','C-07'],medium:['C-02','C-04','C-08'],low:['C-01','C-03','C-05']},
+  '100': {high:['C-06','C-07','C-08'],medium:['C-02','C-04'],low:['C-01','C-03','C-05']},
+  '200': {high:['C-02','C-04','C-06','C-07'],medium:['C-01','C-08'],low:['C-03','C-05']},
+  '500': {high:['C-01','C-02','C-04','C-06','C-07'],medium:['C-03','C-08'],low:['C-05']}
 };
 const vulnerabilityZones = {
   'V-01': {name:'Zone V1 · Child-support concentration',populationShare:.24,indicator:'Children 0–14',indicatorKey:'children',note:'Coordinate schools, caregivers, child-friendly facilities and family reunification.'},
@@ -185,6 +193,10 @@ function runUrban(){
 }
 
 function runAssessment(){
+  if(window.GRP_WORKFLOW){window.GRP_WORKFLOW.open();return;}
+  runLegacyAssessment();
+}
+function runLegacyAssessment(){
   if(running||!requireAOI())return;running=true;userMessage(`Run the RP${selectedScenario} evacuation-planning assessment.`);
   const msg=aiMessage(`<p>I’m running the illustrative governed workflow.</p><div class="analysis-steps"><div class="step" id="p1"><span>·</span>Validate AOI, scenario and planning inputs</div><div class="step" id="p2"><span>·</span>Screen candidate evacuation places</div><div class="step" id="p3"><span>·</span>Aggregate vulnerable-people indicators</div><div class="step" id="p4"><span>·</span>Prepare evidence and investment-brief inputs</div></div>`);
   ['p1','p2','p3','p4'].forEach((id,i)=>setTimeout(()=>{const s=$('#'+id,msg);if(s){s.classList.add('done');$('span',s).textContent='✓';}},350+i*420));
@@ -349,8 +361,8 @@ $('#downloadRiskMap').addEventListener('click',showRiskMap);
 $('#createReport').addEventListener('click',()=>openModal('reportModal'));
 $('#mapFocusTool').addEventListener('click',()=>toggleMapFocus());
 $('#mapArt').addEventListener('click',e=>{if(candidateMode&& !e.target.closest('[data-center]'))placeCandidate();});
-$('#demoFile').addEventListener('click',demoFile);
-$('#rerunUpload').addEventListener('click',rerunUpload);
+$('#demoFile')?.addEventListener('click',demoFile);
+$('#rerunUpload')?.addEventListener('click',rerunUpload);
 $('#generateReport').addEventListener('click',generateReport);
 $('#downloadExport').addEventListener('click',prepareExport);
 $('#closeDrawer').addEventListener('click',closeDrawer);backdrop.addEventListener('click',closeDrawer);
@@ -365,6 +377,22 @@ $('#showPanel').addEventListener('click',()=>showInfoPanel());
 $('#legendToggle').addEventListener('click',e=>{const legend=$('#legend');legend.classList.toggle('collapsed');e.target.textContent=legend.classList.contains('collapsed')?'+':'−';});
 $('#newChat').addEventListener('click',()=>location.reload());
 $('#sendBtn').addEventListener('click',send);$('#chatInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}});
+
+// Apply one canonical result returned by the persistent mock REST/MCP workflow.
+window.GRP_APPLY_ASSESSMENT_RESULT=(result,trace)=>{
+  const targetAOI=result?.area?.id;
+  if(targetAOI&&aoiData[targetAOI]&&selectedAOI!==targetAOI)selectAOI(targetAOI);
+  if(result?.returnPeriod)selectScenario(String(result.returnPeriod));
+  assessmentComplete=true;running=false;refreshScenarioUI();mapCanvas.classList.add('results-visible');showInfoPanel(false);$('#layerCount').textContent='7';
+  const counts=result.counts||{},rows=$$('.centre-row');
+  (result.centres||[]).slice(0,3).forEach((centre,index)=>{
+    const row=rows[index];if(!row)return;const label=centre.status==='potentially-exposed'?'Potentially exposed':centre.status==='unable-to-assess'?'Unable to assess':'Not exposed under this scenario';
+    $('b',$('p',row)).textContent=centre.name;$('small',$('p',row)).textContent=`${label} · ${centre.id}`;
+    const icon=$('i',row);icon.textContent=centre.status==='potentially-exposed'?'E':centre.status==='unable-to-assess'?'?':'N';icon.className=centre.status==='potentially-exposed'?'status-high':centre.status==='unable-to-assess'?'status-medium':'status-low';
+  });
+  aiMessage(`<div class="ai-summary"><p><strong>Stored assessment ${result.assessmentId} is ready.</strong></p><p><b>${counts.potentiallyExposed||0}</b> potentially exposed · <b>${counts.notExposedUnderScenario||0}</b> not exposed under this scenario · <b>${counts.unableToAssess||0}</b> unable to assess.</p><p>This is one stored Hub result. The proposed SIG Risk pack connector is not connected and must read—not recalculate—this result. Trace <b>${trace?.traceId||'recorded'}</b>. Scientific approval is not established; human review is required.</p></div>`);
+  showToast('Stored mock result applied to the Planner map');
+};
 
 // Read-only pilot context for the server-side observable AI workflow.
 window.GRP_CONTEXT=()=>({

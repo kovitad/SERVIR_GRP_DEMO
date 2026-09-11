@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>GRP MVP 1 — Refinement Prototype</title>
+  <link rel="stylesheet" href="mvp1.css" />
+</head>
+<body>
+  <div class="prototype-ribbon"><strong>REFINEMENT PROTOTYPE</strong><span>Illustrative data · Not operational · 04 Sep MVP baseline + 07 Sep MCP alignment</span></div>
+  <header class="topbar">
+    <a class="brand" href="#launcher" aria-label="MVP 1 refinement home"><span class="brand-mark">S</span><span>SERVIR<small>GLOBAL RISK PLATFORM</small></span></a>
+    <div class="workspace"><span></span><b>Thailand Planning</b><small>MVP 1 review workspace</small></div>
+    <div class="top-actions"><button class="quiet" id="criteriaToggle" aria-pressed="true">Review criteria</button><button class="user-button" id="userButton"><span id="userInitials">MS</span><b id="userName">Mali Srisuk</b><small id="userRole">Planner</small></button></div>
+  </header>
+
+  <div class="layout">
+    <nav class="side-nav" aria-label="MVP journey">
+      <p>REFINEMENT JOURNEY</p>
+      <button data-screen="launcher"><span>00</span>Scenario launcher</button>
+      <button data-screen="mcp"><span>M</span>MCP alignment</button>
+      <button data-screen="oidc" data-story="US-01"><span>ID</span>OIDC identity lab</button>
+      <button data-screen="signin" data-story="US-01"><span>01</span>Sign in & access</button>
+      <button data-screen="sources" data-story="US-03"><span>02</span>Prepare data</button>
+      <button data-screen="configure" data-story="US-06"><span>03</span>Configure assessment</button>
+      <button data-screen="results" data-story="US-09"><span>04</span>Review results</button>
+      <button data-screen="downloads" data-story="US-11"><span>05</span>Download evidence</button>
+      <button data-screen="support" data-story="US-12"><span>06</span>Support & recovery</button>
+      <div class="nav-note"><b>Prototype boundary</b><p>Clicks validate workflow and wording—not production capability.</p></div>
+    </nav>
+
+    <main id="mainContent" tabindex="-1">
+      <section class="screen" data-screen-panel="launcher">
+        <div class="page-heading"><div><p class="eyebrow">WORKSHOP CONTROL</p><h1>MVP 1 refinement prototype</h1><p>Choose a role and scenario, then walk through the story-mapped screens with product, planners, data science, security and operations.</p></div><span class="tag proposed">04 SEP BASELINE</span></div>
+        <div class="warning callout"><b>What this proves</b><p>Workflow, terminology, required data, visible permissions, errors and output content.</p><b>What this does not prove</b><p>OIDC, server authorization, geospatial validation, deterministic analytics, persistence, PDF generation, performance or recovery.</p></div>
+        <div class="launcher-grid">
+          <section class="card"><h2>1. Select role</h2><div class="choice-list" id="roleChoices">
+            <button data-role="planner" class="selected"><b>Authorized planner</b><small>US-01 to US-11</small></button>
+            <button data-role="support"><b>Platform support</b><small>US-12 diagnostics</small></button>
+            <button data-role="unauthorized"><b>Authenticated, unassigned</b><small>Access-denied review</small></button>
+            <button data-role="developer"><b>Hub developer</b><small>MCP capability and connection review</small></button>
+            <button data-role="signedout"><b>Signed-out visitor</b><small>OIDC entry point</small></button>
+          </div></section>
+          <section class="card"><h2>2. Select scenario</h2><label class="field"><span>Review scenario</span><select id="scenarioSelect"><option value="happy">Platform-data happy path</option><option value="local">Saved local data path</option><option value="upload-error">Invalid upload</option><option value="replace-error">Failed replacement</option><option value="vulnerability-error">Vulnerability unavailable</option><option value="calculation-error">Calculation failure</option><option value="mcp-gap">MCP declared gap / refusal</option><option value="verification-error">Grounding verification failure</option><option value="mcp-unavailable">MCP unavailable after analysis</option><option value="cross-hub">Cross-Hub access denied</option><option value="export-error">Export failure</option></select></label><button class="primary full" id="startJourney">Start selected journey →</button></section>
+        </div>
+        <section class="card story-map"><div class="section-head"><div><p class="eyebrow">TRACEABILITY</p><h2>Stories covered</h2></div><span>12 stories · 5 epics</span></div><div id="storyGrid" class="story-grid"></div></section>
+      </section>
+
+      <section class="screen" data-screen-panel="mcp" hidden>
+        <div class="page-heading"><div><p class="eyebrow">MCP ALIGNMENT v0.2 · WORKSHOP VIEW</p><h1>Hub–platform capability map</h1><p>Review what the Thailand product needs, what SIG MCP appears to provide, and which responsibilities still require agreement with Jordan.</p></div><span class="tag proposed">NOT CONNECTED</span></div>
+        <div id="mcpContent"></div>
+      </section>
+
+      <section class="screen" data-screen-panel="oidc" hidden>
+        <div class="page-heading"><div><p class="eyebrow">US-01 / US-02 · IDENTITY EXPLAINER</p><h1>OIDC identity and role lab</h1><p>Click through one-time application registration, a normal planner sign-in, token purposes and server-side role authorization.</p></div><span class="tag proposed">SIMULATED</span></div>
+        <div id="oidcContent"></div>
+      </section>
+
+      <section class="screen" data-screen-panel="signin" hidden>
+        <div class="auth-shell">
+          <div class="auth-context"><p class="eyebrow">THAILAND REFERENCE EXPERIENCE</p><h1>Flood-exposure planning evidence</h1><p>Identify evacuation centers that may be exposed, review vulnerable-people information and prepare traceable planning outputs.</p><ul><li>Static planning scenarios—not forecasts</li><li>Evidence support—not a safe-center declaration</li><li>Private workspace by default</li></ul></div>
+          <div class="auth-card" id="authCard"><p class="eyebrow">AUTHORIZED ACCESS</p><h2>Sign in to your workspace</h2><p>Continue through your approved organization identity provider.</p><button class="primary full" id="signInButton">Continue with organization account</button><p class="micro">Production requires OIDC, verified Hub claims, durable sessions and revocation. This click is simulated.</p></div>
+        </div>
+      </section>
+
+      <section class="screen" data-screen-panel="sources" hidden>
+        <div class="page-heading"><div><p class="eyebrow">EPIC 2 · US-03–US-05</p><h1>Data sources</h1><p>Review platform-provided and current saved local data separately.</p></div><button class="primary" id="openUpload">＋ Upload local dataset</button></div>
+        <div id="sourceContent"></div>
+      </section>
+
+      <section class="screen" data-screen-panel="configure" hidden>
+        <div class="page-heading"><div><p class="eyebrow">EPIC 3 · US-06</p><h1>Configure assessment</h1><p>Choose one explicit area, static flood scenario and authorized source for each input.</p></div><span class="tag proposed">DRAFT</span></div>
+        <div class="config-layout"><form class="card" id="configForm"><h2>Assessment inputs</h2>
+          <label class="field"><span>Supported area</span><select><option>Phaya Thai District, Bangkok</option><option disabled>Additional production areas — TBC</option></select><small>Boundary source: Thailand administrative boundary · provider/edition TBC</small></label>
+          <fieldset><legend>JRC static flood scenario</legend><div class="scenario-options" id="scenarioOptions"></div><p class="info-line">ⓘ A return-period layer is a static planning scenario—not a current forecast or warning.</p></fieldset>
+          <fieldset><legend>Required data sources</legend><label class="field"><span>Flood hazard</span><select id="hazardSource"><option>Platform-provided · JRC flood-hazard layer</option><option>Saved local · BMA September flood study</option></select></label><label class="field"><span>Evacuation centers</span><select><option>Saved local · BMA Phaya Thai center register</option><option disabled>Platform source · provider approval pending</option></select></label><label class="field"><span>Vulnerability</span><select><option>Platform-provided · Normalized vulnerability raster</option><option disabled>Saved local · No available dataset</option></select><small>Metric: Normalized vulnerability index, 0–1 · not a population count</small></label></fieldset>
+          <button type="button" class="primary full" id="reviewRun">Review and run assessment →</button></form><aside class="card map-preview"><div class="map-title"><b>Area preview</b><span>Illustrative geometry</span></div><div class="mini-map"><div class="river"></div><div class="boundary"></div><b>PHAYA THAI</b></div><dl class="source-summary"><div><dt>Boundary</dt><dd>Provider/edition TBC</dd></div><div><dt>Coverage</dt><dd>Supported for prototype</dd></div><div><dt>Data boundary</dt><dd>Thailand Planning Hub</dd></div></dl></aside></div>
+      </section>
+
+      <section class="screen" data-screen-panel="results" hidden>
+        <div id="resultContent"></div>
+      </section>
+
+      <section class="screen" data-screen-panel="downloads" hidden>
+        <div class="page-heading"><div><p class="eyebrow">EPIC 4 · US-11</p><h1>Download planning evidence</h1><p>Downloads remain private to the workspace. Downloading does not publish the assessment.</p></div><span class="tag private">PRIVATE</span></div>
+        <div id="downloadContent"></div>
+      </section>
+
+      <section class="screen" data-screen-panel="support" hidden>
+        <div class="page-heading"><div><p class="eyebrow">EPIC 5 · US-12</p><h1>Assessment support</h1><p>Find a run by assessment or support reference without exposing unnecessary private data.</p></div><span class="tag internal">SUPPORT ONLY</span></div>
+        <div id="supportContent"></div>
+      </section>
+    </main>
+
+    <aside class="criteria-panel" id="criteriaPanel"><div class="criteria-head"><div><p>STORY REVIEW</p><h2 id="criteriaStory">US-01</h2></div><button id="closeCriteria" aria-label="Close criteria">×</button></div><h3 id="criteriaTitle"></h3><dl><div><dt>Screens</dt><dd id="criteriaScreens"></dd></div><div><dt>Open decisions</dt><dd id="criteriaDecisions"></dd></div></dl><div id="criteriaList"></div><div class="criteria-legend"><span><i class="ux"></i>Can review in mock</span><span><i class="real"></i>Needs implementation evidence</span></div></aside>
+  </div>
+
+  <dialog id="modal"><div id="modalContent"></div></dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="mock-data.js"></script>
+  <script src="mvp1.js"></script>
+</body>
+</html>

@@ -2,6 +2,14 @@
 
 A bilingual planning prototype with a static Caddy frontend, persistent hub feedback collection and a restricted server-side Type B-lite OpenAI/Langfuse observability pilot, packaged for GitHub, Docker and Ubuntu AWS Lightsail.
 
+## MVP1 Hub workflow and SIG staging alignment
+
+Release 0.10.1 integrates the v0.7 data and assessment journey into the existing Planner application. **Data & run** lets an authenticated Planner choose an area, any of seven static return periods and exactly one source for boundary, flood, evacuation centres and vulnerability. The RP comparison implements the 11 September mockup: it pairs two scenarios in the user’s chosen order, changes only the platform flood layer, uses the centers assessable in both scenarios for the main delta, and shows annual chances, A/B summaries, all-seven-scenario progression, synchronized schematic maps, a difference view, vulnerability overlap, an attention table and evidence limitations. A file-backed development database persists selected sources, static assessments, comparisons and traceability records.
+
+**Upload** accepts actual prepared files rather than only a demonstration button. The enabled prototype contracts are centre CSV/GeoJSON and flood TIFF/GeoTIFF up to 5 MB. Validation is deliberately narrow: it checks declared structure and metadata but does not repair data or perform scientific GIS validation. Accepted files appear in a visible **My Hub data catalogue** with dataset/contribution IDs, provenance, checksum and explicit Ready, Selected for next run and Applied to result states. **Use in this assessment** applies the source to the matching input selector; a run then freezes it into the result evidence. **Need help preparing your data?** records a human-support request without attaching raw file contents automatically.
+
+The local Hub REST routes perform upload, persistence, job and workflow operations. Analytical values remain deterministic fixtures. The 10 September architecture review sharpens the intended SIG boundary: MVP1 does **not** invent `grp_*` MCP tools and does **not** wait for the unimplemented `compute_run` or `contribute_submit` gaps. Instead, the Hub owns private data and the canonical analytics API; the proposed SIG `grp-flood` domain-pack connector implements `gather(target, focus, trace, extras)` behind the existing `assemble_pack` extension point and reads an authorised stored Hub result. The invited tester confirmed Google authentication and fresh-session enumeration of 15 SIG tools. Supplied staging captures show Food Security connected but Risk currently using a no-data/refusal path. Assessment inputs with one eligible dataset are shown as **Active source · automatically selected**; a selector appears only when a genuine alternative exists. Selecting **Determine evacuation-centre exposure** persists a Hub assessment trace. Admin **AI assurance → Workflow traces** then shows a deterministic SIG MCP staging rehearsal, all 15 enumerated tools and a developer-next instruction for each missing step. No SIG MCP server, Risk connector, upstream receipt or production GIS service is called by this prototype. Prototype records use the existing persistent backend volume under `/app/storage/prototype-db`.
+
 ## Thailand reference-experience login cover
 
 Release 0.9.1 presents this deployment as one Thailand reference experience—not the single frontend every Hub must use. The desktop cover uses the supplied flood-planning artwork as a decorative layer, while essential context remains accessible HTML text. Mobile prioritises the login form and hides the nonessential artwork. See [`docs/02Sep2026/LOGIN_COVER_UPDATE.md`](docs/02Sep2026/LOGIN_COVER_UPDATE.md) for screenshots and the implementation summary.
@@ -268,7 +276,7 @@ For automatic HTTPS with a domain:
 
 ```dotenv
 SITE_ADDRESS=prototype.example.org
-IMAGE_TAG=0.9.2
+IMAGE_TAG=0.10.0
 ADMIN_USERNAME=
 ADMIN_PASSWORD=
 PLANNER_USERNAME=

@@ -3,6 +3,7 @@ const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
 const DASHBOARD_DATA = require('./data/langfuse-dashboard-2026-08-31.json');
+const {createPrototypeService} = require('./prototype-service');
 
 const PORT = Number(process.env.PORT || 3000);
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
@@ -23,6 +24,7 @@ const PLANNER_PASSWORD = process.env.PLANNER_PASSWORD || '';
 const DEMO_QUICK_LOGIN = String(process.env.DEMO_QUICK_LOGIN || 'false').toLowerCase() === 'true';
 const FEEDBACK_STORAGE_DIR = path.resolve(process.env.FEEDBACK_STORAGE_DIR || './storage');
 const FEEDBACK_FILE = path.join(FEEDBACK_STORAGE_DIR, 'feedback.json');
+const prototypeService = createPrototypeService({storageDir:FEEDBACK_STORAGE_DIR});
 const MAX_BODY = 32 * 1024;
 const MAX_FEEDBACK_BODY = 1500 * 1024;
 const MAX_ATTACHMENT = 1024 * 1024;
@@ -442,7 +444,11 @@ function sendFile(res, status, body, type, filename) {
 const SERVER_STARTED_AT = iso();
 const server = http.createServer(async (req, res) => {
   try {
-    if (req.method === 'GET' && req.url === '/healthz') return json(res,200,{status:'ok',mode:MODE,openaiConfigured:Boolean(OPENAI_API_KEY),langfuseConfigured:Boolean(LANGFUSE_PUBLIC_KEY&&LANGFUSE_SECRET_KEY),authConfigured:authConfigured(),demoQuickLogin:DEMO_QUICK_LOGIN});
+    if (req.method === 'GET' && req.url === '/healthz') return json(res,200,{status:'ok',mode:MODE,openaiConfigured:Boolean(OPENAI_API_KEY),langfuseConfigured:Boolean(LANGFUSE_PUBLIC_KEY&&LANGFUSE_SECRET_KEY),authConfigured:authConfigured(),demoQuickLogin:DEMO_QUICK_LOGIN,prototypeApi:'ready',prototypeApiVersion:2});
+    if (req.url.startsWith('/api/v1/')) {
+      const session=requireSession(req,res);if(!session)return;
+      return prototypeService.handle(req,res,session);
+    }
     if (req.method === 'GET' && req.url === '/api/auth/demo-status') {
       return json(res,200,{plannerQuickLogin:DEMO_QUICK_LOGIN&&Boolean(PLANNER_USERNAME)});
     }
