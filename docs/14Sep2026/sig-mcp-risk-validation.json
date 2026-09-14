@@ -1,0 +1,370 @@
+{
+  "capturedAt": "2026-09-14T02:24:21.006164+00:00",
+  "endpoint": "https://servirplatform.sig-gis.com/mcp",
+  "authentication": {
+    "method": "OAuth 2.1 authorization code with PKCE",
+    "sso": "Google via WorkOS AuthKit",
+    "accessTokenPersisted": false,
+    "accountIdentifierPersisted": false
+  },
+  "mcp": {
+    "negotiatedProtocolVersion": "2025-06-18",
+    "serverInfo": {
+      "name": "servirplatform",
+      "version": "4.0.0"
+    },
+    "capabilities": {
+      "logging": {},
+      "prompts": {
+        "listChanged": true
+      },
+      "resources": {
+        "subscribe": false,
+        "listChanged": true
+      },
+      "tools": {
+        "listChanged": true
+      }
+    },
+    "sessionIdIssued": false
+  },
+  "toolInventory": {
+    "count": 15,
+    "names": [
+      "platform_capabilities",
+      "corpus_search",
+      "context_get",
+      "assemble_pack",
+      "verify_groundedness",
+      "resolve_place_time",
+      "compose_run",
+      "record_receipt",
+      "publish_answer",
+      "feeds_query",
+      "ui_design",
+      "ui_catalog",
+      "ui_component",
+      "ui_embed",
+      "corpus_document"
+    ]
+  },
+  "calls": {
+    "platform_capabilities": {
+      "status": "ok",
+      "toolsAvailable": [
+        "assemble_pack",
+        "compose_run",
+        "context_get",
+        "corpus_document",
+        "corpus_search",
+        "feeds_query",
+        "platform_capabilities",
+        "publish_answer",
+        "record_receipt",
+        "resolve_place_time",
+        "ui_catalog",
+        "ui_component",
+        "ui_design",
+        "ui_embed",
+        "verify_groundedness"
+      ],
+      "riskComposition": {
+        "description": "Question -> governed 4-section cited hazard-exposure brief for a place x hazard: deterministic geo evidence assembled, drafted, groundedness-gated, receipt minted.",
+        "params": [
+          "question",
+          "provider?",
+          "model?"
+        ],
+        "runs_llm_server_side": true,
+        "llm": "the PLATFORM's model and key; the LLM only parses the target and phrases the brief — every number is computed deterministically. To use YOUR model, run the loop instead: assemble_pack(pack='risk', place=..., hazard=...) -> you draft -> publish_answer.",
+        "for": "consumers with no model credentials or no place to run code (dashboards, cron, REST) — the accompanied path"
+      },
+      "riskResourceAdvertised": true
+    },
+    "assemble_pack_invalid_hazard": {
+      "arguments": {
+        "pack": "risk",
+        "place": "Phaya Thai District, Bangkok, Thailand",
+        "hazard": "river flood"
+      },
+      "status": "declined",
+      "note": "unknown hazard 'river flood' — use the registered hazard identifier 'flood'"
+    },
+    "assemble_pack_risk_flood": {
+      "status": "ok",
+      "pack_id": "11eba723fa3d4591",
+      "answer_status": "INCOMPLETE — this pack is EVIDENCE, not an answer. Draft the brief from it, then finish with ONE call to publish_answer(pack_id, draft, question). Do not show the user a brief that has not been through it.",
+      "next_step": {
+        "required": true,
+        "step": "FINISH — one call gates the draft, mints the receipt, returns the evidence view",
+        "call": {
+          "tool": "publish_answer",
+          "args": {
+            "pack_id": "11eba723fa3d4591",
+            "draft": "<your full drafted brief, verbatim>",
+            "question": "<the user's question, verbatim>"
+          }
+        },
+        "pass_the_whole_draft": "Send the complete draft text, not a summary: the gate hashes exactly what it checked so the receipt proves which text passed.",
+        "draft_rules": [
+          "Use these section headers EXACTLY: ## What the numbers show / ## Method and validation / ## What's missing and how to weigh it / ## Reading the severity scale",
+          "Cite pack items as [n]. Every paragraph needs at least one citation.",
+          "The declared gaps are themselves citable evidence: entry [7]. Your what's-missing paragraphs should cite [7] — an honest gap statement no longer fails the gate as uncited.",
+          "Only cite numbers that appear in the pack — a [n] that is not in the pack is a phantom citation and blocks the gate.",
+          "Do NOT write your own '## Sources' section; the receipt carries the sources with their provenance."
+        ],
+        "granular_alternative": "verify_groundedness(draft, pack_id) then record_receipt(pack_id, report_id) do the same two things separately — same gate, same receipt.",
+        "if_you_stop_here": "The brief would be ungoverned: nothing has checked it for citations that do not exist in the pack, there is no receipt, and neither you nor the user can replay or share the answer. record_receipt is also what returns the evidence view — skip it and the user gets prose instead of the evidence chain."
+      },
+      "pack": "risk",
+      "target": {
+        "place": "Phaya Thai District, Bangkok, Thailand",
+        "hazard": "flood"
+      },
+      "focus": "evacuation-centre exposure across return periods",
+      "citations": [
+        {
+          "n": 1,
+          "kind": "exposure",
+          "retrieval": "computed-at-pack-time",
+          "source": "hazard_flood.tif × hospitals",
+          "title": "hospitals vs hazard_flood",
+          "validation": "deterministic-computation",
+          "text": "9 of 12 hospitals in Phaya Thai District fall in flood hazard class >= 1. By severity — class 2 (Low (0.5-1 m)): 4; class 3 (Moderate (1-1.5 m)): 2; class 4 (High (1.5-2 m)): 3. Method: count_in_hazard.",
+          "method": "count_in_hazard",
+          "series": {
+            "id": "exposure_hospitals",
+            "points": [
+              {
+                "t": "class 1",
+                "v": 0,
+                "c": "Very Low (0-0.5 m)"
+              },
+              {
+                "t": "class 2",
+                "v": 4,
+                "c": "Low (0.5-1 m)"
+              },
+              {
+                "t": "class 3",
+                "v": 2,
+                "c": "Moderate (1-1.5 m)"
+              },
+              {
+                "t": "class 4",
+                "v": 3,
+                "c": "High (1.5-2 m)"
+              },
+              {
+                "t": "class 5",
+                "v": 0,
+                "c": "Very High (>2 m)"
+              }
+            ],
+            "unit": "hospitals by hazard class",
+            "categorical": true
+          }
+        },
+        {
+          "n": 2,
+          "kind": "exposure",
+          "retrieval": "computed-at-pack-time",
+          "source": "hazard_flood.tif × schools",
+          "title": "schools vs hazard_flood",
+          "validation": "deterministic-computation",
+          "text": "8 of 8 schools in Phaya Thai District fall in flood hazard class >= 1. By severity — class 1 (Very Low (0-0.5 m)): 1; class 2 (Low (0.5-1 m)): 2; class 3 (Moderate (1-1.5 m)): 3; class 4 (High (1.5-2 m)): 2. Method: count_in_hazard.",
+          "method": "count_in_hazard",
+          "series": {
+            "id": "exposure_schools",
+            "points": [
+              {
+                "t": "class 1",
+                "v": 1,
+                "c": "Very Low (0-0.5 m)"
+              },
+              {
+                "t": "class 2",
+                "v": 2,
+                "c": "Low (0.5-1 m)"
+              },
+              {
+                "t": "class 3",
+                "v": 3,
+                "c": "Moderate (1-1.5 m)"
+              },
+              {
+                "t": "class 4",
+                "v": 2,
+                "c": "High (1.5-2 m)"
+              },
+              {
+                "t": "class 5",
+                "v": 0,
+                "c": "Very High (>2 m)"
+              }
+            ],
+            "unit": "schools by hazard class",
+            "categorical": true
+          }
+        },
+        {
+          "n": 3,
+          "kind": "exposure",
+          "retrieval": "computed-at-pack-time",
+          "source": "hazard_flood.tif × buildings",
+          "title": "buildings vs hazard_flood",
+          "validation": "deterministic-computation",
+          "text": "4638 of 4818 buildings in Phaya Thai District fall in flood hazard class >= 1. By severity — class 1 (Very Low (0-0.5 m)): 407; class 2 (Low (0.5-1 m)): 1007; class 3 (Moderate (1-1.5 m)): 2340; class 4 (High (1.5-2 m)): 884. Method: count_in_hazard.",
+          "method": "count_in_hazard",
+          "series": {
+            "id": "exposure_buildings",
+            "points": [
+              {
+                "t": "class 1",
+                "v": 407,
+                "c": "Very Low (0-0.5 m)"
+              },
+              {
+                "t": "class 2",
+                "v": 1007,
+                "c": "Low (0.5-1 m)"
+              },
+              {
+                "t": "class 3",
+                "v": 2340,
+                "c": "Moderate (1-1.5 m)"
+              },
+              {
+                "t": "class 4",
+                "v": 884,
+                "c": "High (1.5-2 m)"
+              },
+              {
+                "t": "class 5",
+                "v": 0,
+                "c": "Very High (>2 m)"
+              }
+            ],
+            "unit": "buildings by hazard class",
+            "categorical": true
+          }
+        },
+        {
+          "n": 4,
+          "kind": "exposure",
+          "retrieval": "computed-at-pack-time",
+          "source": "hazard_flood.tif × roads",
+          "title": "roads vs hazard_flood",
+          "validation": "deterministic-computation",
+          "text": "305.3 km of 326.4 km of roads in Phaya Thai District fall in flood hazard class >= 1. By severity (km) — class 1: 36.8; class 2: 63.8; class 3: 128.4; class 4: 76.3. Method: roads_in_hazard.",
+          "method": "roads_in_hazard"
+        },
+        {
+          "n": 5,
+          "kind": "hazard_layer",
+          "retrieval": "computed-at-pack-time",
+          "source": "ADPC hazard_flood.tif, derived from JRC GLOFAS v2.1",
+          "title": "100-year flood hazard (Southeast Asia)",
+          "validation": "structural-contract-checked",
+          "text": "Hazard layer hazard_flood: 100-year flood hazard (Southeast Asia). Lineage: ADPC hazard_flood.tif, derived from JRC GLOFAS v2.1. Declared contract: dtype int8, valid 0-5 class. Observed on this AOI clip: dtype int8, range 0-5 across 6 distinct values (sampled). Legend: 1=Very Low (0-0.5 m); 2=Low (0.5-1 m); 3=Moderate (1-1.5 m); 4=High (1.5-2 m); 5=Very High (>2 m)"
+        },
+        {
+          "n": 6,
+          "kind": "method",
+          "retrieval": "config",
+          "source": "platform method registry",
+          "title": "exposure overlay method",
+          "validation": "documented-method",
+          "text": "Exposure = asset location sampled against the clipped hazard raster; a point's class is the raster value at its coordinates (0 = no data / no hazard); road exposure attributes each segment's haversine length to the class at its midpoint. Severity classes are the provider's, 1 (lowest) to 5 (highest). This is a HAZARD overlay, not a risk level: vulnerability weighting (L2) is not part of this pack yet."
+        },
+        {
+          "n": 7,
+          "kind": "gaps",
+          "source": "platform pack assembly",
+          "title": "declared evidence gaps",
+          "text": "Declared gaps in this evidence pack: (1) no risk document corpus exists — no publications, assessments or reports can be cited for this domain yet (2) raster vintages unknown: no publication date, version or licence is recorded for any catalog raster (3) risk levels (L1 precomputed / L2 vulnerability-weighted) are not in this pack — exposure vs hazard severity only; the compute engine exists (4) OSM asset data carries no retrieval date in the AOI bundle",
+          "validation": "declared-by-platform",
+          "retrieval": "config"
+        }
+      ],
+      "gaps": [
+        "no risk document corpus exists — no publications, assessments or reports can be cited for this domain yet",
+        "raster vintages unknown: no publication date, version or licence is recorded for any catalog raster",
+        "risk levels (L1 precomputed / L2 vulnerability-weighted) are not in this pack — exposure vs hazard severity only; the compute engine exists",
+        "OSM asset data carries no retrieval date in the AOI bundle"
+      ],
+      "queries": null,
+      "required_sections": [
+        "## What the numbers show",
+        "## Method and validation",
+        "## What's missing and how to weigh it",
+        "## Reading the severity scale"
+      ],
+      "stats": {
+        "place": "Phaya Thai District",
+        "hazard": "hazard_flood",
+        "min_severity": 1,
+        "counts": {
+          "hospitals": {
+            "exposed": 9,
+            "total": 12,
+            "by_severity": {
+              "1": 0,
+              "2": 4,
+              "3": 2,
+              "4": 3,
+              "5": 0
+            }
+          },
+          "schools": {
+            "exposed": 8,
+            "total": 8,
+            "by_severity": {
+              "1": 1,
+              "2": 2,
+              "3": 3,
+              "4": 2,
+              "5": 0
+            }
+          },
+          "buildings": {
+            "exposed": 4638,
+            "total": 4818,
+            "by_severity": {
+              "1": 407,
+              "2": 1007,
+              "3": 2340,
+              "4": 884,
+              "5": 0
+            }
+          },
+          "roads": {
+            "exposed_km": 305.3,
+            "total_km": 326.4
+          }
+        }
+      },
+      "trace": [
+        "aoi[Phaya Thai District] 9 km2 via admin boundary ~9 km²",
+        "clip[hazard_flood]",
+        "exposure[hospitals] 9/12",
+        "exposure[schools] 8/8",
+        "exposure[buildings] 4638/4818",
+        "exposure[roads] 305.3km"
+      ],
+      "exec": {
+        "assembled_at": "2026-09-14T02:24:21.006164+00:00",
+        "gather_ms": 1599.2
+      },
+      "viz_recorded": "map payload recorded with the pack — rendered by the hazard_map embed for this receipt",
+      "your_next_output": "STOP — do not write the brief as your reply yet. Write it, then send it as your next output: publish_answer(pack_id='11eba723fa3d4591', draft=<the full brief>, question=<the user's question>). ONE call finishes the loop — it gates the draft, mints the receipt and returns the evidence view. A brief typed straight into the conversation is ungoverned, unreceipted and unshowable, which is the one failure this platform exists to prevent."
+    }
+  },
+  "interpretation": [
+    "Authenticated tool enumeration confirms the live 15-tool surface.",
+    "A live risk assemble_pack call succeeded for Phaya Thai and flood.",
+    "This proves the generic upstream Risk pack can assemble its registered fixture evidence; it does not prove the proposed grp-flood connector to the private Hub result API exists.",
+    "The returned evidence is a 100-year hazard exposure overlay, not the prototype seven-return-period evacuation-centre comparison and not a vulnerability-weighted risk result.",
+    "The pack remains incomplete until a separately drafted answer is gated with publish_answer; publish_answer was intentionally not called during this connection test."
+  ]
+}

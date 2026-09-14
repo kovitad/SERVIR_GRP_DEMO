@@ -4,9 +4,10 @@
 
 - Added `scripts/sig-mcp-capture.js`, a dependency-free SIG MCP contract capture that performs OAuth 2.1 discovery, dynamic client registration, PKCE authorization and the MCP `initialize` handshake, then enumerates every advertised tool with its full input schema.
 - The capture records the negotiated protocol version, server identity and capabilities to a committable evidence file, and diffs the live inventory against the 15 tools this prototype claims in `mcpTools()` so fixture drift becomes visible.
-- The capture never calls a tool, never persists an access token and never writes token material into the evidence file.
+- The default capture never calls a tool. Optional `--test-risk` makes only bounded `platform_capabilities` and Risk `assemble_pack` calls; it never persists an access token or writes token material into evidence.
 - A 403 carrying no `WWW-Authenticate` challenge is reported as a probable network or proxy denial rather than as server-side authorization, so a blocked egress path is not mistaken for a successful reachability probe.
-- Added `docs/14Sep2026/SIG_MCP_CONNECTION_TEST.md` covering the run procedure, how to read the inventory diff, and the explicit boundary between tool enumeration and a proven Risk/`grp-flood` connection.
+- Added `docs/14Sep2026/SIG_MCP_CONNECTION_TEST.md` and a sanitized authenticated validation capture. The latest live run enumerated 15 tools, matched the prototype inventory exactly, and successfully assembled generic Risk pack `7a2ac7b16c28a304` for Phaya Thai and `flood`.
+- Updated Planner/Admin integration wording: generic upstream Risk assembly is now validated, while the deployed Planner and proposed `grp-flood` connector to its private Hub result remain unconnected.
 
 ## 0.10.1-prototype
 

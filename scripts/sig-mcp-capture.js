@@ -6,7 +6,8 @@
  * browser for the invited Google account. It authenticates with OAuth 2.1
  * (PKCE + dynamic client registration when advertised), performs the MCP
  * initialize handshake, enumerates every tool with its full input schema, and
- * writes a committable evidence file.
+ * writes a committable evidence file. With --test-risk it also makes bounded,
+ * read-only platform_capabilities and risk assemble_pack calls.
  *
  * It then diffs the live inventory against the tool list this prototype claims
  * in backend/prototype-service.js, so the repository stops relying on
@@ -33,7 +34,7 @@ const CLIENT_NAME = 'servir-grp-demo-contract-capture';
 const REQUEST_TIMEOUT_MS = 30000;
 
 function parseArgs(argv) {
-  const args = {endpoint: DEFAULT_ENDPOINT, out: '', port: 8765, clientId: '', scope: '', discoverOnly: false};
+  const args = {endpoint: DEFAULT_ENDPOINT, out: '', port: 8765, clientId: '', scope: '', discoverOnly: false, testRisk: false, place: 'Phaya Thai District, Bangkok, Thailand', hazard: 'flood', focus: 'evacuation-centre exposure across return periods'};
   for (let i = 0; i < argv.length; i += 1) {
     const key = argv[i];
     const next = () => argv[++i];
@@ -43,6 +44,10 @@ function parseArgs(argv) {
     else if (key === '--client-id') args.clientId = next();
     else if (key === '--scope') args.scope = next();
     else if (key === '--discover-only') args.discoverOnly = true;
+    else if (key === '--test-risk') args.testRisk = true;
+    else if (key === '--place') args.place = next();
+    else if (key === '--hazard') args.hazard = next();
+    else if (key === '--focus') args.focus = next();
     else if (key === '--help' || key === '-h') { printHelp(); process.exit(0); }
     else { console.error(`Unknown argument: ${key}`); printHelp(); process.exit(2); }
   }
@@ -59,6 +64,10 @@ Capture the deployed SIG MCP tool contract.
   --client-id <id>    Pre-registered client ID; skips dynamic registration
   --scope <scopes>    Space-separated scopes to request
   --discover-only     Record discovery metadata only; no login, no tool list
+  --test-risk         Also call platform_capabilities and assemble_pack(pack=risk)
+  --place <name>      Risk-test place (default Phaya Thai District, Bangkok, Thailand)
+  --hazard <id>       Registered risk hazard ID (default flood, not "river flood")
+  --focus <text>      Optional risk-pack focus
 `);
 }
 
@@ -426,10 +435,13 @@ async function main() {
     session: null,
     tools: [],
     comparisonWithPrototypeClaim: null,
+    toolTests: null,
     limitations: [
       'This records the tool contract the server advertises to an authenticated client.',
-      'It does not call any tool, transfer evidence, or prove that a Risk/grp-flood connector exists.',
-      'Tool presence is not scientific approval and not proof of a protected evidence path.'
+      args.testRisk
+        ? 'The optional test calls platform_capabilities and assembles one Risk evidence pack; it does not call publish_answer or transfer private Hub data.'
+        : 'Inventory-only mode does not call any tool, transfer evidence, or prove that a Risk/grp-flood connector exists.',
+      'Tool presence or a generic Risk pack response is not scientific approval and does not prove the proposed grp-flood-to-Hub protected evidence path.'
     ]
   };
 
@@ -475,6 +487,19 @@ async function main() {
   const claimed = claimedTools(repoRoot);
   evidence.comparisonWithPrototypeClaim = diffInventory(claimed, evidence.tools);
 
+  if (args.testRisk) {
+    console.log(`· Testing the live Risk pack for ${args.place} × ${args.hazard}…`);
+    const capabilities = await session.call('tools/call', {name: 'platform_capabilities', arguments: {}});
+    const riskPack = await session.call('tools/call', {name: 'assemble_pack', arguments: {
+      pack: 'risk', place: args.place, hazard: args.hazard, focus: args.focus
+    }});
+    evidence.toolTests = {
+      platformCapabilities: capabilities,
+      riskAssemblePack: riskPack,
+      boundary: 'Bounded evidence assembly only. No publish_answer call, private Hub transfer, or grp-flood connector claim.'
+    };
+  }
+
   writeEvidence(outPath, evidence);
   report(evidence, path.relative(repoRoot, outPath));
 }
@@ -499,6 +524,7 @@ function report(evidence, relativeOut) {
   if (diff.liveButUnclaimed.length) console.log(`    ON SERVER BUT NOT CLAIMED: ${diff.liveButUnclaimed.join(', ')}`);
   if (!diff.claimedButAbsent.length && !diff.liveButUnclaimed.length) console.log('    Inventory matches exactly.');
 
+  if (evidence.toolTests) console.log('\n  Risk tool test recorded (platform_capabilities + assemble_pack only).');
   console.log(`\n  Evidence written to ${relativeOut}`);
   console.log('  No access token was written to disk.\n');
 }

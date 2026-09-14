@@ -1,5 +1,7 @@
 # GRP MVP1 prototype architecture-alignment review
 
+> **14 September update:** The 10 September no-data observation below is historical. An authenticated contract capture subsequently enumerated 15 live tools and `assemble_pack(pack="risk", place="Phaya Thai District, Bangkok, Thailand", hazard="flood")` returned a valid generic Risk evidence pack. See [`../14Sep2026/SIG_MCP_CONNECTION_TEST.md`](../14Sep2026/SIG_MCP_CONNECTION_TEST.md). The proposed `grp-flood` connector to the private Hub result remains unimplemented.
+
 **Reviewed:** 10 September 2026
 
 **Implementation reviewed:** `prototype/github/`

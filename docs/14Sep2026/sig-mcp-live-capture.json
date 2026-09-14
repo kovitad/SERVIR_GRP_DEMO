@@ -1,0 +1,1757 @@
+{
+  "capturedAt": "2026-09-14T02:37:06.660Z",
+  "endpoint": "https://servirplatform.sig-gis.com/mcp",
+  "capturedBy": "servir-grp-demo-contract-capture",
+  "clientProtocolVersion": "2025-06-18",
+  "discovery": {
+    "endpoint": "https://servirplatform.sig-gis.com/mcp",
+    "probedAt": "2026-09-14T02:37:04.462Z",
+    "unauthenticatedProbe": {
+      "status": 401,
+      "error": null,
+      "wwwAuthenticate": "Bearer resource_metadata=\"https://servirplatform.sig-gis.com/.well-known/oauth-protected-resource/mcp\"",
+      "requiresAuthorization": true,
+      "reachabilityUncertain": false
+    },
+    "protectedResourceMetadata": {
+      "url": "https://servirplatform.sig-gis.com/.well-known/oauth-protected-resource/mcp",
+      "resource": "https://servirplatform.sig-gis.com/mcp",
+      "authorization_servers": [
+        "https://welcoming-splendor-62-staging.authkit.app"
+      ],
+      "scopes_supported": [],
+      "bearer_methods_supported": [
+        "header"
+      ]
+    },
+    "authorizationServerMetadata": {
+      "url": "https://welcoming-splendor-62-staging.authkit.app/.well-known/oauth-authorization-server/",
+      "authorization_endpoint": "https://welcoming-splendor-62-staging.authkit.app/oauth2/authorize",
+      "code_challenge_methods_supported": [
+        "S256"
+      ],
+      "device_authorization_endpoint": "https://welcoming-splendor-62-staging.authkit.app/oauth2/device_authorization",
+      "grant_types_supported": [
+        "authorization_code",
+        "refresh_token",
+        "urn:ietf:params:oauth:grant-type:device_code"
+      ],
+      "introspection_endpoint": "https://welcoming-splendor-62-staging.authkit.app/oauth2/introspection",
+      "issuer": "https://welcoming-splendor-62-staging.authkit.app",
+      "jwks_uri": "https://welcoming-splendor-62-staging.authkit.app/oauth2/jwks",
+      "registration_endpoint": "https://welcoming-splendor-62-staging.authkit.app/oauth2/register",
+      "scopes_supported": [
+        "email",
+        "offline_access",
+        "openid",
+        "profile"
+      ],
+      "response_modes_supported": [
+        "query"
+      ],
+      "response_types_supported": [
+        "code"
+      ],
+      "token_endpoint": "https://welcoming-splendor-62-staging.authkit.app/oauth2/token",
+      "token_endpoint_auth_methods_supported": [
+        "none",
+        "client_secret_post",
+        "client_secret_basic"
+      ]
+    }
+  },
+  "session": {
+    "negotiatedProtocolVersion": "2025-06-18",
+    "serverInfo": {
+      "name": "servirplatform",
+      "version": "4.0.0"
+    },
+    "capabilities": {
+      "logging": {},
+      "prompts": {
+        "listChanged": true
+      },
+      "resources": {
+        "subscribe": false,
+        "listChanged": true
+      },
+      "tools": {
+        "listChanged": true
+      }
+    },
+    "instructions": "The Global Risk Platform — a GOVERNED TOOLKIT for food-security decision support, not a chatbot. Every insight carries its evidence; declines say why; answers are replayable; a groundedness gate blocks ungrounded briefs.\n\nTwo ways to use it:\n- BUILD-TIME: the user asks you to BUILD a tool/app. Produce a REUSABLE artifact (a script/app) that calls these tools — do NOT just run the pipeline once. Write it as SOURCE FILES IN THE USER'S OWN PROJECT that they can run, version and deploy — never a hosted preview on a third-party host. A published static page also FREEZES any verdict into markup that can never be re-resolved.\n- RUN-TIME: the user asks a question. Answer it now via the canonical loop.\n\nKNOW WHO THIS IS FOR, AND SHOW THEM. The people using this are food-security analysts, hub teams and ministry advisors deciding whether to act months ahead. What helps them is SEEING the evidence chain — how old each source is, which are live pulls, what is missing — not reading it as prose. You do not need to be asked for a visual. Assume one helps, and produce it.\n\nUSE THE RICHEST OUTPUT YOUR HOST SUPPORTS. This server cannot see which client you are running in, so it assumes a coding-agent host (files, HTML you can open, markdown, tables) — write a real file the user can open rather than describing one. If your host renders more (artifacts, canvases, inline images, iframes), use that instead. If it renders less, degrade deliberately: a clean table beats a paragraph. Never default to prose just because prose always works.\n\nUSE THE PLATFORM'S OWN INTERFACE, DO NOT INVENT ONE. This server ships its design language and its components: `ui_design` for tokens (colour, type, the trust conventions), `ui_catalog` for what exists, `ui_component` for ready-built markup and brand assets, `ui_embed` for anything showing a verdict. Tool results tell you what to reach for — `record_receipt` returns a `render_with` block naming the component for each part. Reach for those before hand-rolling a chart, a graph or a colour scheme; what you invent will not match, and a verdict you draw yourself attests nothing.\n\nSHIP OBSERVABILITY WITH ANYTHING YOU BUILD. A product built on this platform must emit an execution trace: every response it produces carries a structured record of what ran — steps, timings, upstream calls, LLM usage and cost, and what each step decided. Read `servirplatform://skill/trace-emit` BEFORE writing the backend (it is a complete, portable guide with worked examples) and `servirplatform://skill/trace-visualize` for rendering the trace. An answer whose execution cannot be inspected is only half governed.\n\nNEVER PASTE IFRAME MARKUP INTO A CHAT REPLY. Chat hosts block external frames (CSP frame-src 'self'), so it renders as a blank white box. In hosts that render MCP Apps the evidence panel appears beside the tool result by itself; ui_embed's iframe is only for web pages you are writing.\n\nONE HARD LIMIT: a rendered page FREEZES whatever is in it. Evidence, dates, numbers and sources are safe to freeze; they are snapshots and say so. A VERDICT is not. Never paint \"verified\"/\"passed\" into an artifact. Show it through `ui_embed`, which re-resolves live against the platform, or state it as UNVERIFIED and link the receipt resolver (rule 5).\n\nCanonical loop, THREE steps: assemble_pack(country, crop) -> YOUR LLM drafts a brief from the pack, citing [n] in the pack's required_sections -> publish_answer(pack_id, draft, question), which gates the draft, mints the receipt and returns the evidence view in one call. NEVER show the user a brief that has not been through publish_answer: drafting it into the conversation skips the gate and leaves nothing replayable. (verify_groundedness + record_receipt do the same two things separately if you want them apart.) Use platform_capabilities to scope honestly, corpus_search/corpus_document for evidence with provenance, context_get for the (adjustable) crop calendar.\n\nIf the user asks how to use this server, read the `servirplatform://how-to-use` resource (a human-readable guide) — or run the `explain_platform` prompt — and answer from it.",
+    "sessionIdIssued": false,
+    "oauth": {
+      "clientId": "client_01M2EWCZT1THPWW6TJ7XJWWP0J",
+      "scope": "email offline_access openid profile",
+      "tokenPersisted": false
+    }
+  },
+  "tools": [
+    {
+      "name": "platform_capabilities",
+      "title": "Platform Capabilities",
+      "description": "The platform map: which tools/prompts are live, the bones and their status,\npacks, sources with provenance, calendars, and DECLARED gaps. Bone status is\nderived from the live registry, so it never drifts. Call this first in a build\nsession to scope honestly before writing code.",
+      "inputSchema": {
+        "properties": {},
+        "type": "object",
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": null
+    },
+    {
+      "name": "corpus_search",
+      "title": "Corpus Search",
+      "description": "Search the platform's authoritative document library. Prefer this over a web\nsearch for the subjects it covers (see `platform_capabilities` for the live\nlist): every passage carries a provenance passport\n(source, date, validation, archived copy).\n\nReturns: {status, query, corpus, min_relevance, hits}.\n  status \"ok\"       -> hits: [{score, text, passport{...}}]\n  status \"empty\"    -> hits: [], and `note` says WHY (empty library /\n                       filters exclude / below the relevance floor — a\n                       below-floor miss is a decline, not a weak match)\n  status \"declined\" -> hits: [], and `note` says WHY (missing key / torn corpus)\nWhenever status != \"ok\", render `note` — it is the honest cause.",
+      "inputSchema": {
+        "properties": {
+          "query": {
+            "type": "string"
+          },
+          "k": {
+            "default": 5,
+            "type": "integer"
+          },
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "crop": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "temporal": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "doc_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": null
+    },
+    {
+      "name": "context_get",
+      "title": "Context Get",
+      "description": "The hub-default crop calendar for a country/crop, and the phase the asked\nmonth falls in (asked_month defaults to the current month — \"this season\").\n\nA human `override` (list of {season, planting:[m,m], harvest:[m,m]}) is\nhonored but LABELED: the returned calendar is marked adjusted=true and cited\nas \"ADJUSTED by the requester\". Pass override_country/override_crop to pin it\nto its target — if they mismatch the requested country/crop the override is\nDROPPED and the drop is declared in `gaps` (a swap never applies silently).\n\nReturns: {status, country, crop, asked_month, adjusted, calendar, gaps}.\n  status \"empty\"    -> no calendar configured for this country/crop (`note`)\n  status \"declined\" -> bad asked_month / malformed override (`note`)",
+      "inputSchema": {
+        "properties": {
+          "country": {
+            "type": "string"
+          },
+          "crop": {
+            "type": "string"
+          },
+          "asked_month": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "override": {
+            "anyOf": [
+              {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "override_country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "override_crop": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "country",
+          "crop"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": null
+    },
+    {
+      "name": "assemble_pack",
+      "title": "Assemble Pack",
+      "description": "ANSWER A QUESTION using governed evidence — START HERE for anything this platform covers.\n\nCovers maize and food security in Kenya and Zambia, and the climate drivers behind them (Oceanic Nino Index (ONI); Dipole Mode Index (IOD); Historical ENSO event catalogue (1950-present); IRI monthly ENSO/IOD quick look; CPC ENSO Diagnostic Discussion; Southern Oscillation Index (SOI)). Sources include ACAPS, AMIS, EAGC, FAO, FAO GIEWS, FEWS NET and 24 others.\n\nUse this INSTEAD OF A WEB SEARCH for those subjects. A web search returns prose of unknown provenance; this returns named sources with publication dates and validation levels, the literal queries run, and an explicit list of what is MISSING — then verify_groundedness can gate your draft against it and record_receipt makes the answer replayable.\n\nAssembles a deterministic, citable EVIDENCE PACK and mints a pack_id. Returns numbered citations, declared gaps, and the exact section headers your draft must use. No LLM runs here; assembly is deterministic.\n\nDOMAIN PACKS and their target params — pass the ones for your question (bare country/crop stays food-security): `food-security` (country, crop); `risk` (place, hazard).\n\nSTEP 1 OF 3 — the pack is evidence, NOT a finished answer. You then draft from it, call verify_groundedness(draft, pack_id) to gate the draft, and call record_receipt(pack_id, report_id) to mint the receipt. An answer that skips the gate is ungoverned and has nothing to replay; the receipt is also what returns the evidence view, so skipping it means the user reads prose instead of seeing the evidence chain. Each result names its own next call.",
+      "inputSchema": {
+        "properties": {
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "crop": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "focus": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "pack": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "place": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "hazard": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "min_severity": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "override": {
+            "anyOf": [
+              {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "override_country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "override_crop": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": null
+    },
+    {
+      "name": "verify_groundedness",
+      "title": "Verify Groundedness",
+      "description": "Gate a draft brief against the evidence pack it was written from. The\nverdict is computed SERVER-SIDE (you cannot pass a \"passed\" flag) and a\nresolvable report_id is persisted.\n\nThe draft must be built from a pack minted by assemble_pack, cite its items\nas [n], and contain the required sections (returned as `required_sections` —\nconform to them or the gate fails \"missing sections\"). Blocking failures:\nmissing sections, a model-written \"## Sources\", no citations, phantom\ncitations (numbers not in the pack), uncited paragraphs. Recorded but not\nblocking: numbers in the draft absent from the evidence.\n\nReturns: {status, report_id, passed, evidence_tier, required_sections,\nfailures, cited, phantom_citations, missing_sections, uncited_paragraphs,\nnumbers_unverified_recorded}. status \"declined\" -> unknown pack_id (`note`).",
+      "inputSchema": {
+        "properties": {
+          "draft": {
+            "type": "string"
+          },
+          "pack_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "draft",
+          "pack_id"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": null
+    },
+    {
+      "name": "resolve_place_time",
+      "title": "Resolve Place Time",
+      "description": "Turn human place-and-time into machine place-and-time: country/crop + a time\nexpression (`when`: a month name, 1-12, or \"this season\" — the default) → the\nseason windows and which phase that month falls in.\n\nReturns: {status, country, crop, region, asked_month, month_name, seasons,\nactive_seasons, region_resolution}. `region` is currently passed through\nUNRESOLVED — a sub-national gazetteer/admin geometries are a declared Phase-2\ngap, stated in `region_resolution`. status \"empty\" -> no calendar for that\ncountry/crop; \"declined\" -> unparseable `when` (`note`).",
+      "inputSchema": {
+        "properties": {
+          "country": {
+            "type": "string"
+          },
+          "crop": {
+            "type": "string"
+          },
+          "region": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "when": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "country",
+          "crop"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": null
+    },
+    {
+      "name": "compose_run",
+      "title": "Compose Run",
+      "description": "Run a pre-wired COMPOSITION end-to-end — for consumers with NO LLM of their\nown (dashboards, cron jobs, automated bulletins).\n\nNOTE this runs the PLATFORM's LLM server-side, on the platform's key and bill.\n`provider`/`model` pick among the platform's CONFIGURED providers — they do not\naccept your credentials. If you have your own model, prefer the loop —\nassemble_pack → you draft → verify_groundedness — which uses YOUR model for the\nsame evidence, the same gate and the same receipt. Use this tool when you have\nno model credentials or nowhere to run code.\n\nCompositions are registry rows (see `compositions` in platform_capabilities), so\nnew ones add no tools. Returns: {status, brief, citations, gaps, grounded,\npack_id, report_id, receipt_id, draft_sha256, provider, model}. status\n\"declined\" -> `note` (unknown composition / no question / ungroundable).",
+      "inputSchema": {
+        "properties": {
+          "composition": {
+            "default": "foodsecurity.brief",
+            "type": "string"
+          },
+          "question": {
+            "default": "",
+            "type": "string"
+          },
+          "override": {
+            "anyOf": [
+              {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "override_country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "override_crop": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "provider": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": null
+    },
+    {
+      "name": "record_receipt",
+      "title": "Record Receipt",
+      "description": "Mint or resolve a replayable RECEIPT — the shareable proof of an answer.\n\nMint (pass pack_id, and report_id from verify_groundedness): ties the question,\nthe evidence pack, and the verdict into one persisted receipt_id. Resolve (pass\nreceipt_id): returns that receipt. The receipt is claim-scoped — it attests that\nevery cited claim traces to the pack, NOT the truth of the underlying sources.\n\nReturns: {status, receipt_id, question, pack_id, report_id, passed,\nevidence_tier, sources, claim_scope, minted_at, resolve_with}. A hosted,\ncopy-paste-survivable resolver URL is a declared Phase-2 gap. status \"declined\"\n-> `note` (no pack for mint / unknown receipt_id).",
+      "inputSchema": {
+        "properties": {
+          "pack_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "report_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "receipt_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "question": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": null
+    },
+    {
+      "name": "publish_answer",
+      "title": "Publish Answer",
+      "description": "FINISH AN ANSWER — call this before you show the user a brief. One call: it gates your draft against the evidence pack and, only if it passes, mints the replayable receipt and returns the components that display the evidence chain.\n\nThis is the LAST step of the canonical loop (assemble_pack -> you draft -> publish_answer). Showing a brief without it means the answer was never checked for citations that do not exist in the pack, has no receipt, and cannot be replayed or shared.\n\nPass the draft VERBATIM and in full — it is hashed, so the receipt can prove which exact text passed. Cite pack items as [n], use the pack's required_sections as your headers, and do not write your own '## Sources'.\n\nReturns: {status, passed, report_id, receipt_id, public_resolver, sources, evidence_freshness, claim_scope, render_with, next_step}. status \"blocked\" -> the gate refused it: `failures` says why, NO receipt is minted, and the draft must not be shown. Use verify_groundedness / record_receipt directly only if you need the two steps separately.",
+      "inputSchema": {
+        "properties": {
+          "pack_id": {
+            "type": "string"
+          },
+          "draft": {
+            "type": "string"
+          },
+          "question": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "pack_id",
+          "draft"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": null
+    },
+    {
+      "name": "feeds_query",
+      "title": "Feeds Query",
+      "description": "CURRENT CLIMATE AND CROP DATA, live from the source — use this INSTEAD OF A WEB SEARCH for these numbers. Every value arrives with its source, its date and how it was validated. Covers: CPC ENSO Diagnostic Discussion; Historical ENSO event catalogue (1950-present); Oceanic Nino Index (ONI); IRI monthly ENSO/IOD quick look; Southern Oscillation Index (SOI); geoglam_conditions; Dipole Mode Index (IOD).\n\n`dataset` names the feed and `params` carries its arguments — both come from the registry, so new feeds appear here without a tool change.\n\nAvailable now:\n  - `enso_discussion` (NOAA CPC) — NOAA CPC monthly ENSO Diagnostic Discussion, served VERBATIM. The ONLY source for the formal ENSO Alert System Status (Watch / Advisory / Final Advisory) — a status is a declaration, not a measurement, so no index can supply it. Usually fresher than the IRI quick look. params: {}\n  - `enso_event_history` (derived from NOAA CPC ONI) — Historical ENSO event catalogue (1950-present) for analogue years and back-testing. DERIVED from the ONI series using CPC's own definition, not a separately published product. params: {min_seasons: optional run length threshold (default 5)}\n  - `enso_oni` (NOAA CPC) — Oceanic Nino Index — 3-month running Nino-3.4 SST anomaly; detects and classifies ENSO onset and strength. params: {limit: optional number of recent seasons (default 12)}\n  - `enso_outlook` (IRI / Columbia Climate School) — IRI monthly ENSO/IOD quick look — the official forecast narrative served VERBATIM by section. This is where the official probability percentages live, as prose: quote and attribute them, never re-type them as structured numbers. params: {year: int, optional — defaults to the latest published, month: int 1-12, optional — defaults to the latest published}\n  - `enso_soi` (NOAA PSL) — Monthly standardized SOI (Tahiti minus Darwin sea-level pressure) — the atmospheric side of ENSO. Sustained negative values lean El Nino. params: {limit: months of series to return (default 12)}\n  - `geoglam_conditions` (GEOGLAM Crop Monitor (CMET)) — Per-region crop-condition assessments for a month. params: {crop: optional crop name, place: optional country or region, month: optional YYYYMM (default: latest published)}\n  - `iod_dmi` (NOAA PSL (HadISST)) — Dipole Mode Index — the Indian Ocean Dipole, a co-driver that can amplify or offset the ENSO signal. params: {limit: optional number of recent months (default 12)}\n\nRegistered but not yet available (asking returns why):\n  - `chirps_rainfall` — DECLARED GAP: rainfall + ~15-day forecast — pending hub data lists. NOTE: Phase 2 of the use case, not Phase 1.\n  - `chirts_temperature` — DECLARED GAP: daily max/min temperature (heat stress) — pending hub data lists\n  - `ecmwf_seas5` — DECLARED GAP: ECMWF SEAS5 seasonal forecast. Public products are charts (opencharts serves a CC-BY-4.0 PNG), not per-place numbers; the data path is the Climate Data Store, which needs an account and licence acceptance.\n  - `enso_plume` — DECLARED GAP: RETIRED UPSTREAM, 2026-08-17. IRI moved this service from ensoforecast.iri.columbia.edu to ensoforecast2 (the old host 301s to the new one) and, in the move, replaced the machine-readable JSON API with server-rendered images. Every data route now returns HTTP 403 (plumes_json, plume_models, select_plumes, figure4_options), while the new figure4_plot / figure7_plot / figure9_plot routes return 200 image/svg+xml. Confirmed not an IP or user-agent block: 403 from two separate networks, with and without a browser UA, Referer and Origin. The SVG is NOT parseable back into data — it carries 211 <path> elements, ZERO <text> elements and no data attributes, because the labels are rendered as glyph outlines. Recovering per-model values would mean OCR-ing vector outlines and reverse-engineering the axis transform, which is the same fabrication risk we refuse for enso_probabilities. Closing this needs IRI to restore a data endpoint. Use enso_discussion for official status and probability wording, and enso_oni for the observed index.\n  - `enso_probabilities` — DECLARED GAP: A STRUCTURED probabilistic ENSO forecast (El Nino / neutral / La Nina by lead season, as numbers). No machine-readable table is published: IRI carries the percentages only in prose, CPC publishes them as a PNG, and the IRI Data Library path is not public. Regex-ing prose for probabilities would put a silently-wrong number in a governed brief. Use `enso_outlook` and quote the narrative, or `enso_plume` for model counts — counts are not probabilities and must not be presented as such. Closing this needs a structured feed or an authenticated dataset path.\n  - `era5_agromet` — DECLARED GAP: agro-met reanalysis — pending hub data lists\n  - `hub_s2s_forecast` — DECLARED GAP: the East-Africa hub's seasonal-to-sub-seasonal pipeline — pending hub contribution\n  - `icpac_ghacof` — DECLARED GAP: ICPAC GHACOF regional seasonal consensus outlook for the Greater Horn of Africa — the regionally-authoritative downscaling of the ENSO signal, and the source a Kenya-specific claim should rest on rather than a global index. Published as PDF statements; needs a machine-readable path or ingestion into the corpus.\n  - `iod_dmi_bom` — DECLARED GAP: The Australian BoM's own IOD index. The use-case doc names BoM FIRST for the DMI and we serve NOAA PSL instead, so the substitution is declared rather than left implicit. BoM publishes no machine-readable series — bom.gov.au/climate/enso/indices.shtml is ~58 KB of HTML with the value in prose and charts (iod_1.txt: HTTP 404). Regex-ing a number out of that page is the same antipattern refused for enso_probabilities, so it is NOT done. Live consequence to be aware of: PSL lags materially (2026-05 while ONI is at MJJ 2026), so the co-driver reads older than the driver. Closing this needs a BoM data path, not a scraper.\n  - `nmme_seasonal` — DECLARED GAP: North American Multi-Model Ensemble seasonal forecast (precip/temp). Grids are public at ftp.cpc.ncep.noaa.gov/NMME/realtime_anom/ but carry no SST, so nothing here substitutes for the ENSO plume; needs an extraction step to reach a place-level number.\n  - `tamsat_rainfall` — DECLARED GAP: TAMSAT satellite rainfall estimates + soil moisture for Africa — the Africa-specific complement to CHIRPS. Pending hub data lists.\n\nReturns: {status, dataset, as_of, count, summary, records, passport}. The passport carries source, validation, residency, the literal upstream query, and `stale_data` with a note when served from last-good cache (never present stale data as live). status \"empty\" -> the feed answered but has no rows; \"declined\" -> `note` plus the upstream's own alternatives.",
+      "inputSchema": {
+        "properties": {
+          "dataset": {
+            "type": "string"
+          },
+          "params": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "dataset"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": null
+    },
+    {
+      "name": "ui_design",
+      "title": "Ui Design",
+      "description": "Get the platform design language (theme `grp` v0, built on the SERVIR identity) so you do NOT invent a colour scheme.\n\nColour and type are read LIVE from the SERVIR Design System in Figma when it is reachable, so you get what the designers currently ship. `design_source` always states which you got: `figma-live` (with file, version and last_modified) or `config` (the committed copy, used when Figma is unreachable). Live values arrive as `tokens.brand_colors` and `tokens.design_file_type_scale`, SEPARATE from `palette`/`typography`, which stay the semantic role map your components bind to. `design_source.conflicts` lists anything ambiguous in the design file (duplicate hexes, malformed labels) rather than resolving it silently.\n\nReturns tokens (palette/typography/radii/provenance colours), `css` (--grp-* custom properties for any stack), `daisyui_theme` (Tailwind/daisyUI), plus `trust_rules`, `semantic`, `validation_levels` and `voice` — the honesty conventions that must travel with the styling.\n\n`format`: all (default) | tokens | css | daisyui.\nRULE: server_verified — success/verified styling is reserved for server-verified state; default is 'unverified'.\nREQUIRED: every page shows the platform header (logo + domain name) — get it from ui_component('platform_header'); the logo ships embedded in the markup.",
+      "inputSchema": {
+        "properties": {
+          "format": {
+            "default": "all",
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": null
+    },
+    {
+      "name": "ui_catalog",
+      "title": "Ui Catalog",
+      "description": "List the ready-built UI components you can use instead of writing them from scratch. Each entry states its TRUST CLASS and how it is delivered.\n\n  - `chat_shell` (presentational, delivery: recipe)\n  - `crop_calendar_editor` (input, delivery: embed)\n  - `decline_card` (receipt_bound, delivery: recipe)\n  - `groundedness_strip` (receipt_bound, delivery: embed)\n  - `hazard_map` (presentational, delivery: embed)\n  - `platform_header` (presentational, delivery: recipe)\n  - `provenance_graph` (receipt_bound, delivery: embed)\n  - `source_card` (receipt_bound, delivery: recipe)\n  - `validation_badge` (presentational, delivery: recipe)\n\nreceipt_bound = the component shows a verdict, so it binds to a server id and cannot be handed a 'passed' flag. input = it emits a human judgement but never renders its own verdict. presentational = style freely.",
+      "inputSchema": {
+        "properties": {},
+        "type": "object",
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": null
+    },
+    {
+      "name": "ui_component",
+      "title": "Ui Component",
+      "description": "Get the READY-BUILT markup for a component instead of writing UI from scratch. Returns self-contained HTML+CSS styled with the platform's --grp-* custom properties, plus its data contract and guardrail.\n\nAuthored now: `decline_card`, `groundedness_strip`, `platform_header`, `source_card`, `validation_badge`.\nSee ui_catalog for every catalogued component and its trust class; one not yet authored declines as not-implemented rather than pretending.\n\nALSO SERVES BRAND ASSETS from the live design file, which is how you get the SERVIR identity every UI on this platform must carry. Pass a set name from `ui_catalog.design_file_components` and narrow it with `treatment` and `layout`, and you get a rendered SVG url.\n  treatment: Primary | Black | Grayscale | Reversed Color | Reversed Mono\n             (use a Reversed treatment on a dark ground)\n  layout:    Horizontal | Stacked   (Lockup only)\ne.g. ui_component(name=\"SERVIR/Logo/Lockup\", treatment=\"Reversed Mono\", layout=\"Horizontal\"). An ambiguous or unknown value DECLINES and lists the real variants. Rendered urls EXPIRE (~30 days): download, do not hotlink.\n\nreceipt_bound components must render UNVERIFIED unless fed a payload resolved from the platform — there is no 'passed' input.",
+      "inputSchema": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "treatment": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "layout": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": null
+    },
+    {
+      "name": "ui_embed",
+      "title": "Ui Embed",
+      "description": "Embed a LIVE platform component in a PAGE YOU ARE WRITING — our component, running our code, resolving its own state. Use this instead of a copied recipe whenever a verdict is shown: an embed cannot be handed a 'passed' flag and cannot freeze one into your markup.\n\nFOR WEB PAGES AND APPS ONLY — never paste the iframe into a chat reply. Chat hosts forbid external frames (CSP frame-src 'self'), so in chat it renders as a blank box; there the evidence panel already displays beside the tool result.\n\nEmbeddable now:\n  - `hazard_map` (binds receipt_id)\n  - `provenance_graph` (binds receipt_id)\n\nPlanned:\n  - `crop_calendar_editor` — embed pending — emits an override via postMessage; not yet decoupled\n  - `groundedness_strip` — not embeddable yet\n\nReturns an iframe snippet bound to your id. Copy the recipe instead (ui_component) only for inert chrome like source cards.",
+      "inputSchema": {
+        "properties": {
+          "component": {
+            "type": "string"
+          },
+          "receipt_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "component"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": null
+    },
+    {
+      "name": "corpus_document",
+      "title": "Corpus Document",
+      "description": "Trace a passage back to its source document.\n\nReturns: {status, ...}.\n  No doc_id, status \"ok\" -> {documents, inventory: [{doc_id, chunks, passport}]}\n  With a doc_id, status \"ok\" -> {doc_id, chunks, passport} (the trace-back terminus)\n  status \"declined\" -> `note` says WHY (unreadable corpus / unknown doc_id)\nWhenever status != \"ok\", render `note`.",
+      "inputSchema": {
+        "properties": {
+          "doc_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": null
+    }
+  ],
+  "comparisonWithPrototypeClaim": {
+    "claimedCount": 15,
+    "liveCount": 15,
+    "confirmed": [
+      "platform_capabilities",
+      "assemble_pack",
+      "verify_groundedness",
+      "record_receipt",
+      "publish_answer",
+      "compose_run",
+      "corpus_search",
+      "corpus_document",
+      "feeds_query",
+      "context_get",
+      "resolve_place_time",
+      "ui_design",
+      "ui_catalog",
+      "ui_component",
+      "ui_embed"
+    ],
+    "claimedButAbsent": [],
+    "liveButUnclaimed": []
+  },
+  "toolTests": {
+    "platformCapabilities": {
+      "content": [
+        {
+          "text": "{\"server\":{\"name\":\"servirplatform\",\"version\":\"0.2.0-phase1\",\"transport\":\"stdio\"},\"contract\":[\"evidence attached to every insight\",\"declines say why\",\"everything replayable via a receipt\",\"human input declared (ADJUSTED, target-pinned)\",\"verdicts are server-bound (no client-set green tick)\",\"receipts state their evidence tier\",\"receipts outlive everything\"],\"usage\":{\"instructions\":\"delivered to the LLM at connect (initialize)\",\"skills\":{\"trace-emit\":\"servirplatform://skill/trace-emit\",\"trace-visualize\":\"servirplatform://skill/trace-visualize\"},\"prompts\":[\"build_a_tool\",\"explain_platform\",\"run_analysis\"],\"resources\":[\"servirplatform://how-to-use\",\"servirplatform://pack/food-security\",\"servirplatform://pack/risk\",\"servirplatform://skill/trace-emit\",\"servirplatform://skill/trace-visualize\",\"ui://servirplatform/evidence\"],\"modes\":[\"build-time: build a reusable app on the tools\",\"run-time: answer one question now\"]},\"tools_available\":[\"assemble_pack\",\"compose_run\",\"context_get\",\"corpus_document\",\"corpus_search\",\"feeds_query\",\"platform_capabilities\",\"publish_answer\",\"record_receipt\",\"resolve_place_time\",\"ui_catalog\",\"ui_component\",\"ui_design\",\"ui_embed\",\"verify_groundedness\"],\"builder_requirements\":{\"note\":\"requirements for anything you BUILD on these tools (a script, an app, a page) — part of the capability contract, not advice; a build that skips one ships unfinished\",\"observability\":{\"rule\":\"instrument your build: every run must emit its own execution trace — a trace_id, per-step duration_ms, a one-line summary per step, and token usage for any step that calls a model\",\"read_first\":\"servirplatform://skill/trace-emit\",\"surface\":\"publish_answer returns `trace` — the platform's own loop execution (assemble/draft/verify/record). Show it in what you build; do not swallow it\",\"prove\":\"a finished build includes one real captured trace from a real run\"}},\"compositions\":{\"foodsecurity.brief\":{\"description\":\"Question -> governed 4-section cited brief: evidence assembled, drafted, groundedness-gated, receipt minted.\",\"params\":[\"question\",\"override?\",\"override_country?\",\"override_crop?\",\"provider?\",\"model?\"],\"runs_llm_server_side\":true,\"llm\":\"the PLATFORM's model and key; `provider`/`model` choose among the platform's configured providers, NOT your own credentials. To use YOUR model, run the loop instead: assemble_pack -> you draft -> verify_groundedness (same evidence, same gate, same receipt).\",\"for\":\"consumers with no model credentials or no place to run code (dashboards, cron, REST) — the accompanied path\"},\"risk.brief\":{\"description\":\"Question -> governed 4-section cited hazard-exposure brief for a place x hazard: deterministic geo evidence assembled, drafted, groundedness-gated, receipt minted.\",\"params\":[\"question\",\"provider?\",\"model?\"],\"runs_llm_server_side\":true,\"llm\":\"the PLATFORM's model and key; the LLM only parses the target and phrases the brief — every number is computed deterministically. To use YOUR model, run the loop instead: assemble_pack(pack='risk', place=..., hazard=...) -> you draft -> publish_answer.\",\"for\":\"consumers with no model credentials or no place to run code (dashboards, cron, REST) — the accompanied path\"}},\"feeds\":{\"geoglam_conditions\":{\"status\":\"available\",\"adapter\":\"cropmonitor_conditions\",\"description\":\"Per-region crop-condition assessments for a month.\",\"params\":{\"crop\":\"optional crop name\",\"place\":\"optional country or region\",\"month\":\"optional YYYYMM (default: latest published)\"},\"source\":\"GEOGLAM Crop Monitor (CMET)\",\"validation\":\"multi-agency-consensus\",\"residency\":\"external call-out\",\"pack\":\"food-security\"},\"enso_oni\":{\"status\":\"available\",\"title\":\"Oceanic Nino Index (ONI)\",\"brief_role\":\"driver\",\"adapter\":\"climate_index\",\"index\":\"oni\",\"description\":\"Oceanic Nino Index — 3-month running Nino-3.4 SST anomaly; detects and classifies ENSO onset and strength.\",\"params\":{\"limit\":\"optional number of recent seasons (default 12)\"},\"source\":\"NOAA CPC\",\"sst_basis\":\"ERSSTv5, 1991-2020 base\",\"validation\":\"single-agency\",\"residency\":\"external call-out\",\"cadence\":\"monthly, ~5-day availability\",\"pack\":\"food-security\"},\"iod_dmi\":{\"status\":\"available\",\"title\":\"Dipole Mode Index (IOD)\",\"brief_role\":\"driver\",\"adapter\":\"climate_index\",\"index\":\"dmi\",\"description\":\"Dipole Mode Index — the Indian Ocean Dipole, a co-driver that can amplify or offset the ENSO signal.\",\"params\":{\"limit\":\"optional number of recent months (default 12)\"},\"source\":\"NOAA PSL (HadISST)\",\"validation\":\"single-agency\",\"residency\":\"external call-out\",\"cadence\":\"monthly\",\"pack\":\"food-security\"},\"enso_event_history\":{\"status\":\"available\",\"title\":\"Historical ENSO event catalogue (1950-present)\",\"brief_role\":\"driver\",\"adapter\":\"climate_index\",\"index\":\"enso_events\",\"description\":\"Historical ENSO event catalogue (1950-present) for analogue years and back-testing. DERIVED from the ONI series using CPC's own definition, not a separately published product.\",\"params\":{\"min_seasons\":\"optional run length threshold (default 5)\"},\"source\":\"derived from NOAA CPC ONI\",\"validation\":\"single-agency\",\"residency\":\"external call-out\",\"cadence\":\"monthly (follows ONI)\",\"pack\":\"food-security\"},\"enso_plume\":{\"status\":\"declared_gap\",\"title\":\"CCSR/IRI ENSO model prediction plume\",\"adapter\":\"enso_forecast\",\"product\":\"enso_plume\",\"source\":\"IRI / Columbia Climate School\",\"reason\":\"RETIRED UPSTREAM, 2026-08-17. IRI moved this service from ensoforecast.iri.columbia.edu to ensoforecast2 (the old host 301s to the new one) and, in the move, replaced the machine-readable JSON API with server-rendered images. Every data route now returns HTTP 403 (plumes_json, plume_models, select_plumes, figure4_options), while the new figure4_plot / figure7_plot / figure9_plot routes return 200 image/svg+xml. Confirmed not an IP or user-agent block: 403 from two separate networks, with and without a browser UA, Referer and Origin. The SVG is NOT parseable back into data — it carries 211 <path> elements, ZERO <text> elements and no data attributes, because the labels are rendered as glyph outlines. Recovering per-model values would mean OCR-ing vector outlines and reverse-engineering the axis transform, which is the same fabrication risk we refuse for enso_probabilities. Closing this needs IRI to restore a data endpoint. Use enso_discussion for official status and probability wording, and enso_oni for the observed index.\",\"params\":{\"year\":\"int, optional\",\"month\":\"int 1-12, optional\"},\"pack\":\"food-security\"},\"enso_outlook\":{\"status\":\"available\",\"title\":\"IRI monthly ENSO/IOD quick look\",\"brief_role\":\"driver\",\"adapter\":\"enso_forecast\",\"product\":\"enso_outlook\",\"source\":\"IRI / Columbia Climate School\",\"sst_basis\":\"OISST, 1991-2020 base\",\"validation\":\"single-agency\",\"residency\":\"external call-out\",\"cadence\":\"monthly (issued mid-month)\",\"description\":\"IRI monthly ENSO/IOD quick look — the official forecast narrative served VERBATIM by section. This is where the official probability percentages live, as prose: quote and attribute them, never re-type them as structured numbers.\",\"params\":{\"year\":\"int, optional — defaults to the latest published\",\"month\":\"int 1-12, optional — defaults to the latest published\"},\"pack\":\"food-security\"},\"enso_discussion\":{\"status\":\"available\",\"title\":\"CPC ENSO Diagnostic Discussion\",\"brief_role\":\"driver\",\"adapter\":\"enso_forecast\",\"product\":\"enso_discussion\",\"source\":\"NOAA CPC\",\"validation\":\"multi-agency-consensus\",\"residency\":\"external call-out\",\"cadence\":\"monthly (2nd Thursday)\",\"description\":\"NOAA CPC monthly ENSO Diagnostic Discussion, served VERBATIM. The ONLY source for the formal ENSO Alert System Status (Watch / Advisory / Final Advisory) — a status is a declaration, not a measurement, so no index can supply it. Usually fresher than the IRI quick look.\",\"params\":{},\"pack\":\"food-security\"},\"enso_probabilities\":{\"status\":\"declared_gap\",\"reason\":\"A STRUCTURED probabilistic ENSO forecast (El Nino / neutral / La Nina by lead season, as numbers). No machine-readable table is published: IRI carries the percentages only in prose, CPC publishes them as a PNG, and the IRI Data Library path is not public. Regex-ing prose for probabilities would put a silently-wrong number in a governed brief. Use `enso_outlook` and quote the narrative, or `enso_plume` for model counts — counts are not probabilities and must not be presented as such. Closing this needs a structured feed or an authenticated dataset path.\",\"params\":{\"lead\":\"?\"},\"pack\":\"food-security\"},\"iod_dmi_bom\":{\"status\":\"declared_gap\",\"reason\":\"The Australian BoM's own IOD index. The use-case doc names BoM FIRST for the DMI and we serve NOAA PSL instead, so the substitution is declared rather than left implicit. BoM publishes no machine-readable series — bom.gov.au/climate/enso/indices.shtml is ~58 KB of HTML with the value in prose and charts (iod_1.txt: HTTP 404). Regex-ing a number out of that page is the same antipattern refused for enso_probabilities, so it is NOT done. Live consequence to be aware of: PSL lags materially (2026-05 while ONI is at MJJ 2026), so the co-driver reads older than the driver. Closing this needs a BoM data path, not a scraper.\",\"params\":{},\"pack\":\"food-security\"},\"icpac_ghacof\":{\"status\":\"declared_gap\",\"reason\":\"ICPAC GHACOF regional seasonal consensus outlook for the Greater Horn of Africa — the regionally-authoritative downscaling of the ENSO signal, and the source a Kenya-specific claim should rest on rather than a global index. Published as PDF statements; needs a machine-readable path or ingestion into the corpus.\",\"params\":{\"place\":\"?\",\"season\":\"?\"},\"pack\":\"food-security\"},\"nmme_seasonal\":{\"status\":\"declared_gap\",\"reason\":\"North American Multi-Model Ensemble seasonal forecast (precip/temp). Grids are public at ftp.cpc.ncep.noaa.gov/NMME/realtime_anom/ but carry no SST, so nothing here substitutes for the ENSO plume; needs an extraction step to reach a place-level number.\",\"params\":{\"place\":\"?\",\"variable\":\"?\",\"lead\":\"?\"},\"pack\":\"food-security\"},\"ecmwf_seas5\":{\"status\":\"declared_gap\",\"reason\":\"ECMWF SEAS5 seasonal forecast. Public products are charts (opencharts serves a CC-BY-4.0 PNG), not per-place numbers; the data path is the Climate Data Store, which needs an account and licence acceptance.\",\"params\":{\"place\":\"?\",\"variable\":\"?\",\"lead\":\"?\"},\"pack\":\"food-security\"},\"tamsat_rainfall\":{\"status\":\"declared_gap\",\"reason\":\"TAMSAT satellite rainfall estimates + soil moisture for Africa — the Africa-specific complement to CHIRPS. Pending hub data lists.\",\"params\":{\"place\":\"?\",\"date_range\":\"?\"},\"pack\":\"food-security\"},\"chirps_rainfall\":{\"status\":\"declared_gap\",\"reason\":\"rainfall + ~15-day forecast — pending hub data lists. NOTE: Phase 2 of the use case, not Phase 1.\",\"params\":{\"place\":\"?\",\"date_range\":\"?\"},\"pack\":\"food-security\"},\"chirts_temperature\":{\"status\":\"declared_gap\",\"reason\":\"daily max/min temperature (heat stress) — pending hub data lists\",\"params\":{\"place\":\"?\",\"date_range\":\"?\"},\"pack\":\"food-security\"},\"era5_agromet\":{\"status\":\"declared_gap\",\"reason\":\"agro-met reanalysis — pending hub data lists\",\"params\":{\"place\":\"?\",\"date_range\":\"?\",\"variable\":\"?\"},\"pack\":\"food-security\"},\"hub_s2s_forecast\":{\"status\":\"declared_gap\",\"reason\":\"the East-Africa hub's seasonal-to-sub-seasonal pipeline — pending hub contribution\",\"params\":{\"place\":\"?\",\"lead_time\":\"?\"},\"pack\":\"food-security\"},\"enso_soi\":{\"title\":\"Southern Oscillation Index (SOI)\",\"description\":\"Monthly standardized SOI (Tahiti minus Darwin sea-level pressure) — the atmospheric side of ENSO. Sustained negative values lean El Nino.\",\"source\":\"NOAA PSL\",\"validation\":\"single-agency\",\"residency\":\"external call-out\",\"cadence\":\"monthly\",\"adapter\":\"generic_table\",\"fetch\":{\"url\":\"https://psl.noaa.gov/data/correlation/soi.data\",\"index_name\":\"SOI\",\"units\":\"standardized anomaly\",\"missing_below\":-90,\"round\":2,\"bands\":[{\"max\":-1.0,\"label\":\"strongly negative (El Nino-leaning)\"},{\"min\":-1.0,\"max\":-0.5,\"label\":\"negative\"},{\"min\":-0.5,\"max\":0.5,\"label\":\"neutral\"},{\"min\":0.5,\"max\":1.0,\"label\":\"positive\"},{\"min\":1.0,\"label\":\"strongly positive (La Nina-leaning)\"}]},\"params\":{\"limit\":\"months of series to return (default 12)\"},\"note\":\"Driver signal only. This says nothing about local rainfall, crops or food security — cite evidence about the place itself for local claims.\",\"status\":\"available\",\"declarative\":\"enso_soi.yml\",\"pack\":\"food-security\"}},\"bones\":[{\"bone\":\"resolve\",\"tools\":[\"resolve_place_time\"],\"status\":\"available\"},{\"bone\":\"fetch\",\"tools\":[\"corpus_search\",\"corpus_document\",\"feeds_query\"],\"status\":\"available\",\"note\":\"corpus + GEOGLAM conditions built; CHIRPS/CHIRTS/ERA5 are declared feed rows\"},{\"bone\":\"compute\",\"tools\":[\"compute_run\"],\"status\":\"planned (phase2)\"},{\"bone\":\"context\",\"tools\":[\"context_get\"],\"status\":\"available\"},{\"bone\":\"assemble\",\"tools\":[\"assemble_pack\"],\"status\":\"available\"},{\"bone\":\"verify\",\"tools\":[\"verify_groundedness\"],\"status\":\"available\"},{\"bone\":\"record\",\"tools\":[\"record_receipt\"],\"status\":\"available\"},{\"bone\":\"contribute\",\"tools\":[\"contribute_submit\"],\"status\":\"planned (phase2)\"}],\"design_language\":{\"source\":\"figma-live\",\"file\":\"SERVIR Design System\",\"last_modified\":\"2026-09-11T19:17:01Z\",\"brand_component_sets\":[\"SERVIR/Logo/Lockup\",\"SERVIR/Logo/Symbol\",\"SERVIR/Logo/Wordmark\"],\"tools\":[\"ui_design\",\"ui_catalog\",\"ui_component\",\"ui_embed\"],\"note\":\"Colour, type and brand assets are read from the design file at call time. ui_design falls back to the committed theme if it is unreachable and always states which source you got.\"},\"domain_packs\":[{\"id\":\"food-security\",\"display_name\":\"Food Security Platform\",\"version\":\"v0\",\"profile\":\"Phase-1 profile — what ships today, gaps declared\",\"built_for\":\"early signs of maize failure in the current season (Kenya Trans-Nzoia vs Zambia — the hub-locked PoC question)\",\"output_contract\":{\"required_sections\":[\"## What history says\",\"## The current signal\",\"## What's missing and how to weigh it\",\"## Season timing caveat\"],\"gate\":\"verify_groundedness — BLOCKING on: required sections present, no self-written Sources, citations resolve to the pack, every paragraph cited. Recorded not blocking: numbers absent from evidence.\",\"receipt\":\"record_receipt — question + pack + verdict + verified-text hash\"},\"sources\":{\"corpus\":{\"status\":\"available\",\"documents\":62,\"chunks\":1758,\"events\":[\"el-nino-2015-16\",\"el-nino-2023-24\",\"el-nino-2026-27\"]},\"conditions\":{\"status\":\"available\",\"source\":\"GEOGLAM Crop Monitor\",\"note\":\"staleness is flagged in the evidence when served from last-good cache\"},\"feeds\":{\"geoglam_conditions\":{\"status\":\"available\",\"source\":\"GEOGLAM Crop Monitor (CMET)\"},\"enso_oni\":{\"status\":\"available\",\"source\":\"NOAA CPC\"},\"iod_dmi\":{\"status\":\"available\",\"source\":\"NOAA PSL (HadISST)\"},\"enso_event_history\":{\"status\":\"available\",\"source\":\"derived from NOAA CPC ONI\"},\"enso_plume\":{\"status\":\"declared_gap\",\"source\":\"IRI / Columbia Climate School\",\"reason\":\"RETIRED UPSTREAM, 2026-08-17. IRI moved this service from ensoforecast.iri.columbia.edu to ensoforecast2 (the old host 301s to the new one) and, in the move, replaced the machine-readable JSON API with server-rendered images. Every data route now returns HTTP 403 (plumes_json, plume_models, select_plumes, figure4_options), while the new figure4_plot / figure7_plot / figure9_plot routes return 200 image/svg+xml. Confirmed not an IP or user-agent block: 403 from two separate networks, with and without a browser UA, Referer and Origin. The SVG is NOT parseable back into data — it carries 211 <path> elements, ZERO <text> elements and no data attributes, because the labels are rendered as glyph outlines. Recovering per-model values would mean OCR-ing vector outlines and reverse-engineering the axis transform, which is the same fabrication risk we refuse for enso_probabilities. Closing this needs IRI to restore a data endpoint. Use enso_discussion for official status and probability wording, and enso_oni for the observed index.\"},\"enso_outlook\":{\"status\":\"available\",\"source\":\"IRI / Columbia Climate School\"},\"enso_discussion\":{\"status\":\"available\",\"source\":\"NOAA CPC\"},\"enso_probabilities\":{\"status\":\"declared_gap\",\"reason\":\"A STRUCTURED probabilistic ENSO forecast (El Nino / neutral / La Nina by lead season, as numbers). No machine-readable table is published: IRI carries the percentages only in prose, CPC publishes them as a PNG, and the IRI Data Library path is not public. Regex-ing prose for probabilities would put a silently-wrong number in a governed brief. Use `enso_outlook` and quote the narrative, or `enso_plume` for model counts — counts are not probabilities and must not be presented as such. Closing this needs a structured feed or an authenticated dataset path.\"},\"iod_dmi_bom\":{\"status\":\"declared_gap\",\"reason\":\"The Australian BoM's own IOD index. The use-case doc names BoM FIRST for the DMI and we serve NOAA PSL instead, so the substitution is declared rather than left implicit. BoM publishes no machine-readable series — bom.gov.au/climate/enso/indices.shtml is ~58 KB of HTML with the value in prose and charts (iod_1.txt: HTTP 404). Regex-ing a number out of that page is the same antipattern refused for enso_probabilities, so it is NOT done. Live consequence to be aware of: PSL lags materially (2026-05 while ONI is at MJJ 2026), so the co-driver reads older than the driver. Closing this needs a BoM data path, not a scraper.\"},\"icpac_ghacof\":{\"status\":\"declared_gap\",\"reason\":\"ICPAC GHACOF regional seasonal consensus outlook for the Greater Horn of Africa — the regionally-authoritative downscaling of the ENSO signal, and the source a Kenya-specific claim should rest on rather than a global index. Published as PDF statements; needs a machine-readable path or ingestion into the corpus.\"},\"nmme_seasonal\":{\"status\":\"declared_gap\",\"reason\":\"North American Multi-Model Ensemble seasonal forecast (precip/temp). Grids are public at ftp.cpc.ncep.noaa.gov/NMME/realtime_anom/ but carry no SST, so nothing here substitutes for the ENSO plume; needs an extraction step to reach a place-level number.\"},\"ecmwf_seas5\":{\"status\":\"declared_gap\",\"reason\":\"ECMWF SEAS5 seasonal forecast. Public products are charts (opencharts serves a CC-BY-4.0 PNG), not per-place numbers; the data path is the Climate Data Store, which needs an account and licence acceptance.\"},\"tamsat_rainfall\":{\"status\":\"declared_gap\",\"reason\":\"TAMSAT satellite rainfall estimates + soil moisture for Africa — the Africa-specific complement to CHIRPS. Pending hub data lists.\"},\"chirps_rainfall\":{\"status\":\"declared_gap\",\"reason\":\"rainfall + ~15-day forecast — pending hub data lists. NOTE: Phase 2 of the use case, not Phase 1.\"},\"chirts_temperature\":{\"status\":\"declared_gap\",\"reason\":\"daily max/min temperature (heat stress) — pending hub data lists\"},\"era5_agromet\":{\"status\":\"declared_gap\",\"reason\":\"agro-met reanalysis — pending hub data lists\"},\"hub_s2s_forecast\":{\"status\":\"declared_gap\",\"reason\":\"the East-Africa hub's seasonal-to-sub-seasonal pipeline — pending hub contribution\"},\"enso_soi\":{\"status\":\"available\",\"source\":\"NOAA PSL\"}}},\"calendars\":[{\"country\":\"kenya\",\"crops\":[\"maize\"]},{\"country\":\"zambia\",\"crops\":[\"maize\"]}],\"calendar_provenance\":\"hub defaults are hand-authored approximations of GEOGLAM/FAO baselines; a hub-provided passported calendar is pending. Per-request overrides are honored and labelled ADJUSTED.\",\"compositions\":[\"foodsecurity.brief\",\"risk.brief\"],\"guidance\":{\"instructions\":\"delivered at connect\",\"prompts\":[\"build_a_tool\",\"run_analysis\",\"explain_platform\"],\"resources\":[\"servirplatform://how-to-use\",\"servirplatform://pack/food-security\"]},\"gaps\":[\"climate feeds (CHIRPS/CHIRTS/ERA5) — pending hub data lists\",\"analytics / threshold formulas — pending hub contribution (compute bone is phase2)\",\"acreage-under-stress — needs crop-type/land-cover masks (deferred)\",\"MCP Apps widgets — phase2 (web widgets exist in apps/web)\",\"sub-national regions are not resolved to geometries — gazetteer is phase2\",\"archived ORIGINAL bytes need the REST mount; over MCP corpus_document returns the extracted text that was cited\"],\"worked_example\":{\"receipt_id\":\"9655345712d3c364\",\"resolve_with\":\"record_receipt(receipt_id='9655345712d3c364')\",\"note\":\"a real receipt from this server — resolve it instead of inventing a sample payload\"}},{\"id\":\"risk\",\"display_name\":\"Risk Platform\",\"version\":\"v0\",\"profile\":\"v0 — hazard exposure only; risk levels and corpus are declared gaps\",\"built_for\":\"asset exposure to a mapped hazard for one place, replayable\",\"output_contract\":{\"required_sections\":[\"## What the numbers show\",\"## Method and validation\",\"## What's missing and how to weigh it\",\"## Reading the severity scale\"],\"gate\":\"verify_groundedness — same blocking rules as every pack\",\"receipt\":\"record_receipt / publish_answer — pack carries the map viz\"},\"sources\":{\"corpus\":{\"status\":\"declared_gap\",\"reason\":\"no risk document corpus exists yet\"},\"rasters\":{\"status\":\"available\",\"hazards\":[\"cyclone\",\"drought\",\"earthquake\",\"fire\",\"flashflood\",\"flood\",\"heatdays\",\"landslides\",\"storm\",\"tsunami\"],\"note\":\"only hazard_flood states lineage (ADPC, derived from JRC GLOFAS v2.1); vintages/licences are unrecorded for all — declared in every pack\"},\"assets\":{\"status\":\"available\",\"source\":\"OSM via Overpass\",\"note\":\"no retrieval date recorded in the AOI bundle\"}},\"target\":{\"place\":\"geocodable place name\",\"hazard\":\"one of: cyclone, drought, earthquake, fire, flashflood, flood, heatdays, landslides, storm, tsunami\",\"min_severity\":\"optional, 1-5, default 1\"},\"gaps\":[\"risk levels (L1/L2) not in the pack — exposure only, engine exists\",\"no risk corpus\",\"raster vintages/licences unrecorded\",\"BYOD uploads are session-scoped and cannot enter a pack\"],\"compositions\":{\"risk.brief\":\"available via compose_run — the platform LLM parses, drafts and gates server-side; or run the assemble -> publish_answer loop with your own model\"}}]}",
+          "type": "text"
+        }
+      ],
+      "isError": false,
+      "structuredContent": {
+        "server": {
+          "name": "servirplatform",
+          "version": "0.2.0-phase1",
+          "transport": "stdio"
+        },
+        "contract": [
+          "evidence attached to every insight",
+          "declines say why",
+          "everything replayable via a receipt",
+          "human input declared (ADJUSTED, target-pinned)",
+          "verdicts are server-bound (no client-set green tick)",
+          "receipts state their evidence tier",
+          "receipts outlive everything"
+        ],
+        "usage": {
+          "instructions": "delivered to the LLM at connect (initialize)",
+          "skills": {
+            "trace-emit": "servirplatform://skill/trace-emit",
+            "trace-visualize": "servirplatform://skill/trace-visualize"
+          },
+          "prompts": [
+            "build_a_tool",
+            "explain_platform",
+            "run_analysis"
+          ],
+          "resources": [
+            "servirplatform://how-to-use",
+            "servirplatform://pack/food-security",
+            "servirplatform://pack/risk",
+            "servirplatform://skill/trace-emit",
+            "servirplatform://skill/trace-visualize",
+            "ui://servirplatform/evidence"
+          ],
+          "modes": [
+            "build-time: build a reusable app on the tools",
+            "run-time: answer one question now"
+          ]
+        },
+        "tools_available": [
+          "assemble_pack",
+          "compose_run",
+          "context_get",
+          "corpus_document",
+          "corpus_search",
+          "feeds_query",
+          "platform_capabilities",
+          "publish_answer",
+          "record_receipt",
+          "resolve_place_time",
+          "ui_catalog",
+          "ui_component",
+          "ui_design",
+          "ui_embed",
+          "verify_groundedness"
+        ],
+        "builder_requirements": {
+          "note": "requirements for anything you BUILD on these tools (a script, an app, a page) — part of the capability contract, not advice; a build that skips one ships unfinished",
+          "observability": {
+            "rule": "instrument your build: every run must emit its own execution trace — a trace_id, per-step duration_ms, a one-line summary per step, and token usage for any step that calls a model",
+            "read_first": "servirplatform://skill/trace-emit",
+            "surface": "publish_answer returns `trace` — the platform's own loop execution (assemble/draft/verify/record). Show it in what you build; do not swallow it",
+            "prove": "a finished build includes one real captured trace from a real run"
+          }
+        },
+        "compositions": {
+          "foodsecurity.brief": {
+            "description": "Question -> governed 4-section cited brief: evidence assembled, drafted, groundedness-gated, receipt minted.",
+            "params": [
+              "question",
+              "override?",
+              "override_country?",
+              "override_crop?",
+              "provider?",
+              "model?"
+            ],
+            "runs_llm_server_side": true,
+            "llm": "the PLATFORM's model and key; `provider`/`model` choose among the platform's configured providers, NOT your own credentials. To use YOUR model, run the loop instead: assemble_pack -> you draft -> verify_groundedness (same evidence, same gate, same receipt).",
+            "for": "consumers with no model credentials or no place to run code (dashboards, cron, REST) — the accompanied path"
+          },
+          "risk.brief": {
+            "description": "Question -> governed 4-section cited hazard-exposure brief for a place x hazard: deterministic geo evidence assembled, drafted, groundedness-gated, receipt minted.",
+            "params": [
+              "question",
+              "provider?",
+              "model?"
+            ],
+            "runs_llm_server_side": true,
+            "llm": "the PLATFORM's model and key; the LLM only parses the target and phrases the brief — every number is computed deterministically. To use YOUR model, run the loop instead: assemble_pack(pack='risk', place=..., hazard=...) -> you draft -> publish_answer.",
+            "for": "consumers with no model credentials or no place to run code (dashboards, cron, REST) — the accompanied path"
+          }
+        },
+        "feeds": {
+          "geoglam_conditions": {
+            "status": "available",
+            "adapter": "cropmonitor_conditions",
+            "description": "Per-region crop-condition assessments for a month.",
+            "params": {
+              "crop": "optional crop name",
+              "place": "optional country or region",
+              "month": "optional YYYYMM (default: latest published)"
+            },
+            "source": "GEOGLAM Crop Monitor (CMET)",
+            "validation": "multi-agency-consensus",
+            "residency": "external call-out",
+            "pack": "food-security"
+          },
+          "enso_oni": {
+            "status": "available",
+            "title": "Oceanic Nino Index (ONI)",
+            "brief_role": "driver",
+            "adapter": "climate_index",
+            "index": "oni",
+            "description": "Oceanic Nino Index — 3-month running Nino-3.4 SST anomaly; detects and classifies ENSO onset and strength.",
+            "params": {
+              "limit": "optional number of recent seasons (default 12)"
+            },
+            "source": "NOAA CPC",
+            "sst_basis": "ERSSTv5, 1991-2020 base",
+            "validation": "single-agency",
+            "residency": "external call-out",
+            "cadence": "monthly, ~5-day availability",
+            "pack": "food-security"
+          },
+          "iod_dmi": {
+            "status": "available",
+            "title": "Dipole Mode Index (IOD)",
+            "brief_role": "driver",
+            "adapter": "climate_index",
+            "index": "dmi",
+            "description": "Dipole Mode Index — the Indian Ocean Dipole, a co-driver that can amplify or offset the ENSO signal.",
+            "params": {
+              "limit": "optional number of recent months (default 12)"
+            },
+            "source": "NOAA PSL (HadISST)",
+            "validation": "single-agency",
+            "residency": "external call-out",
+            "cadence": "monthly",
+            "pack": "food-security"
+          },
+          "enso_event_history": {
+            "status": "available",
+            "title": "Historical ENSO event catalogue (1950-present)",
+            "brief_role": "driver",
+            "adapter": "climate_index",
+            "index": "enso_events",
+            "description": "Historical ENSO event catalogue (1950-present) for analogue years and back-testing. DERIVED from the ONI series using CPC's own definition, not a separately published product.",
+            "params": {
+              "min_seasons": "optional run length threshold (default 5)"
+            },
+            "source": "derived from NOAA CPC ONI",
+            "validation": "single-agency",
+            "residency": "external call-out",
+            "cadence": "monthly (follows ONI)",
+            "pack": "food-security"
+          },
+          "enso_plume": {
+            "status": "declared_gap",
+            "title": "CCSR/IRI ENSO model prediction plume",
+            "adapter": "enso_forecast",
+            "product": "enso_plume",
+            "source": "IRI / Columbia Climate School",
+            "reason": "RETIRED UPSTREAM, 2026-08-17. IRI moved this service from ensoforecast.iri.columbia.edu to ensoforecast2 (the old host 301s to the new one) and, in the move, replaced the machine-readable JSON API with server-rendered images. Every data route now returns HTTP 403 (plumes_json, plume_models, select_plumes, figure4_options), while the new figure4_plot / figure7_plot / figure9_plot routes return 200 image/svg+xml. Confirmed not an IP or user-agent block: 403 from two separate networks, with and without a browser UA, Referer and Origin. The SVG is NOT parseable back into data — it carries 211 <path> elements, ZERO <text> elements and no data attributes, because the labels are rendered as glyph outlines. Recovering per-model values would mean OCR-ing vector outlines and reverse-engineering the axis transform, which is the same fabrication risk we refuse for enso_probabilities. Closing this needs IRI to restore a data endpoint. Use enso_discussion for official status and probability wording, and enso_oni for the observed index.",
+            "params": {
+              "year": "int, optional",
+              "month": "int 1-12, optional"
+            },
+            "pack": "food-security"
+          },
+          "enso_outlook": {
+            "status": "available",
+            "title": "IRI monthly ENSO/IOD quick look",
+            "brief_role": "driver",
+            "adapter": "enso_forecast",
+            "product": "enso_outlook",
+            "source": "IRI / Columbia Climate School",
+            "sst_basis": "OISST, 1991-2020 base",
+            "validation": "single-agency",
+            "residency": "external call-out",
+            "cadence": "monthly (issued mid-month)",
+            "description": "IRI monthly ENSO/IOD quick look — the official forecast narrative served VERBATIM by section. This is where the official probability percentages live, as prose: quote and attribute them, never re-type them as structured numbers.",
+            "params": {
+              "year": "int, optional — defaults to the latest published",
+              "month": "int 1-12, optional — defaults to the latest published"
+            },
+            "pack": "food-security"
+          },
+          "enso_discussion": {
+            "status": "available",
+            "title": "CPC ENSO Diagnostic Discussion",
+            "brief_role": "driver",
+            "adapter": "enso_forecast",
+            "product": "enso_discussion",
+            "source": "NOAA CPC",
+            "validation": "multi-agency-consensus",
+            "residency": "external call-out",
+            "cadence": "monthly (2nd Thursday)",
+            "description": "NOAA CPC monthly ENSO Diagnostic Discussion, served VERBATIM. The ONLY source for the formal ENSO Alert System Status (Watch / Advisory / Final Advisory) — a status is a declaration, not a measurement, so no index can supply it. Usually fresher than the IRI quick look.",
+            "params": {},
+            "pack": "food-security"
+          },
+          "enso_probabilities": {
+            "status": "declared_gap",
+            "reason": "A STRUCTURED probabilistic ENSO forecast (El Nino / neutral / La Nina by lead season, as numbers). No machine-readable table is published: IRI carries the percentages only in prose, CPC publishes them as a PNG, and the IRI Data Library path is not public. Regex-ing prose for probabilities would put a silently-wrong number in a governed brief. Use `enso_outlook` and quote the narrative, or `enso_plume` for model counts — counts are not probabilities and must not be presented as such. Closing this needs a structured feed or an authenticated dataset path.",
+            "params": {
+              "lead": "?"
+            },
+            "pack": "food-security"
+          },
+          "iod_dmi_bom": {
+            "status": "declared_gap",
+            "reason": "The Australian BoM's own IOD index. The use-case doc names BoM FIRST for the DMI and we serve NOAA PSL instead, so the substitution is declared rather than left implicit. BoM publishes no machine-readable series — bom.gov.au/climate/enso/indices.shtml is ~58 KB of HTML with the value in prose and charts (iod_1.txt: HTTP 404). Regex-ing a number out of that page is the same antipattern refused for enso_probabilities, so it is NOT done. Live consequence to be aware of: PSL lags materially (2026-05 while ONI is at MJJ 2026), so the co-driver reads older than the driver. Closing this needs a BoM data path, not a scraper.",
+            "params": {},
+            "pack": "food-security"
+          },
+          "icpac_ghacof": {
+            "status": "declared_gap",
+            "reason": "ICPAC GHACOF regional seasonal consensus outlook for the Greater Horn of Africa — the regionally-authoritative downscaling of the ENSO signal, and the source a Kenya-specific claim should rest on rather than a global index. Published as PDF statements; needs a machine-readable path or ingestion into the corpus.",
+            "params": {
+              "place": "?",
+              "season": "?"
+            },
+            "pack": "food-security"
+          },
+          "nmme_seasonal": {
+            "status": "declared_gap",
+            "reason": "North American Multi-Model Ensemble seasonal forecast (precip/temp). Grids are public at ftp.cpc.ncep.noaa.gov/NMME/realtime_anom/ but carry no SST, so nothing here substitutes for the ENSO plume; needs an extraction step to reach a place-level number.",
+            "params": {
+              "place": "?",
+              "variable": "?",
+              "lead": "?"
+            },
+            "pack": "food-security"
+          },
+          "ecmwf_seas5": {
+            "status": "declared_gap",
+            "reason": "ECMWF SEAS5 seasonal forecast. Public products are charts (opencharts serves a CC-BY-4.0 PNG), not per-place numbers; the data path is the Climate Data Store, which needs an account and licence acceptance.",
+            "params": {
+              "place": "?",
+              "variable": "?",
+              "lead": "?"
+            },
+            "pack": "food-security"
+          },
+          "tamsat_rainfall": {
+            "status": "declared_gap",
+            "reason": "TAMSAT satellite rainfall estimates + soil moisture for Africa — the Africa-specific complement to CHIRPS. Pending hub data lists.",
+            "params": {
+              "place": "?",
+              "date_range": "?"
+            },
+            "pack": "food-security"
+          },
+          "chirps_rainfall": {
+            "status": "declared_gap",
+            "reason": "rainfall + ~15-day forecast — pending hub data lists. NOTE: Phase 2 of the use case, not Phase 1.",
+            "params": {
+              "place": "?",
+              "date_range": "?"
+            },
+            "pack": "food-security"
+          },
+          "chirts_temperature": {
+            "status": "declared_gap",
+            "reason": "daily max/min temperature (heat stress) — pending hub data lists",
+            "params": {
+              "place": "?",
+              "date_range": "?"
+            },
+            "pack": "food-security"
+          },
+          "era5_agromet": {
+            "status": "declared_gap",
+            "reason": "agro-met reanalysis — pending hub data lists",
+            "params": {
+              "place": "?",
+              "date_range": "?",
+              "variable": "?"
+            },
+            "pack": "food-security"
+          },
+          "hub_s2s_forecast": {
+            "status": "declared_gap",
+            "reason": "the East-Africa hub's seasonal-to-sub-seasonal pipeline — pending hub contribution",
+            "params": {
+              "place": "?",
+              "lead_time": "?"
+            },
+            "pack": "food-security"
+          },
+          "enso_soi": {
+            "title": "Southern Oscillation Index (SOI)",
+            "description": "Monthly standardized SOI (Tahiti minus Darwin sea-level pressure) — the atmospheric side of ENSO. Sustained negative values lean El Nino.",
+            "source": "NOAA PSL",
+            "validation": "single-agency",
+            "residency": "external call-out",
+            "cadence": "monthly",
+            "adapter": "generic_table",
+            "fetch": {
+              "url": "https://psl.noaa.gov/data/correlation/soi.data",
+              "index_name": "SOI",
+              "units": "standardized anomaly",
+              "missing_below": -90,
+              "round": 2,
+              "bands": [
+                {
+                  "max": -1,
+                  "label": "strongly negative (El Nino-leaning)"
+                },
+                {
+                  "min": -1,
+                  "max": -0.5,
+                  "label": "negative"
+                },
+                {
+                  "min": -0.5,
+                  "max": 0.5,
+                  "label": "neutral"
+                },
+                {
+                  "min": 0.5,
+                  "max": 1,
+                  "label": "positive"
+                },
+                {
+                  "min": 1,
+                  "label": "strongly positive (La Nina-leaning)"
+                }
+              ]
+            },
+            "params": {
+              "limit": "months of series to return (default 12)"
+            },
+            "note": "Driver signal only. This says nothing about local rainfall, crops or food security — cite evidence about the place itself for local claims.",
+            "status": "available",
+            "declarative": "enso_soi.yml",
+            "pack": "food-security"
+          }
+        },
+        "bones": [
+          {
+            "bone": "resolve",
+            "tools": [
+              "resolve_place_time"
+            ],
+            "status": "available"
+          },
+          {
+            "bone": "fetch",
+            "tools": [
+              "corpus_search",
+              "corpus_document",
+              "feeds_query"
+            ],
+            "status": "available",
+            "note": "corpus + GEOGLAM conditions built; CHIRPS/CHIRTS/ERA5 are declared feed rows"
+          },
+          {
+            "bone": "compute",
+            "tools": [
+              "compute_run"
+            ],
+            "status": "planned (phase2)"
+          },
+          {
+            "bone": "context",
+            "tools": [
+              "context_get"
+            ],
+            "status": "available"
+          },
+          {
+            "bone": "assemble",
+            "tools": [
+              "assemble_pack"
+            ],
+            "status": "available"
+          },
+          {
+            "bone": "verify",
+            "tools": [
+              "verify_groundedness"
+            ],
+            "status": "available"
+          },
+          {
+            "bone": "record",
+            "tools": [
+              "record_receipt"
+            ],
+            "status": "available"
+          },
+          {
+            "bone": "contribute",
+            "tools": [
+              "contribute_submit"
+            ],
+            "status": "planned (phase2)"
+          }
+        ],
+        "design_language": {
+          "source": "figma-live",
+          "file": "SERVIR Design System",
+          "last_modified": "2026-09-11T19:17:01Z",
+          "brand_component_sets": [
+            "SERVIR/Logo/Lockup",
+            "SERVIR/Logo/Symbol",
+            "SERVIR/Logo/Wordmark"
+          ],
+          "tools": [
+            "ui_design",
+            "ui_catalog",
+            "ui_component",
+            "ui_embed"
+          ],
+          "note": "Colour, type and brand assets are read from the design file at call time. ui_design falls back to the committed theme if it is unreachable and always states which source you got."
+        },
+        "domain_packs": [
+          {
+            "id": "food-security",
+            "display_name": "Food Security Platform",
+            "version": "v0",
+            "profile": "Phase-1 profile — what ships today, gaps declared",
+            "built_for": "early signs of maize failure in the current season (Kenya Trans-Nzoia vs Zambia — the hub-locked PoC question)",
+            "output_contract": {
+              "required_sections": [
+                "## What history says",
+                "## The current signal",
+                "## What's missing and how to weigh it",
+                "## Season timing caveat"
+              ],
+              "gate": "verify_groundedness — BLOCKING on: required sections present, no self-written Sources, citations resolve to the pack, every paragraph cited. Recorded not blocking: numbers absent from evidence.",
+              "receipt": "record_receipt — question + pack + verdict + verified-text hash"
+            },
+            "sources": {
+              "corpus": {
+                "status": "available",
+                "documents": 62,
+                "chunks": 1758,
+                "events": [
+                  "el-nino-2015-16",
+                  "el-nino-2023-24",
+                  "el-nino-2026-27"
+                ]
+              },
+              "conditions": {
+                "status": "available",
+                "source": "GEOGLAM Crop Monitor",
+                "note": "staleness is flagged in the evidence when served from last-good cache"
+              },
+              "feeds": {
+                "geoglam_conditions": {
+                  "status": "available",
+                  "source": "GEOGLAM Crop Monitor (CMET)"
+                },
+                "enso_oni": {
+                  "status": "available",
+                  "source": "NOAA CPC"
+                },
+                "iod_dmi": {
+                  "status": "available",
+                  "source": "NOAA PSL (HadISST)"
+                },
+                "enso_event_history": {
+                  "status": "available",
+                  "source": "derived from NOAA CPC ONI"
+                },
+                "enso_plume": {
+                  "status": "declared_gap",
+                  "source": "IRI / Columbia Climate School",
+                  "reason": "RETIRED UPSTREAM, 2026-08-17. IRI moved this service from ensoforecast.iri.columbia.edu to ensoforecast2 (the old host 301s to the new one) and, in the move, replaced the machine-readable JSON API with server-rendered images. Every data route now returns HTTP 403 (plumes_json, plume_models, select_plumes, figure4_options), while the new figure4_plot / figure7_plot / figure9_plot routes return 200 image/svg+xml. Confirmed not an IP or user-agent block: 403 from two separate networks, with and without a browser UA, Referer and Origin. The SVG is NOT parseable back into data — it carries 211 <path> elements, ZERO <text> elements and no data attributes, because the labels are rendered as glyph outlines. Recovering per-model values would mean OCR-ing vector outlines and reverse-engineering the axis transform, which is the same fabrication risk we refuse for enso_probabilities. Closing this needs IRI to restore a data endpoint. Use enso_discussion for official status and probability wording, and enso_oni for the observed index."
+                },
+                "enso_outlook": {
+                  "status": "available",
+                  "source": "IRI / Columbia Climate School"
+                },
+                "enso_discussion": {
+                  "status": "available",
+                  "source": "NOAA CPC"
+                },
+                "enso_probabilities": {
+                  "status": "declared_gap",
+                  "reason": "A STRUCTURED probabilistic ENSO forecast (El Nino / neutral / La Nina by lead season, as numbers). No machine-readable table is published: IRI carries the percentages only in prose, CPC publishes them as a PNG, and the IRI Data Library path is not public. Regex-ing prose for probabilities would put a silently-wrong number in a governed brief. Use `enso_outlook` and quote the narrative, or `enso_plume` for model counts — counts are not probabilities and must not be presented as such. Closing this needs a structured feed or an authenticated dataset path."
+                },
+                "iod_dmi_bom": {
+                  "status": "declared_gap",
+                  "reason": "The Australian BoM's own IOD index. The use-case doc names BoM FIRST for the DMI and we serve NOAA PSL instead, so the substitution is declared rather than left implicit. BoM publishes no machine-readable series — bom.gov.au/climate/enso/indices.shtml is ~58 KB of HTML with the value in prose and charts (iod_1.txt: HTTP 404). Regex-ing a number out of that page is the same antipattern refused for enso_probabilities, so it is NOT done. Live consequence to be aware of: PSL lags materially (2026-05 while ONI is at MJJ 2026), so the co-driver reads older than the driver. Closing this needs a BoM data path, not a scraper."
+                },
+                "icpac_ghacof": {
+                  "status": "declared_gap",
+                  "reason": "ICPAC GHACOF regional seasonal consensus outlook for the Greater Horn of Africa — the regionally-authoritative downscaling of the ENSO signal, and the source a Kenya-specific claim should rest on rather than a global index. Published as PDF statements; needs a machine-readable path or ingestion into the corpus."
+                },
+                "nmme_seasonal": {
+                  "status": "declared_gap",
+                  "reason": "North American Multi-Model Ensemble seasonal forecast (precip/temp). Grids are public at ftp.cpc.ncep.noaa.gov/NMME/realtime_anom/ but carry no SST, so nothing here substitutes for the ENSO plume; needs an extraction step to reach a place-level number."
+                },
+                "ecmwf_seas5": {
+                  "status": "declared_gap",
+                  "reason": "ECMWF SEAS5 seasonal forecast. Public products are charts (opencharts serves a CC-BY-4.0 PNG), not per-place numbers; the data path is the Climate Data Store, which needs an account and licence acceptance."
+                },
+                "tamsat_rainfall": {
+                  "status": "declared_gap",
+                  "reason": "TAMSAT satellite rainfall estimates + soil moisture for Africa — the Africa-specific complement to CHIRPS. Pending hub data lists."
+                },
+                "chirps_rainfall": {
+                  "status": "declared_gap",
+                  "reason": "rainfall + ~15-day forecast — pending hub data lists. NOTE: Phase 2 of the use case, not Phase 1."
+                },
+                "chirts_temperature": {
+                  "status": "declared_gap",
+                  "reason": "daily max/min temperature (heat stress) — pending hub data lists"
+                },
+                "era5_agromet": {
+                  "status": "declared_gap",
+                  "reason": "agro-met reanalysis — pending hub data lists"
+                },
+                "hub_s2s_forecast": {
+                  "status": "declared_gap",
+                  "reason": "the East-Africa hub's seasonal-to-sub-seasonal pipeline — pending hub contribution"
+                },
+                "enso_soi": {
+                  "status": "available",
+                  "source": "NOAA PSL"
+                }
+              }
+            },
+            "calendars": [
+              {
+                "country": "kenya",
+                "crops": [
+                  "maize"
+                ]
+              },
+              {
+                "country": "zambia",
+                "crops": [
+                  "maize"
+                ]
+              }
+            ],
+            "calendar_provenance": "hub defaults are hand-authored approximations of GEOGLAM/FAO baselines; a hub-provided passported calendar is pending. Per-request overrides are honored and labelled ADJUSTED.",
+            "compositions": [
+              "foodsecurity.brief",
+              "risk.brief"
+            ],
+            "guidance": {
+              "instructions": "delivered at connect",
+              "prompts": [
+                "build_a_tool",
+                "run_analysis",
+                "explain_platform"
+              ],
+              "resources": [
+                "servirplatform://how-to-use",
+                "servirplatform://pack/food-security"
+              ]
+            },
+            "gaps": [
+              "climate feeds (CHIRPS/CHIRTS/ERA5) — pending hub data lists",
+              "analytics / threshold formulas — pending hub contribution (compute bone is phase2)",
+              "acreage-under-stress — needs crop-type/land-cover masks (deferred)",
+              "MCP Apps widgets — phase2 (web widgets exist in apps/web)",
+              "sub-national regions are not resolved to geometries — gazetteer is phase2",
+              "archived ORIGINAL bytes need the REST mount; over MCP corpus_document returns the extracted text that was cited"
+            ],
+            "worked_example": {
+              "receipt_id": "9655345712d3c364",
+              "resolve_with": "record_receipt(receipt_id='9655345712d3c364')",
+              "note": "a real receipt from this server — resolve it instead of inventing a sample payload"
+            }
+          },
+          {
+            "id": "risk",
+            "display_name": "Risk Platform",
+            "version": "v0",
+            "profile": "v0 — hazard exposure only; risk levels and corpus are declared gaps",
+            "built_for": "asset exposure to a mapped hazard for one place, replayable",
+            "output_contract": {
+              "required_sections": [
+                "## What the numbers show",
+                "## Method and validation",
+                "## What's missing and how to weigh it",
+                "## Reading the severity scale"
+              ],
+              "gate": "verify_groundedness — same blocking rules as every pack",
+              "receipt": "record_receipt / publish_answer — pack carries the map viz"
+            },
+            "sources": {
+              "corpus": {
+                "status": "declared_gap",
+                "reason": "no risk document corpus exists yet"
+              },
+              "rasters": {
+                "status": "available",
+                "hazards": [
+                  "cyclone",
+                  "drought",
+                  "earthquake",
+                  "fire",
+                  "flashflood",
+                  "flood",
+                  "heatdays",
+                  "landslides",
+                  "storm",
+                  "tsunami"
+                ],
+                "note": "only hazard_flood states lineage (ADPC, derived from JRC GLOFAS v2.1); vintages/licences are unrecorded for all — declared in every pack"
+              },
+              "assets": {
+                "status": "available",
+                "source": "OSM via Overpass",
+                "note": "no retrieval date recorded in the AOI bundle"
+              }
+            },
+            "target": {
+              "place": "geocodable place name",
+              "hazard": "one of: cyclone, drought, earthquake, fire, flashflood, flood, heatdays, landslides, storm, tsunami",
+              "min_severity": "optional, 1-5, default 1"
+            },
+            "gaps": [
+              "risk levels (L1/L2) not in the pack — exposure only, engine exists",
+              "no risk corpus",
+              "raster vintages/licences unrecorded",
+              "BYOD uploads are session-scoped and cannot enter a pack"
+            ],
+            "compositions": {
+              "risk.brief": "available via compose_run — the platform LLM parses, drafts and gates server-side; or run the assemble -> publish_answer loop with your own model"
+            }
+          }
+        ]
+      }
+    },
+    "riskAssemblePack": {
+      "content": [
+        {
+          "text": "{\"status\":\"ok\",\"pack_id\":\"7a2ac7b16c28a304\",\"answer_status\":\"INCOMPLETE — this pack is EVIDENCE, not an answer. Draft the brief from it, then finish with ONE call to publish_answer(pack_id, draft, question). Do not show the user a brief that has not been through it.\",\"next_step\":{\"required\":true,\"step\":\"FINISH — one call gates the draft, mints the receipt, returns the evidence view\",\"call\":{\"tool\":\"publish_answer\",\"args\":{\"pack_id\":\"7a2ac7b16c28a304\",\"draft\":\"<your full drafted brief, verbatim>\",\"question\":\"<the user's question, verbatim>\"}},\"pass_the_whole_draft\":\"Send the complete draft text, not a summary: the gate hashes exactly what it checked so the receipt proves which text passed.\",\"draft_rules\":[\"Use these section headers EXACTLY: ## What the numbers show / ## Method and validation / ## What's missing and how to weigh it / ## Reading the severity scale\",\"Cite pack items as [n]. Every paragraph needs at least one citation.\",\"The declared gaps are themselves citable evidence: entry [7]. Your what's-missing paragraphs should cite [7] — an honest gap statement no longer fails the gate as uncited.\",\"Only cite numbers that appear in the pack — a [n] that is not in the pack is a phantom citation and blocks the gate.\",\"Do NOT write your own '## Sources' section; the receipt carries the sources with their provenance.\"],\"granular_alternative\":\"verify_groundedness(draft, pack_id) then record_receipt(pack_id, report_id) do the same two things separately — same gate, same receipt.\",\"if_you_stop_here\":\"The brief would be ungoverned: nothing has checked it for citations that do not exist in the pack, there is no receipt, and neither you nor the user can replay or share the answer. record_receipt is also what returns the evidence view — skip it and the user gets prose instead of the evidence chain.\"},\"pack\":\"risk\",\"target\":{\"place\":\"Phaya Thai District, Bangkok, Thailand\",\"hazard\":\"flood\"},\"focus\":\"evacuation-centre exposure across return periods\",\"citations\":[{\"n\":1,\"kind\":\"exposure\",\"retrieval\":\"computed-at-pack-time\",\"source\":\"hazard_flood.tif × hospitals\",\"title\":\"hospitals vs hazard_flood\",\"validation\":\"deterministic-computation\",\"text\":\"9 of 12 hospitals in Phaya Thai District fall in flood hazard class >= 1. By severity — class 2 (Low (0.5-1 m)): 4; class 3 (Moderate (1-1.5 m)): 2; class 4 (High (1.5-2 m)): 3. Method: count_in_hazard.\",\"method\":\"count_in_hazard\",\"series\":{\"id\":\"exposure_hospitals\",\"points\":[{\"t\":\"class 1\",\"v\":0,\"c\":\"Very Low (0-0.5 m)\"},{\"t\":\"class 2\",\"v\":4,\"c\":\"Low (0.5-1 m)\"},{\"t\":\"class 3\",\"v\":2,\"c\":\"Moderate (1-1.5 m)\"},{\"t\":\"class 4\",\"v\":3,\"c\":\"High (1.5-2 m)\"},{\"t\":\"class 5\",\"v\":0,\"c\":\"Very High (>2 m)\"}],\"unit\":\"hospitals by hazard class\",\"categorical\":true}},{\"n\":2,\"kind\":\"exposure\",\"retrieval\":\"computed-at-pack-time\",\"source\":\"hazard_flood.tif × schools\",\"title\":\"schools vs hazard_flood\",\"validation\":\"deterministic-computation\",\"text\":\"8 of 8 schools in Phaya Thai District fall in flood hazard class >= 1. By severity — class 1 (Very Low (0-0.5 m)): 1; class 2 (Low (0.5-1 m)): 2; class 3 (Moderate (1-1.5 m)): 3; class 4 (High (1.5-2 m)): 2. Method: count_in_hazard.\",\"method\":\"count_in_hazard\",\"series\":{\"id\":\"exposure_schools\",\"points\":[{\"t\":\"class 1\",\"v\":1,\"c\":\"Very Low (0-0.5 m)\"},{\"t\":\"class 2\",\"v\":2,\"c\":\"Low (0.5-1 m)\"},{\"t\":\"class 3\",\"v\":3,\"c\":\"Moderate (1-1.5 m)\"},{\"t\":\"class 4\",\"v\":2,\"c\":\"High (1.5-2 m)\"},{\"t\":\"class 5\",\"v\":0,\"c\":\"Very High (>2 m)\"}],\"unit\":\"schools by hazard class\",\"categorical\":true}},{\"n\":3,\"kind\":\"exposure\",\"retrieval\":\"computed-at-pack-time\",\"source\":\"hazard_flood.tif × buildings\",\"title\":\"buildings vs hazard_flood\",\"validation\":\"deterministic-computation\",\"text\":\"4638 of 4818 buildings in Phaya Thai District fall in flood hazard class >= 1. By severity — class 1 (Very Low (0-0.5 m)): 407; class 2 (Low (0.5-1 m)): 1007; class 3 (Moderate (1-1.5 m)): 2340; class 4 (High (1.5-2 m)): 884. Method: count_in_hazard.\",\"method\":\"count_in_hazard\",\"series\":{\"id\":\"exposure_buildings\",\"points\":[{\"t\":\"class 1\",\"v\":407,\"c\":\"Very Low (0-0.5 m)\"},{\"t\":\"class 2\",\"v\":1007,\"c\":\"Low (0.5-1 m)\"},{\"t\":\"class 3\",\"v\":2340,\"c\":\"Moderate (1-1.5 m)\"},{\"t\":\"class 4\",\"v\":884,\"c\":\"High (1.5-2 m)\"},{\"t\":\"class 5\",\"v\":0,\"c\":\"Very High (>2 m)\"}],\"unit\":\"buildings by hazard class\",\"categorical\":true}},{\"n\":4,\"kind\":\"exposure\",\"retrieval\":\"computed-at-pack-time\",\"source\":\"hazard_flood.tif × roads\",\"title\":\"roads vs hazard_flood\",\"validation\":\"deterministic-computation\",\"text\":\"305.3 km of 326.4 km of roads in Phaya Thai District fall in flood hazard class >= 1. By severity (km) — class 1: 36.8; class 2: 63.8; class 3: 128.4; class 4: 76.3. Method: roads_in_hazard.\",\"method\":\"roads_in_hazard\"},{\"n\":5,\"kind\":\"hazard_layer\",\"retrieval\":\"computed-at-pack-time\",\"source\":\"ADPC hazard_flood.tif, derived from JRC GLOFAS v2.1\",\"title\":\"100-year flood hazard (Southeast Asia)\",\"validation\":\"structural-contract-checked\",\"text\":\"Hazard layer hazard_flood: 100-year flood hazard (Southeast Asia). Lineage: ADPC hazard_flood.tif, derived from JRC GLOFAS v2.1. Declared contract: dtype int8, valid 0-5 class. Observed on this AOI clip: dtype int8, range 0-5 across 6 distinct values (sampled). Legend: 1=Very Low (0-0.5 m); 2=Low (0.5-1 m); 3=Moderate (1-1.5 m); 4=High (1.5-2 m); 5=Very High (>2 m)\"},{\"n\":6,\"kind\":\"method\",\"retrieval\":\"config\",\"source\":\"platform method registry\",\"title\":\"exposure overlay method\",\"validation\":\"documented-method\",\"text\":\"Exposure = asset location sampled against the clipped hazard raster; a point's class is the raster value at its coordinates (0 = no data / no hazard); road exposure attributes each segment's haversine length to the class at its midpoint. Severity classes are the provider's, 1 (lowest) to 5 (highest). This is a HAZARD overlay, not a risk level: vulnerability weighting (L2) is not part of this pack yet.\"},{\"n\":7,\"kind\":\"gaps\",\"source\":\"platform pack assembly\",\"title\":\"declared evidence gaps\",\"text\":\"Declared gaps in this evidence pack: (1) no risk document corpus exists — no publications, assessments or reports can be cited for this domain yet (2) raster vintages unknown: no publication date, version or licence is recorded for any catalog raster (3) risk levels (L1 precomputed / L2 vulnerability-weighted) are not in this pack — exposure vs hazard severity only; the compute engine exists (4) OSM asset data carries no retrieval date in the AOI bundle\",\"validation\":\"declared-by-platform\",\"retrieval\":\"config\"}],\"gaps\":[\"no risk document corpus exists — no publications, assessments or reports can be cited for this domain yet\",\"raster vintages unknown: no publication date, version or licence is recorded for any catalog raster\",\"risk levels (L1 precomputed / L2 vulnerability-weighted) are not in this pack — exposure vs hazard severity only; the compute engine exists\",\"OSM asset data carries no retrieval date in the AOI bundle\"],\"queries\":null,\"required_sections\":[\"## What the numbers show\",\"## Method and validation\",\"## What's missing and how to weigh it\",\"## Reading the severity scale\"],\"stats\":{\"place\":\"Phaya Thai District\",\"hazard\":\"hazard_flood\",\"min_severity\":1,\"counts\":{\"hospitals\":{\"exposed\":9,\"total\":12,\"by_severity\":{\"1\":0,\"2\":4,\"3\":2,\"4\":3,\"5\":0}},\"schools\":{\"exposed\":8,\"total\":8,\"by_severity\":{\"1\":1,\"2\":2,\"3\":3,\"4\":2,\"5\":0}},\"buildings\":{\"exposed\":4638,\"total\":4818,\"by_severity\":{\"1\":407,\"2\":1007,\"3\":2340,\"4\":884,\"5\":0}},\"roads\":{\"exposed_km\":305.3,\"total_km\":326.4}}},\"trace\":[\"aoi[Phaya Thai District] 9 km2 via admin boundary ~9 km²\",\"clip[hazard_flood]\",\"exposure[hospitals] 9/12\",\"exposure[schools] 8/8\",\"exposure[buildings] 4638/4818\",\"exposure[roads] 305.3km\"],\"exec\":{\"assembled_at\":\"2026-09-14T02:37:31.536930+00:00\",\"gather_ms\":1689.3},\"viz_recorded\":\"map payload recorded with the pack — rendered by the hazard_map embed for this receipt\",\"your_next_output\":\"STOP — do not write the brief as your reply yet. Write it, then send it as your next output: publish_answer(pack_id='7a2ac7b16c28a304', draft=<the full brief>, question=<the user's question>). ONE call finishes the loop — it gates the draft, mints the receipt and returns the evidence view. A brief typed straight into the conversation is ungoverned, unreceipted and unshowable, which is the one failure this platform exists to prevent.\"}",
+          "type": "text"
+        }
+      ],
+      "isError": false,
+      "structuredContent": {
+        "status": "ok",
+        "pack_id": "7a2ac7b16c28a304",
+        "answer_status": "INCOMPLETE — this pack is EVIDENCE, not an answer. Draft the brief from it, then finish with ONE call to publish_answer(pack_id, draft, question). Do not show the user a brief that has not been through it.",
+        "next_step": {
+          "required": true,
+          "step": "FINISH — one call gates the draft, mints the receipt, returns the evidence view",
+          "call": {
+            "tool": "publish_answer",
+            "args": {
+              "pack_id": "7a2ac7b16c28a304",
+              "draft": "<your full drafted brief, verbatim>",
+              "question": "<the user's question, verbatim>"
+            }
+          },
+          "pass_the_whole_draft": "Send the complete draft text, not a summary: the gate hashes exactly what it checked so the receipt proves which text passed.",
+          "draft_rules": [
+            "Use these section headers EXACTLY: ## What the numbers show / ## Method and validation / ## What's missing and how to weigh it / ## Reading the severity scale",
+            "Cite pack items as [n]. Every paragraph needs at least one citation.",
+            "The declared gaps are themselves citable evidence: entry [7]. Your what's-missing paragraphs should cite [7] — an honest gap statement no longer fails the gate as uncited.",
+            "Only cite numbers that appear in the pack — a [n] that is not in the pack is a phantom citation and blocks the gate.",
+            "Do NOT write your own '## Sources' section; the receipt carries the sources with their provenance."
+          ],
+          "granular_alternative": "verify_groundedness(draft, pack_id) then record_receipt(pack_id, report_id) do the same two things separately — same gate, same receipt.",
+          "if_you_stop_here": "The brief would be ungoverned: nothing has checked it for citations that do not exist in the pack, there is no receipt, and neither you nor the user can replay or share the answer. record_receipt is also what returns the evidence view — skip it and the user gets prose instead of the evidence chain."
+        },
+        "pack": "risk",
+        "target": {
+          "place": "Phaya Thai District, Bangkok, Thailand",
+          "hazard": "flood"
+        },
+        "focus": "evacuation-centre exposure across return periods",
+        "citations": [
+          {
+            "n": 1,
+            "kind": "exposure",
+            "retrieval": "computed-at-pack-time",
+            "source": "hazard_flood.tif × hospitals",
+            "title": "hospitals vs hazard_flood",
+            "validation": "deterministic-computation",
+            "text": "9 of 12 hospitals in Phaya Thai District fall in flood hazard class >= 1. By severity — class 2 (Low (0.5-1 m)): 4; class 3 (Moderate (1-1.5 m)): 2; class 4 (High (1.5-2 m)): 3. Method: count_in_hazard.",
+            "method": "count_in_hazard",
+            "series": {
+              "id": "exposure_hospitals",
+              "points": [
+                {
+                  "t": "class 1",
+                  "v": 0,
+                  "c": "Very Low (0-0.5 m)"
+                },
+                {
+                  "t": "class 2",
+                  "v": 4,
+                  "c": "Low (0.5-1 m)"
+                },
+                {
+                  "t": "class 3",
+                  "v": 2,
+                  "c": "Moderate (1-1.5 m)"
+                },
+                {
+                  "t": "class 4",
+                  "v": 3,
+                  "c": "High (1.5-2 m)"
+                },
+                {
+                  "t": "class 5",
+                  "v": 0,
+                  "c": "Very High (>2 m)"
+                }
+              ],
+              "unit": "hospitals by hazard class",
+              "categorical": true
+            }
+          },
+          {
+            "n": 2,
+            "kind": "exposure",
+            "retrieval": "computed-at-pack-time",
+            "source": "hazard_flood.tif × schools",
+            "title": "schools vs hazard_flood",
+            "validation": "deterministic-computation",
+            "text": "8 of 8 schools in Phaya Thai District fall in flood hazard class >= 1. By severity — class 1 (Very Low (0-0.5 m)): 1; class 2 (Low (0.5-1 m)): 2; class 3 (Moderate (1-1.5 m)): 3; class 4 (High (1.5-2 m)): 2. Method: count_in_hazard.",
+            "method": "count_in_hazard",
+            "series": {
+              "id": "exposure_schools",
+              "points": [
+                {
+                  "t": "class 1",
+                  "v": 1,
+                  "c": "Very Low (0-0.5 m)"
+                },
+                {
+                  "t": "class 2",
+                  "v": 2,
+                  "c": "Low (0.5-1 m)"
+                },
+                {
+                  "t": "class 3",
+                  "v": 3,
+                  "c": "Moderate (1-1.5 m)"
+                },
+                {
+                  "t": "class 4",
+                  "v": 2,
+                  "c": "High (1.5-2 m)"
+                },
+                {
+                  "t": "class 5",
+                  "v": 0,
+                  "c": "Very High (>2 m)"
+                }
+              ],
+              "unit": "schools by hazard class",
+              "categorical": true
+            }
+          },
+          {
+            "n": 3,
+            "kind": "exposure",
+            "retrieval": "computed-at-pack-time",
+            "source": "hazard_flood.tif × buildings",
+            "title": "buildings vs hazard_flood",
+            "validation": "deterministic-computation",
+            "text": "4638 of 4818 buildings in Phaya Thai District fall in flood hazard class >= 1. By severity — class 1 (Very Low (0-0.5 m)): 407; class 2 (Low (0.5-1 m)): 1007; class 3 (Moderate (1-1.5 m)): 2340; class 4 (High (1.5-2 m)): 884. Method: count_in_hazard.",
+            "method": "count_in_hazard",
+            "series": {
+              "id": "exposure_buildings",
+              "points": [
+                {
+                  "t": "class 1",
+                  "v": 407,
+                  "c": "Very Low (0-0.5 m)"
+                },
+                {
+                  "t": "class 2",
+                  "v": 1007,
+                  "c": "Low (0.5-1 m)"
+                },
+                {
+                  "t": "class 3",
+                  "v": 2340,
+                  "c": "Moderate (1-1.5 m)"
+                },
+                {
+                  "t": "class 4",
+                  "v": 884,
+                  "c": "High (1.5-2 m)"
+                },
+                {
+                  "t": "class 5",
+                  "v": 0,
+                  "c": "Very High (>2 m)"
+                }
+              ],
+              "unit": "buildings by hazard class",
+              "categorical": true
+            }
+          },
+          {
+            "n": 4,
+            "kind": "exposure",
+            "retrieval": "computed-at-pack-time",
+            "source": "hazard_flood.tif × roads",
+            "title": "roads vs hazard_flood",
+            "validation": "deterministic-computation",
+            "text": "305.3 km of 326.4 km of roads in Phaya Thai District fall in flood hazard class >= 1. By severity (km) — class 1: 36.8; class 2: 63.8; class 3: 128.4; class 4: 76.3. Method: roads_in_hazard.",
+            "method": "roads_in_hazard"
+          },
+          {
+            "n": 5,
+            "kind": "hazard_layer",
+            "retrieval": "computed-at-pack-time",
+            "source": "ADPC hazard_flood.tif, derived from JRC GLOFAS v2.1",
+            "title": "100-year flood hazard (Southeast Asia)",
+            "validation": "structural-contract-checked",
+            "text": "Hazard layer hazard_flood: 100-year flood hazard (Southeast Asia). Lineage: ADPC hazard_flood.tif, derived from JRC GLOFAS v2.1. Declared contract: dtype int8, valid 0-5 class. Observed on this AOI clip: dtype int8, range 0-5 across 6 distinct values (sampled). Legend: 1=Very Low (0-0.5 m); 2=Low (0.5-1 m); 3=Moderate (1-1.5 m); 4=High (1.5-2 m); 5=Very High (>2 m)"
+          },
+          {
+            "n": 6,
+            "kind": "method",
+            "retrieval": "config",
+            "source": "platform method registry",
+            "title": "exposure overlay method",
+            "validation": "documented-method",
+            "text": "Exposure = asset location sampled against the clipped hazard raster; a point's class is the raster value at its coordinates (0 = no data / no hazard); road exposure attributes each segment's haversine length to the class at its midpoint. Severity classes are the provider's, 1 (lowest) to 5 (highest). This is a HAZARD overlay, not a risk level: vulnerability weighting (L2) is not part of this pack yet."
+          },
+          {
+            "n": 7,
+            "kind": "gaps",
+            "source": "platform pack assembly",
+            "title": "declared evidence gaps",
+            "text": "Declared gaps in this evidence pack: (1) no risk document corpus exists — no publications, assessments or reports can be cited for this domain yet (2) raster vintages unknown: no publication date, version or licence is recorded for any catalog raster (3) risk levels (L1 precomputed / L2 vulnerability-weighted) are not in this pack — exposure vs hazard severity only; the compute engine exists (4) OSM asset data carries no retrieval date in the AOI bundle",
+            "validation": "declared-by-platform",
+            "retrieval": "config"
+          }
+        ],
+        "gaps": [
+          "no risk document corpus exists — no publications, assessments or reports can be cited for this domain yet",
+          "raster vintages unknown: no publication date, version or licence is recorded for any catalog raster",
+          "risk levels (L1 precomputed / L2 vulnerability-weighted) are not in this pack — exposure vs hazard severity only; the compute engine exists",
+          "OSM asset data carries no retrieval date in the AOI bundle"
+        ],
+        "queries": null,
+        "required_sections": [
+          "## What the numbers show",
+          "## Method and validation",
+          "## What's missing and how to weigh it",
+          "## Reading the severity scale"
+        ],
+        "stats": {
+          "place": "Phaya Thai District",
+          "hazard": "hazard_flood",
+          "min_severity": 1,
+          "counts": {
+            "hospitals": {
+              "exposed": 9,
+              "total": 12,
+              "by_severity": {
+                "1": 0,
+                "2": 4,
+                "3": 2,
+                "4": 3,
+                "5": 0
+              }
+            },
+            "schools": {
+              "exposed": 8,
+              "total": 8,
+              "by_severity": {
+                "1": 1,
+                "2": 2,
+                "3": 3,
+                "4": 2,
+                "5": 0
+              }
+            },
+            "buildings": {
+              "exposed": 4638,
+              "total": 4818,
+              "by_severity": {
+                "1": 407,
+                "2": 1007,
+                "3": 2340,
+                "4": 884,
+                "5": 0
+              }
+            },
+            "roads": {
+              "exposed_km": 305.3,
+              "total_km": 326.4
+            }
+          }
+        },
+        "trace": [
+          "aoi[Phaya Thai District] 9 km2 via admin boundary ~9 km²",
+          "clip[hazard_flood]",
+          "exposure[hospitals] 9/12",
+          "exposure[schools] 8/8",
+          "exposure[buildings] 4638/4818",
+          "exposure[roads] 305.3km"
+        ],
+        "exec": {
+          "assembled_at": "2026-09-14T02:37:31.536930+00:00",
+          "gather_ms": 1689.3
+        },
+        "viz_recorded": "map payload recorded with the pack — rendered by the hazard_map embed for this receipt",
+        "your_next_output": "STOP — do not write the brief as your reply yet. Write it, then send it as your next output: publish_answer(pack_id='7a2ac7b16c28a304', draft=<the full brief>, question=<the user's question>). ONE call finishes the loop — it gates the draft, mints the receipt and returns the evidence view. A brief typed straight into the conversation is ungoverned, unreceipted and unshowable, which is the one failure this platform exists to prevent."
+      }
+    },
+    "boundary": "Bounded evidence assembly only. No publish_answer call, private Hub transfer, or grp-flood connector claim."
+  },
+  "limitations": [
+    "This records the tool contract the server advertises to an authenticated client.",
+    "The optional test calls platform_capabilities and assembles one Risk evidence pack; it does not call publish_answer or transfer private Hub data.",
+    "Tool presence or a generic Risk pack response is not scientific approval and does not prove the proposed grp-flood-to-Hub protected evidence path."
+  ]
+}

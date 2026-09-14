@@ -16,7 +16,8 @@ repository can tell whether it still matches the deployed server.
 
 `scripts/sig-mcp-capture.js` replaces that with a recorded, re-runnable
 contract capture, and diffs the live inventory against what the prototype
-claims.
+claims. Its optional `--test-risk` mode also performs the bounded live Risk
+check completed on 14 September.
 
 ## Prerequisites
 
@@ -73,6 +74,8 @@ Useful flags:
 | `--client-id <id>` | Use a pre-registered client instead of dynamic registration |
 | `--scope <scopes>` | Request specific scopes |
 | `--discover-only` | Metadata only; no login and no tool list |
+| `--test-risk` | After enumeration, call `platform_capabilities` and bounded `assemble_pack(pack="risk")` |
+| `--place`, `--hazard`, `--focus` | Override Risk test inputs; use the registered hazard ID `flood`, not `river flood` |
 
 ## Step 3 — Read the diff
 
@@ -95,6 +98,26 @@ Against this prototype's claimed inventory:
 Commit `sig-mcp-capture.json` next to this file. It is the contract record the
 architecture review asked for, and re-running the script later shows drift.
 
+## Step 4 — Optionally validate the generic Risk pack
+
+```bash
+node scripts/sig-mcp-capture.js --test-risk --port 8768 \
+  --place "Phaya Thai District, Bangkok, Thailand" \
+  --hazard flood \
+  --focus "evacuation-centre exposure across return periods"
+```
+
+This remains bounded: it calls `platform_capabilities` and assembles evidence,
+but does not draft or publish an answer. Review the captured tool output before
+committing it because it can contain upstream evidence values.
+
+The re-runnable authenticated 14 September run is recorded in
+[`sig-mcp-live-capture.json`](sig-mcp-live-capture.json), with a concise earlier
+validation in [`sig-mcp-risk-validation.json`](sig-mcp-risk-validation.json).
+The latest capture enumerated 15 tools, matched all 15 prototype claims, and
+successfully returned Risk pack `7a2ac7b16c28a304` for Phaya Thai and `flood`. The earlier value `river flood` was correctly declined because the
+registered identifier is `flood`.
+
 ## What this does and does not prove
 
 Proves:
@@ -106,8 +129,9 @@ Proves:
 
 Does **not** prove:
 
-- that a Risk or `grp-flood` connector exists — enumeration is not connection;
-- that a protected evidence transfer or privacy gate works;
+- in inventory-only mode, that Risk works — enumeration is not execution;
+- even with `--test-risk`, that the proposed private-Hub `grp-flood` connector exists;
+- that a protected Hub evidence transfer or privacy gate works;
 - that any tool returns correct or scientifically approved results;
 - anything about `compute_run` or `contribute_submit` beyond their absence or
   presence in the list.
@@ -120,8 +144,8 @@ Those remain P0 items 1 and 3–7 of the architecture review.
   browser's Google session makes that a single click.
 - The evidence file records the `client_id`, requested scope and tool schemas
   only. No token, no refresh token, no account identifier.
-- The script never calls a tool, so it cannot transfer or expose SIG data.
-- Review the evidence file before committing, as with any captured artefact.
+- By default the script never calls a tool. `--test-risk` explicitly calls only `platform_capabilities` and `assemble_pack`; it does not call `publish_answer`.
+- Risk test output can contain upstream evidence values. Review the evidence file before committing, as with any captured artefact.
 
 ## Troubleshooting
 

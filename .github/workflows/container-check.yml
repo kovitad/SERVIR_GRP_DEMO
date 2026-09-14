@@ -28,6 +28,7 @@ jobs:
           node --check backend/prototype-service.js
           node --check scripts/dev-local.js
           node --check scripts/sig-mcp-capture.js
+          node -e "const d=require('./docs/14Sep2026/sig-mcp-live-capture.json'); const raw=JSON.stringify(d); if(d.tools.length!==15||d.comparisonWithPrototypeClaim.confirmed.length!==15||d.toolTests.riskAssemblePack.structuredContent.status!=='ok'||/kovitad\\.janlakhon|\\\"access_token\\\"\\s*:|\\\"refresh_token\\\"\\s*:/.test(raw)) process.exit(1);"
           python3 -m py_compile scripts/env_control.py
           bash -n scripts/bootstrap-ubuntu.sh scripts/deploy.sh scripts/update.sh scripts/ai-master.sh scripts/feedback-backup.sh
 
