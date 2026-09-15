@@ -53,21 +53,24 @@ The product, backend, data and SIG owners should approve these points together:
 
 - **Runtime:** accept or revise the proposed FastAPI worker/API plus PostGIS architecture instead of extending the current Node fixture backend.
 - **Frontend:** retain the existing static/Caddy prototype during the first slice or approve a separate frontend migration. A Next.js migration is not required to prove the backend chain.
-- **Pack ownership:** extend the existing Risk pack or add a neighbouring GRP pack. Avoid duplicating `hazard_flood`.
-- **Pack deployment:** confirm whether ADPC may contribute a `packs_ext` module and who reviews/deploys it.
-- **Network:** confirm whether the SIG VM may call the Hub’s protected HTTPS result endpoint.
+- **Pack ownership — confirmed 14 September:** enhance the existing Risk pack rather than creating a duplicate around `hazard_flood`.
+- **Pack deployment detail still needed:** agree the contribution branch/repository, review owner, pack-doctor checks and who deploys the enhancement.
+- **Network — confirmed 14 September:** SIG can call the Hub’s protected HTTPS result endpoint. The remaining design work is service authentication, authorization, allowlisting, timeout and retry behaviour.
 - **First-slice geography:** use Chiang Yuen District for the golden integration because its boundary resolved in the live run; keep tambon/province unsupported until explicit geometry/admin-code targeting exists.
 - **Identity:** approve the restricted interim service/delegation approach and assign the real OIDC decision.
 - **Model path:** defer the Planner question box; when enabled, prefer the Hub-metered model path unless SIG provides auditable `compose_run` cost limits.
 
-### Two hard blockers
+### Former hard blockers — direction confirmed
 
-The connector cannot be called viable until SIG answers:
+The user confirmed on 14 September that the existing Risk pack can be enhanced and that SIG can call the Hub service. This unblocks the thin-pack direction.
 
-1. Can ADPC extend/add a domain pack module, and what is the contribution/deployment process?
-2. Can that pack make outbound HTTPS calls to the protected Hub result service?
+The following are now contract details rather than architecture blockers:
 
-A negative answer to either changes the connector architecture and must trigger replanning.
+1. Which repository/branch and review/deployment process is used for the Risk pack enhancement?
+2. Which machine identity, scopes and Hub authorization checks protect the outbound HTTPS call?
+3. Which network allowlist, timeout, retry and correlation rules apply?
+
+Do not call the connector operational until those details are implemented and tested end to end.
 
 ## First slice definition
 
@@ -88,7 +91,9 @@ Explicitly defer:
 
 ### Tasks
 
-- Hold one SIG technical session covering pack ownership/deployment and outbound access.
+- Record the confirmed decisions to enhance the existing Risk pack and permit outbound calls to the Hub.
+- Agree the pack contribution, review, test and deployment workflow.
+- Define service authentication, Hub authorization, network allowlisting and token rotation for SIG-to-Hub calls.
 - Obtain the SIG tool-call deadline and expected retry/timeout behaviour.
 - Ask whether a pack may accept an admin code or explicit geometry and cite Hub-held vector results.
 - Confirm whether receipt IDs are durable production records and define retention/resolution expectations.
@@ -98,8 +103,8 @@ Explicitly defer:
 ### Done when
 
 - Decisions are written with owner/date.
-- Both hard blockers have explicit answers.
-- The target contract is approved or this plan is revised before connector code begins.
+- The two former blockers remain recorded as resolved in principle.
+- Pack deployment ownership and the SIG-to-Hub security contract are approved before production connection.
 
 ## Workstream 2 — golden science fixture
 
@@ -178,7 +183,7 @@ The technical design also refers to `model_price` but does not include it in its
 
 **Owner:** integration developer with SIG pack owner
 
-Do this only after the two hard blockers are answered positively.
+The two architecture blockers are answered positively, so this experiment can start once a protected Hub result endpoint and the pack contribution workflow are available.
 
 ### Experiment
 
@@ -261,15 +266,15 @@ If a custom pack cannot bypass the resolver, restrict MVP1 to the supported dist
 - Protected immutable result API.
 - CI and deployment baseline.
 
-### Track B — one urgent SIG conversation
+### Track B — close integration contract details
 
-- Pack ownership/deployment.
-- Outbound HTTPS permission.
+- Pack contribution, review and deployment workflow.
+- SIG-to-Hub service identity, scopes, allowlist and token rotation.
 - Explicit target/admin-code support.
-- Tool deadline and receipt retention.
+- Tool deadline, retry policy and receipt retention.
 - Raster metadata ownership and model-spend visibility.
 
-### Track C — starts after blocker answers
+### Track C — can start with the protected endpoint
 
 - Minimal pack experiment.
 - Exact result-to-citation test.
@@ -314,9 +319,10 @@ If a custom pack cannot bypass the resolver, restrict MVP1 to the supported dist
 
 ## Immediate next actions
 
-1. Send SIG the two blocker questions and proposed minimal-pack experiment.
+1. Thank SIG for confirming the thin-pack direction, then document the exact pack deployment and SIG-to-Hub authentication contract.
 2. Ask the science owner for a signed Chiang Yuen golden result and approved boundary source/edition.
 3. Decide whether the proposed FastAPI/PostGIS first slice is approved or whether the current Node service will be evolved instead.
-4. Resolve the twelve-versus-thirteen-table `model_price` inconsistency.
-5. Turn the approved architecture into team-estimated issues; do not treat this document’s ordering as a staffing estimate.
-6. Push the existing three local commits after review so the live MCP evidence and handover are protected on `origin/main`.
+4. Implement the smallest protected completed-assessment endpoint and a mock SIG service-identity test.
+5. Resolve the twelve-versus-thirteen-table `model_price` inconsistency.
+6. Turn the approved architecture into team-estimated issues; do not treat this document’s ordering as a staffing estimate.
+7. Push the existing local commits after review so the live MCP evidence and handover are protected on `origin/main`.

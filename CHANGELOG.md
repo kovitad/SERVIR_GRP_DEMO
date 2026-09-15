@@ -9,7 +9,7 @@
 - Added `docs/14Sep2026/SIG_MCP_CONNECTION_TEST.md` and a sanitized authenticated validation capture. The latest live run enumerated 15 tools, matched the prototype inventory exactly, and successfully assembled generic Risk pack `7a2ac7b16c28a304` for Phaya Thai and `flood`.
 - Updated Planner/Admin integration wording: generic upstream Risk assembly is now validated, while the deployed Planner and proposed `grp-flood` connector to its private Hub result remain unconnected.
 - Added `docs/14Sep2026/HANDOVER_NEXT_AI.md` as the current continuation guide covering repository state, validated capability, truth boundaries, evidence gaps and the phased backend integration plan.
-- Added `docs/14Sep2026/REFINED_MVP1_WORK_PLAN.md`, incorporating the three live generic Risk runs, two governed receipts, measured 52–152 second assembly time, AOI fallback defect and first-slice technical proposal. The critical path now prioritises a signed district golden result, asynchronous Hub assessment service and the two SIG pack/outbound-network blocker decisions.
+- Added `docs/14Sep2026/REFINED_MVP1_WORK_PLAN.md`, incorporating the three live generic Risk runs, two governed receipts, measured 52–152 second assembly time, AOI fallback defect and first-slice technical proposal. The direction is now confirmed: enhance the existing Risk pack and allow it to call the protected Hub service; remaining work covers the golden result, asynchronous Hub assessment, pack deployment and SIG-to-Hub security contract.
 
 ## 0.10.1-prototype
 

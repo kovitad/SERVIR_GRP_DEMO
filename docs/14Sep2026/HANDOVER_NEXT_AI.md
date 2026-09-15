@@ -127,8 +127,8 @@ The critical path is now:
 1. Approve the proposed production runtime rather than silently replacing the existing Node fixture prototype.
 2. Obtain a signed Chiang Yuen golden GIS result.
 3. Build the Hub-owned asynchronous assessment, validation and protected immutable-result API.
-4. Get explicit SIG answers on the two hard blockers: permission to deploy/extend a pack module and outbound HTTPS from that pack to the Hub service.
-5. Prove the smallest pack can use an explicit admin target, read the exact completed Hub result and emit one citation per number without free-text AOI fallback.
+4. Treat the thin-pack direction as confirmed: enhance the existing Risk pack, which may call the Hub. Close the remaining deployment, machine-identity, authorization, allowlist, timeout and retry details.
+5. Prove the smallest Risk-pack enhancement can use an explicit admin target, read the exact completed Hub result and emit one citation per number without free-text AOI fallback.
 6. Gate the custom-pack draft and store the real pack/report/receipt linkage.
 7. Add the Planner evidence/receipt view, then add the metered question box only after the evidence chain works.
 
