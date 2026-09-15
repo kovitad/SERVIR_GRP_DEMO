@@ -514,7 +514,43 @@ Use manual approval. Back up first, deploy the same tested image digest, migrate
 
 ## 15. Operations, monitoring and recovery
 
-### 15.1 Health and metrics
+### 15.1 Observability architecture
+
+Use OpenTelemetry and Langfuse together rather than treating them as alternatives:
+
+- OpenTelemetry covers HTTP, database, worker, GIS, queue and SIG dependency telemetry.
+- Langfuse covers model generations, prompts, tokens, cost, evaluations, feedback and governed-answer observations.
+- PostGIS remains the durable workflow truth and stores `audit_event` plus `llm_usage`; neither telemetry system replaces application state or security audit.
+
+Instrument `grp-api` and `grp-worker` with OpenTelemetry SDKs. Run one lightweight OpenTelemetry Collector per VM to redact, batch, retry and export telemetry. The Collector is not a datastore or dashboard; export to ADPC’s approved monitoring service, a managed Grafana service, or a separately operated Prometheus/Tempo/Loki/Grafana stack. Do not initially self-host the complete observability stack on the CPU-bound application VMs.
+
+Continue using the existing hosted Langfuse project for the controlled AI pilot unless data-residency policy requires a dedicated observability environment. Do not use Langfuse as the uptime monitor, job queue, authorization audit or canonical cost ledger.
+
+Carry these correlation fields across authorized boundaries:
+
+```text
+trace_id
+workflow_id
+assessment_id
+job_attempt_id
+hub_id
+pack_id
+report_id
+receipt_id
+```
+
+The API stores trace context with the database job. A worker starts a linked consumer span when it claims the job rather than pretending that a potentially long queue wait is one synchronous request. Hub-to-SIG calls carry W3C `traceparent` and `X-Correlation-ID` when SIG accepts them. Trace context is telemetry only and never grants access.
+
+The Admin experience has four separately authorized views:
+
+1. **System health:** API availability/latency, worker heartbeat, queue depth/age, failures, CPU/memory/disk, database readiness, backup age and SIG dependency status.
+2. **Workflow explorer:** submitted, validated, queued, worker started, GIS completed, SIG pack assembled, draft generated, gate result and receipt minted—with duration, safe error and exact identifiers at each stage.
+3. **AI assurance:** Langfuse model/provider, prompt version, tokens, cost, latency, grounding result, retries, evaluation and planner feedback.
+4. **Security audit:** Hub database events for sign-in, membership, dataset replacement, assessment submission, SIG evidence reads, publication approval, administrative reads and credential rotation.
+
+The Admin browser reads those views through protected Hub APIs. It does not receive direct observability-provider secret keys. Raw traces remain restricted by role and Hub.
+
+### 15.2 Health and metrics
 
 - `/healthz`: process alive; no sensitive dependency detail.
 - `/readyz`: database, storage and migration compatibility.
@@ -525,9 +561,30 @@ Use manual approval. Back up first, deploy the same tested image digest, migrate
 - Database size/connections and backup age.
 - SIG evidence calls by status/latency; never label metrics with assessment/user IDs.
 
-Use structured JSON logs with `workflow_id`, `assessment_id`, safe `support_ref`, route and status. Redact authorization headers, cookies, tokens, raw uploaded features, signed URLs and draft/private evidence.
+Initial metric names:
 
-### 15.2 Backup
+```text
+grp_http_requests_total
+grp_http_request_duration_seconds
+grp_assessments_total
+grp_assessment_duration_seconds
+grp_job_queue_depth
+grp_job_queue_oldest_seconds
+grp_worker_heartbeat
+grp_worker_failures_total
+grp_sig_requests_total
+grp_sig_request_duration_seconds
+grp_sig_contract_errors_total
+grp_disk_used_ratio
+grp_backup_age_seconds
+grp_llm_tokens_total
+grp_llm_cost_usd_total
+grp_grounding_failures_total
+```
+
+Use structured JSON logs with `workflow_id`, `assessment_id`, safe `support_ref`, route and status. Redact authorization headers, cookies, tokens, raw uploaded features, signed URLs, unrestricted prompts and draft/private evidence. Do not use user, assessment or dataset identifiers as metric labels because they leak context and create unsafe cardinality.
+
+### 15.3 Backup
 
 Back up PostgreSQL, accepted immutable files, method/configuration versions and SIG identifier mappings as a consistent set. Encrypt backups and copy them off the VM. Proposed initial policy pending ADPC approval:
 
@@ -538,7 +595,7 @@ Back up PostgreSQL, accepted immutable files, method/configuration versions and 
 
 Replication or a second directory on the same disk is not backup.
 
-### 15.3 Failure behaviour
+### 15.4 Failure behaviour
 
 - SIG unavailable: Hub jobs/results continue; evidence state is `pending_sig` or `sig_unavailable`.
 - Hub unavailable: SIG returns a typed unavailable result; it must not fall back to generic place analysis for an `assessment_ref` request.
