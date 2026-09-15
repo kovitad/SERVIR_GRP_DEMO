@@ -21,8 +21,10 @@ The pilot remains restricted to one question for Phaya Thai, RP100 and the 1 km 
 - Full contract and Risk evidence: [`docs/14Sep2026/sig-mcp-live-capture.json`](docs/14Sep2026/sig-mcp-live-capture.json); concise validation record: [`docs/14Sep2026/sig-mcp-risk-validation.json`](docs/14Sep2026/sig-mcp-risk-validation.json)
 - Re-runnable capture: `node scripts/sig-mcp-capture.js --test-risk`
 - Live result: 15 tools enumerated with an exact fixture match; `platform_capabilities` and generic Risk `assemble_pack` succeeded; latest captured pack ID `7a2ac7b16c28a304`.
-- Boundary: this validates upstream generic hazard-exposure assembly only. The current Planner, its RP comparison, private Hub authorization and proposed `grp-flood.gather(...)` connector are not integrated with SIG.
-- Returned gaps: no Risk document corpus, incomplete raster vintage/licence metadata, no vulnerability-weighted risk, and no OSM retrieval date.
+- Further user-supplied records document three live generic Risk runs and two governed receipts: Ku Thong receipt `9655345712d3c364` used the wrong radius-box AOI; Chiang Yuen District receipt `d5b98bc8302b1829` used a resolved district boundary; the province zero-result fallback was not published.
+- Boundary: this validates upstream generic hazard-exposure assembly and the generic gate/receipt finish only. The current Planner, its RP comparison, private Hub authorization and proposed `grp-flood.gather(...)` connector are not integrated with SIG. A valid receipt proves evidence traceability, not correct AOI or scientific correctness.
+- Returned gaps: no Risk document corpus, incomplete raster vintage/licence metadata, no vulnerability-weighted risk, no evacuation-centre class, no required three-status output and no OSM retrieval date.
+- Active integration plan: [`docs/14Sep2026/REFINED_MVP1_WORK_PLAN.md`](docs/14Sep2026/REFINED_MVP1_WORK_PLAN.md).
 
 ## Current handover snapshot — what we are up to
 

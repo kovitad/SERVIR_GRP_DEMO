@@ -16,7 +16,8 @@ Read these files before changing implementation claims:
 2. [`SIG_MCP_CONNECTION_TEST.md`](SIG_MCP_CONNECTION_TEST.md) — repeatable OAuth/MCP contract and bounded Risk test procedure.
 3. [`sig-mcp-live-capture.json`](sig-mcp-live-capture.json) — exact authenticated tool schemas and latest bounded Risk output.
 4. [`../10Sep2026/PROTOTYPE_ARCHITECTURE_ALIGNMENT_REVIEW.md`](../10Sep2026/PROTOTYPE_ARCHITECTURE_ALIGNMENT_REVIEW.md) — architecture decisions and remaining connector gaps.
-5. [`../11Sep2026/HANDOVER_RELEASE_0.10.1.md`](../11Sep2026/HANDOVER_RELEASE_0.10.1.md) — release 0.10.1 workflow and localhost-fix baseline.
+5. [`REFINED_MVP1_WORK_PLAN.md`](REFINED_MVP1_WORK_PLAN.md) — delivery sequence refined from three live runs and the first-slice proposal.
+6. [`../11Sep2026/HANDOVER_RELEASE_0.10.1.md`](../11Sep2026/HANDOVER_RELEASE_0.10.1.md) — release 0.10.1 workflow and localhost-fix baseline.
 
 ## Repository state at handover
 
@@ -69,6 +70,8 @@ The registered hazard identifier is `flood`. The value `river flood` was correct
 
 The live Risk evidence is a 100-year flood hazard-exposure pack covering hospitals, schools, buildings and roads. It is not the Planner's seven-return-period evacuation-centre comparison and must not be merged numerically with that result.
 
+Additional user-supplied 14 September records document three live runs and two governed receipts. Ku Thong pack `40248e7502d47ee4` produced receipt `9655345712d3c364`, but used a wrong 12 km fallback box. Chiang Yuen District pack `36e0819a57530063` produced receipt `d5b98bc8302b1829` against a resolved district boundary. A Maha Sarakham Province run also fell back to a box, returned zeros and was deliberately not published. These records prove the gate/receipt path and also prove that a valid receipt is not evidence of correct AOI or science. See the source DOCX files in `prototype/14Sep2026/` and the refined plan.
+
 ## Critical truth boundary
 
 Three things must remain visibly separate:
@@ -117,45 +120,19 @@ Do not run `publish_answer` merely to make a demo look complete. It requires an 
 
 ## Recommended next implementation
 
-### Phase A — controlled evidence-only spike
+Use [`REFINED_MVP1_WORK_PLAN.md`](REFINED_MVP1_WORK_PLAN.md) as the active plan. The new runs remove the need for another generic evidence-only proof: generic assembly and the complete gate/receipt finish have already been demonstrated.
 
-Build a reusable MCP client inside the Node backend, not in browser JavaScript:
+The critical path is now:
 
-1. OAuth discovery and a fixed production client registration.
-2. HTTPS callback on the deployed application domain.
-3. Server-side, short-lived encrypted token handling.
-4. Admin-only connect, status, expiry and disconnect controls.
-5. `initialize`, `tools/list` and exact contract-drift validation.
-6. Bounded `platform_capabilities` and generic Risk `assemble_pack` calls.
-7. A separate SIG evidence panel showing pack ID, citations, method, gaps and execution duration.
-8. Clear fallback when SIG is unavailable; the Hub assessment must continue working.
+1. Approve the proposed production runtime rather than silently replacing the existing Node fixture prototype.
+2. Obtain a signed Chiang Yuen golden GIS result.
+3. Build the Hub-owned asynchronous assessment, validation and protected immutable-result API.
+4. Get explicit SIG answers on the two hard blockers: permission to deploy/extend a pack module and outbound HTTPS from that pack to the Hub service.
+5. Prove the smallest pack can use an explicit admin target, read the exact completed Hub result and emit one citation per number without free-text AOI fallback.
+6. Gate the custom-pack draft and store the real pack/report/receipt linkage.
+7. Add the Planner evidence/receipt view, then add the metered question box only after the evidence chain works.
 
 Do not expose provider or OAuth tokens to frontend code, application logs, Langfuse, screenshots or committed evidence.
-
-### Phase B — actual Hub-to-SIG connection
-
-Agree with the SIG team how the internal Risk pack will resolve an authorised immutable Hub assessment. The protected contract needs:
-
-- assessment/result target identifier;
-- delegated user and Hub authorization;
-- exact dataset-version manifest;
-- trace/correlation propagation;
-- timeout and retry semantics;
-- privacy rules preventing raw private upload transfer;
-- citations and declared gaps referencing the same canonical Hub result.
-
-Only after that contract exists should `grp-flood.gather(...)` be described as connected.
-
-### Phase C — governed answer
-
-After the protected connector works:
-
-1. Assemble a pack for the stored Hub result.
-2. Draft from that pack using the existing server-side model workflow or an explicitly approved alternative.
-3. Use the exact required section headers and cite every paragraph.
-4. Call `publish_answer(pack_id, draft, question)`.
-5. Persist the real `pack_id`, `report_id`, `receipt_id`, assessment ID, trace ID and draft hash.
-6. Render the server-resolved evidence/receipt component; do not paint a permanent local “verified” badge.
 
 ## Validation already completed
 
