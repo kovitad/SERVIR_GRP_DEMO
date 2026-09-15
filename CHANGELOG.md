@@ -8,6 +8,7 @@
 - A 403 carrying no `WWW-Authenticate` challenge is reported as a probable network or proxy denial rather than as server-side authorization, so a blocked egress path is not mistaken for a successful reachability probe.
 - Added `docs/14Sep2026/SIG_MCP_CONNECTION_TEST.md` and a sanitized authenticated validation capture. The latest live run enumerated 15 tools, matched the prototype inventory exactly, and successfully assembled generic Risk pack `7a2ac7b16c28a304` for Phaya Thai and `flood`.
 - Updated Planner/Admin integration wording: generic upstream Risk assembly is now validated, while the deployed Planner and proposed `grp-flood` connector to its private Hub result remain unconnected.
+- Added `docs/14Sep2026/HANDOVER_NEXT_AI.md` as the current continuation guide covering repository state, validated capability, truth boundaries, evidence gaps and the phased backend integration plan.
 
 ## 0.10.1-prototype
 

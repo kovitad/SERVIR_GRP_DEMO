@@ -1,8 +1,8 @@
 # AI / developer handover
 
-> **Current release handover:** Read [`docs/11Sep2026/HANDOVER_RELEASE_0.10.1.md`](docs/11Sep2026/HANDOVER_RELEASE_0.10.1.md) for the concise delivered scope, localhost fixes, completed validation, persistence/security boundaries and next actions. The earlier [`../07Sep2026/HANDOVER_MCP_ALIGNMENT_AND_MVP1_MOCK.md`](../07Sep2026/HANDOVER_MCP_ALIGNMENT_AND_MVP1_MOCK.md) remains useful background when operating in the full parent workspace, but release 0.10.1 integrates that refinement into the deployable interface.
+> **Start with the current AI handover:** Read [`docs/14Sep2026/HANDOVER_NEXT_AI.md`](docs/14Sep2026/HANDOVER_NEXT_AI.md) for the live SIG MCP validation, exact integration boundary and recommended implementation sequence. Then use [`docs/11Sep2026/HANDOVER_RELEASE_0.10.1.md`](docs/11Sep2026/HANDOVER_RELEASE_0.10.1.md) for the release baseline. The earlier [`../07Sep2026/HANDOVER_MCP_ALIGNMENT_AND_MVP1_MOCK.md`](../07Sep2026/HANDOVER_MCP_ALIGNMENT_AND_MVP1_MOCK.md) remains historical background in the parent workspace.
 
-**Last updated:** 11 September 2026
+**Last updated:** 14 September 2026
 **Repository:** `https://github.com/kovitad/SERVIR_GRP_DEMO.git`  
 **Branch:** `main`
 
