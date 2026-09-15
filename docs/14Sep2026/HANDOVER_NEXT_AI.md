@@ -16,8 +16,9 @@ Read these files before changing implementation claims:
 2. [`SIG_MCP_CONNECTION_TEST.md`](SIG_MCP_CONNECTION_TEST.md) — repeatable OAuth/MCP contract and bounded Risk test procedure.
 3. [`sig-mcp-live-capture.json`](sig-mcp-live-capture.json) — exact authenticated tool schemas and latest bounded Risk output.
 4. [`../10Sep2026/PROTOTYPE_ARCHITECTURE_ALIGNMENT_REVIEW.md`](../10Sep2026/PROTOTYPE_ARCHITECTURE_ALIGNMENT_REVIEW.md) — architecture decisions and remaining connector gaps.
-5. [`REFINED_MVP1_WORK_PLAN.md`](REFINED_MVP1_WORK_PLAN.md) — delivery sequence refined from three live runs and the first-slice proposal.
-6. [`../11Sep2026/HANDOVER_RELEASE_0.10.1.md`](../11Sep2026/HANDOVER_RELEASE_0.10.1.md) — release 0.10.1 workflow and localhost-fix baseline.
+5. [`GRP_MVP1_HUB_SIG_ARCHITECTURE_DESIGN_V1.0.md`](GRP_MVP1_HUB_SIG_ARCHITECTURE_DESIGN_V1.0.md) and its [developer DOCX](2026-09-15_GRP_MVP1_Hub_SIG_Architecture_Design_v1.0.docx) — implementation architecture for local development and the two ADPC VMs.
+6. [`REFINED_MVP1_WORK_PLAN.md`](REFINED_MVP1_WORK_PLAN.md) — delivery sequence refined from three live runs and the first-slice proposal.
+7. [`../11Sep2026/HANDOVER_RELEASE_0.10.1.md`](../11Sep2026/HANDOVER_RELEASE_0.10.1.md) — release 0.10.1 workflow and localhost-fix baseline.
 
 ## Repository state at handover
 

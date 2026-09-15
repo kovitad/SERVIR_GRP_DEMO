@@ -10,6 +10,7 @@
 - Updated Planner/Admin integration wording: generic upstream Risk assembly is now validated, while the deployed Planner and proposed `grp-flood` connector to its private Hub result remain unconnected.
 - Added `docs/14Sep2026/HANDOVER_NEXT_AI.md` as the current continuation guide covering repository state, validated capability, truth boundaries, evidence gaps and the phased backend integration plan.
 - Added `docs/14Sep2026/REFINED_MVP1_WORK_PLAN.md`, incorporating the three live generic Risk runs, two governed receipts, measured 52–152 second assembly time, AOI fallback defect and first-slice technical proposal. The direction is now confirmed: enhance the existing Risk pack and allow it to call the protected Hub service; remaining work covers the golden result, asynchronous Hub assessment, pack deployment and SIG-to-Hub security contract.
+- Added the versioned Markdown and developer DOCX for the Hub–SIG architecture. It incorporates the requested staging (`4 vCPU / 16 GB / 250 GB`) and production (`4 vCPU / 32 GB / 500 GB`) Ubuntu VMs, DNS/HTTPS ingress, local workflow, PostGIS job design, protected SIG evidence API, Risk-pack `assessment_ref` proposal, security, CI/CD, operations and implementation increments.
 
 ## 0.10.1-prototype
 

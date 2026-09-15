@@ -25,6 +25,7 @@ The pilot remains restricted to one question for Phaya Thai, RP100 and the 1 km 
 - Boundary: this validates upstream generic hazard-exposure assembly and the generic gate/receipt finish only. The current Planner, its RP comparison, private Hub authorization and proposed `grp-flood.gather(...)` connector are not integrated with SIG. A valid receipt proves evidence traceability, not correct AOI or scientific correctness.
 - Returned gaps: no Risk document corpus, incomplete raster vintage/licence metadata, no vulnerability-weighted risk, no evacuation-centre class, no required three-status output and no OSM retrieval date.
 - Thin-pack direction confirmed: enhance the existing SIG Risk pack, and let it call the protected Hub result API. Pack deployment workflow and SIG-to-Hub machine identity/authorization remain to be specified and tested.
+- Developer architecture: [`docs/14Sep2026/GRP_MVP1_HUB_SIG_ARCHITECTURE_DESIGN_V1.0.md`](docs/14Sep2026/GRP_MVP1_HUB_SIG_ARCHITECTURE_DESIGN_V1.0.md) and [DOCX](docs/14Sep2026/2026-09-15_GRP_MVP1_Hub_SIG_Architecture_Design_v1.0.docx), covering local development, both ADPC VMs, protected Hub APIs and the existing Risk-pack enhancement.
 - Active integration plan: [`docs/14Sep2026/REFINED_MVP1_WORK_PLAN.md`](docs/14Sep2026/REFINED_MVP1_WORK_PLAN.md).
 
 ## Current handover snapshot — what we are up to
