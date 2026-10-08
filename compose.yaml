@@ -11,10 +11,10 @@ services:
         condition: service_healthy
     environment:
       SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+    # Loopback-only: a host reverse proxy (nginx/Caddy) owns ports 80/443 and
+    # terminates HTTPS, so this can share a server with other sites.
     ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
+      - "127.0.0.1:${HOST_PORT:-8081}:80"
     volumes:
       - caddy_data:/data
       - caddy_config:/config
