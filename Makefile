@@ -16,7 +16,7 @@ logs:
 	docker compose logs -f --tail=100
 
 health:
-	curl -fsS http://127.0.0.1/healthz && echo
+	curl -fsS http://127.0.0.1:$${HOST_PORT:-8081}/healthz && echo
 	docker compose ps
 
 feedback-backup:

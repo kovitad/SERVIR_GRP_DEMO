@@ -77,7 +77,7 @@ def validate(values: dict[str, str], proposed_master: bool | None = None) -> lis
     return errors
 
 
-def update_value(path: Path, key: str, value: str) -> None:
+def update_value(path: Path, key: str, value: str, comment: str = "# Admin-controlled AI environment master") -> None:
     lines = path.read_text(encoding="utf-8").splitlines() if path.exists() else []
     pattern = re.compile(rf"^\s*{re.escape(key)}\s*=")
     replacement = f"{key}={value}"
@@ -94,7 +94,7 @@ def update_value(path: Path, key: str, value: str) -> None:
     if not found:
         if output and output[-1].strip():
             output.append("")
-        output.extend(["# Admin-controlled AI environment master", replacement])
+        output.extend([comment, replacement])
     temp = path.with_suffix(".tmp")
     temp.write_text("\n".join(output).rstrip() + "\n", encoding="utf-8")
     try:
@@ -128,7 +128,9 @@ def status(values: dict[str, str]) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("command", choices=["validate", "status", "migrate", "allow", "lock"])
+    parser.add_argument("command", choices=["validate", "status", "migrate", "allow", "lock", "set"])
+    parser.add_argument("key", nargs="?")
+    parser.add_argument("value", nargs="?")
     parser.add_argument("--env-file", type=Path, default=ENV_FILE)
     args = parser.parse_args()
     path = args.env_file.resolve()
@@ -150,6 +152,12 @@ def main() -> int:
         else:
             print("No environment migration required.")
         print("Existing account, provider and AI control values were not changed or displayed.")
+        return 0
+    if args.command == "set":
+        if not args.key or args.value is None:
+            print("ERROR: Usage: env_control.py set KEY VALUE", file=sys.stderr)
+            return 1
+        update_value(path, args.key, args.value, comment="# Deployment setting")
         return 0
     if args.command == "lock":
         update_value(path, "AI_FEATURE_ALLOWED", "false")

@@ -3,9 +3,31 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
+public=false
+[[ "${1:-}" == "--public" ]] && public=true
+
+set_env() { python3 scripts/env_control.py set "$1" "$2" >/dev/null; }
+
 if [[ ! -f .env ]]; then
   cp .env.example .env
-  echo "Created .env from .env.example. Review SITE_ADDRESS and AI observability settings before deployment."
+  chmod 600 .env
+  echo "Created .env from .env.example."
+  # Fill empty accounts so a first deployment needs no manual editing.
+  if ! grep -q '^ADMIN_PASSWORD=..*' .env; then
+    admin_password="$(openssl rand -base64 18)"
+    planner_password="$(openssl rand -base64 18)"
+    set_env ADMIN_USERNAME admin
+    set_env ADMIN_PASSWORD "$admin_password"
+    set_env PLANNER_USERNAME planner
+    set_env PLANNER_PASSWORD "$planner_password"
+    echo "Generated accounts (shown once; also stored in .env):"
+    echo "  Admin:   admin / $admin_password"
+    echo "  Planner: planner / $planner_password"
+  fi
+fi
+
+if [[ "$public" == "true" ]]; then
+  set_env HOST_BIND 0.0.0.0
 fi
 
 chmod 600 .env
